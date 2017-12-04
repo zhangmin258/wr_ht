@@ -1,0 +1,150 @@
+
+<style>
+    .push li{
+        line-height: 3;
+    }
+    .push li .push_title{
+        width: 10%;
+        font-weight: bold;
+        display: inline-block;
+    }
+    .push li .push_cnt{
+        display: inline-block;
+    }
+    .push li .push_cnt label{
+        font-weight: normal;
+        position: relative;
+        margin-right: 20px;
+    }
+    .push li .push_cnt label input{
+        width: 20px;
+        height: 20px;
+        position: relative;
+        z-index: 10;
+        vertical-align: -5px;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    .push li .push_cnt label img{
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        z-index: 0;
+        right: 0;
+        bottom: 11px;
+    }
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading">推送文本</div>
+    <div class="panel-body">
+        <ul class="push">
+            <li>
+                <span class="push_title">推送标题</span>
+                <span class="push_cnt">{{.pushInfo.Title}}</span>
+            </li>
+            <li>
+                <span class="push_title">推送内容</span>
+                <span class="push_cnt">{{.pushInfo.Content}}</span>
+            </li>
+            <li>
+                <span class="push_title">指向位置</span>
+                <span class="push_cnt">{{if eq .pushInfo.JumpType 2}}{{.pushInfo.Name}}{{else if eq .pushInfo.JumpType 3}}{{.pushInfo.UrlTitle}} {{.pushInfo.Url}}{{else}}-{{end}}</span>
+            </li>
+            <li>
+                <span class="push_title">推送时间</span>
+                <span class="push_cnt">{{.pushInfo.PushTime.Format "2006-01-02 15:04:05"}}</span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="panel">
+    <div class="panel-heading">用户属性</div>
+    <div class="panel-body">
+        <ul class="push">
+            <li>
+                <span class="push_title">地域要求</span>
+                <span class="push_cnt">{{if eq .pushInfo.PushLocationType 2}}只贷给-{{.pushInfo.PushLocation}}{{else if eq .pushInfo.PushLocationType 3}}不贷给-{{.pushInfo.PushLocation}}{{else}}不限{{end}}</span>
+            </li>
+            <li>
+                <span class="push_title">手机系统要求</span>
+                <span class="push_cnt">{{if eq .pushInfo.PushSys 1}}安卓{{else if eq .pushInfo.PushSys 2}}IOS{{else}}不限{{end}}</span>
+            </li>
+            <li>
+                <span class="push_title">芝麻分要求</span>
+                <span class="push_cnt">{{.pushInfo.PushMinZm}}~{{.pushInfo.PushMaxZm}}</span>
+            </li>
+            <li>
+                <span class="push_title">用户标签</span>
+                <span class="push_cnt">
+                    <label>
+                        <span>多头借款</span>
+                        <input type="checkbox" value="1">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>网黑</span>
+                        <input type="checkbox" value="2">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>白户</span>
+                        <input type="checkbox" value="3">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>大额需求</span>
+                        <input type="checkbox" value="4">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+$(function(){
+
+    $('input[type="checkbox"]').on('click',function(){
+        if(this.checked){
+            $(this).siblings("img").attr("src","../static/img/true.png");
+　　　　}else{
+　　　　　　$(this).siblings("img").attr("src","../static/img/false.png");
+　　　　}
+    });
+
+
+});
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+

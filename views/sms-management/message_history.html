@@ -1,0 +1,171 @@
+
+<style>
+
+    td{
+        vertical-align: middle !important;
+    }
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">
+        <strong class="pull-left">发送历史</strong>
+        <strong class="pull-right">总发送条数：{{.SMSCount}}条</strong>
+    </div>
+    <div class="panel-body">
+        <form action="/smsmanagement/getsmsmanagelist" id="searchForm2" method="get" class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="请输入发送文本" style="width: 250px;" name="content" id="send_text">
+            </div>
+            <button id="searchBtn" type="submit" class="btn btn-info">搜索</button>
+        </form>
+        <hr>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th style="width: 15%">发送时间</th>
+                    <th style="width: 35%">发送内容</th>
+                    <th style="width: 40%">用户属性</th>
+                    <th style="width: 10%" class="text-center">发送条数</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range $k,$sms := .smsMange}}
+                <tr>
+                    <td>{{$sms.PushTime}}</td>
+                    <td>{{$sms.Content}}</td>
+                    <td>
+                        {{$sms.Nature}}
+                    </td>
+                    <td class="text-center">{{$sms.PushCount}}</td>
+                </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination2" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination2").my_page("#searchForm2");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+
+$(function(){
+
+
+    if(window.sessionStorage.send_text){
+        $('#send_text').val(window.sessionStorage.send_text);
+    }
+
+
+});
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

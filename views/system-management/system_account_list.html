@@ -1,0 +1,130 @@
+
+<div class="row">
+    <div class="col-md-12">
+        <div class="panel panel_border panel_anthen">
+            <div class="panel_heading">
+                <form id="searchForm" action="" method="get">
+                    <ul class="nav pull-left">
+                        <li class="pull-left">
+                            <input type="text" class="input-medium" value="" placeHolder="账号" name="account" />&nbsp;&nbsp;
+                        </li>
+                        <li class="pull-left">
+                            <input type="text" class="input-medium" value="" placeHolder="使用人" name="username" />&nbsp;&nbsp;
+                        </li>
+                        <li class="pull-left">
+                            <input type="text" class="input-medium" value="" placeHolder="岗位" name="role" />&nbsp;&nbsp;
+                        </li>
+                        <li class="pull-left">
+                            <select class="input-medium" name="accountstate">
+                                <option value="">- 请选择账号状态 -</option>
+                                <option value="启用">启用</option>
+                                <option value="禁用">禁用</option>
+                            </select>&nbsp;&nbsp;
+                        </li>
+                        <li class="pull-left">
+                            <button type="submit" class="btn btn-info">搜索</button>
+                        </li>
+                    </ul>
+                </form>
+                <a class="btn btn-info pull-right" href="javascript:void(0);" onclick="return getpage('/system/user')">添加账号</a>
+            </div>
+            <div class="panel-body">
+                <form action="" id="form1" method="post">
+                    <table class="table table-hover table-striped table_thead_fixed">
+                        <thead>
+                        <tr>
+                            <th>账号</th>
+                            <th>使用人</th>
+                            <th>角色</th>
+                            <th>岗位</th>
+                            <th>邮箱</th>
+                            <th>账号状态</th>
+                            <th>操作</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                            {{range $k, $v := .list}}
+                            <tr>
+                                <td>{{$v.Name}}</td>
+                                <td>{{$v.Displayname}}</td>
+                                <td>{{$v.RoleName}}</td>
+                                <td>{{$v.StationName}}</td>
+                                <td>{{$v.Email}}</td>
+                                <td><span class="tag_bg_red">{{$v.Accountstatus}}</span></td>
+                                <td>
+                                    {{if ne $v.Id 1}}
+                                    <a href="javascript:void(0);" onclick="return getpage('/system/user?uid={{$v.Id}}')">编辑</a>&nbsp;&nbsp;
+                                    {{if $.isAdmin}}
+                                        <a href="javascript:void(0);" onclick="showEwm('https://ser.zcmlc.com/v1/qrcode?t={{$v.AuthURL}}','{{$v.Secret}}')">二维码</a>&nbsp;&nbsp;
+                                    {{end}}
+                                    <a href="javascript:void(0);" onclick="return delUser('{{$v.Id}}')">删除</a>
+                                    {{end}}
+                                </td>
+                            </tr>
+                            {{end}}
+                            <!-- <tr>
+                                <td>XJKC201541254</td>
+                                <td>王尼玛</td>
+                                <td>客服主管</td>
+                                <td>wangnm@xjkc.com</td>
+                                <td>启用</td>
+                                <td>
+                                    <a href="javascript:void(0);" onclick="return getpage()">编辑</a>&nbsp;&nbsp;
+                                    <a href="javascript:void(0);" onclick="showEwm('https://www.zcmlc.com')">二维码</a>&nbsp;&nbsp;
+                                    <a href="javascript:void(0);" onclick="return getpage()">删除</a>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                        <tfoot>
+                        <tr>
+                            <td colspan="14">
+                                <div class="fl">
+                                    <div class="pagination"> 共{{.count}}条</div>
+                                </div>
+                                <div class="fl">
+                                    <div class="pagination" id="pagination" data-url="/system/userlist" currentPage="{{.currpage}}" pageCount="{{.pagecount}}"></div>
+                                    <script type="text/javascript">
+                                        $(function() {
+                                            $("#pagination").my_page("#searchForm");
+                                        });
+                                    </script>
+                                </div>
+                            </td>
+                        </tr>
+                        </tfoot>
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="dialog-ewm" class="hide1" title="二维码">loading...</div>
+
+<script type="text/javascript">
+
+    $('#dialog-ewm').dialog({
+        autoOpen: false,
+        modal: true,
+        width:235,
+        maxHeight: 300,
+        position: ["center", 100]
+    });
+
+    function showEwm(src, key){
+        $('#dialog-ewm').html('<img style="width:200px;" src="'+src+'"/><br/><span style="width:100%;margin:0.1rem auto 0;text-align: center;">'+key+'</span>');
+        $('#dialog-ewm').dialog('open');
+    }
+
+    function delUser(id){
+        if(confirm('删除则该账号无法登陆，是否继续?')){
+            $.zpost("/system/deluser",{uid:id},function(result){
+                if(result.ret==200){
+                    return getpage('/system/userlist');
+                }else{
+                    alert(result.msg);
+                }
+            });
+        }
+    }
+</script>

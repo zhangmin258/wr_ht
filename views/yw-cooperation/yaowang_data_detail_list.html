@@ -1,0 +1,42 @@
+
+
+	<table class="table table-hover">
+	    <thead>
+	         <tr>
+	            <th>日期</th>
+	            <th>注册用户</th>
+	            <th>登录用户</th>
+	            <th>产品总UV</th>
+	            <th>活跃用户</th>
+	        </tr>
+	    </thead>
+	    <tbody>
+			{{range $k,$v := .datalist}}
+	        <tr>
+				<td>{{$v.CreateDate}}</td>
+				<td>{{$v.RegistCount}}</td>
+				<td>{{$v.LoginCount}}</td>
+				<td>{{$v.UVCount}}</td>
+				<td>{{$v.ActiveCount}}</td> 
+			</tr>
+			{{end}}
+	    </tbody>
+	    <tfoot>
+	        <tr>
+	            <td colspan="5">
+	                <div class="fl">
+	                    <div class="pagination">总共{{.count}}条</div>
+	                </div>
+	                <div class="fl">
+	                    <div class="pagination" id="pagination" data-url="/yaowangproduct/getyaowangdatadetaillist" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+	                </div>
+	                <script type="text/javascript">
+	                    $(function () {
+	                        $("#pagination").my_page("","#data_detail");
+	                    });
+	                </script>
+	            </td>
+	        </tr>
+	    </tfoot>
+	</table>
+	

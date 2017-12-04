@@ -1,0 +1,294 @@
+
+<style>
+
+	#pt_name{
+	    width: 250px;
+	    height: 35px;
+	    text-indent: 5px;
+	}
+
+	.xl{
+	    width: 250px;
+	    overflow: text;
+	    border: #ccc solid 1px;
+	    border-top: none;
+	    position: absolute;
+	    z-index: 100;
+	    top: 35px;
+	    left: 8px;
+	    padding: 0;
+	    display: none;
+	}
+
+	.xl li {
+	    line-height: 30px;
+	    cursor: pointer;
+	    padding-left: 10px;
+	    background: #fff;
+	    color: #666;
+	}
+
+	.xl li:hover {
+	    background: #ccc;
+	    color: maroon;
+	}
+
+</style>
+
+
+
+
+<div class="panel">
+	<div class="panel-heading">数据报表</div>
+	<div class="panel-body">
+		<form action="" id="searchForm1" method="get" class="form-inline" style="text-align: center;">
+			<strong style="margin-right: 2%;">日期选择</strong>
+			<input name="startTime1" id="startDate1" class="Wdate form-control" type="text" value="{{.excelDate}}"
+                       onFocus="var endDate = $dp.$('endDate1');WdatePicker({dateFmt:'yyyy-MM-dd',
+                       onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate1\')}'})"
+                />&nbsp;&nbsp;-&nbsp;
+                <input name="endTime1" id="endDate1" class="Wdate form-control" type="text" value="{{.excelDate}}"
+                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate1\')}'})"
+                       />&nbsp;&nbsp;&nbsp;
+            <button type="button" class="btn btn-info" style="width: 150px;" id="export1">导出全部平台数据</button>
+		</form>
+	</div>
+</div>
+
+
+<div class="panel">
+	<div class="panel-heading" style="padding-bottom: 45px;">
+		<strong class="pull-left" style="line-height: 30px;">平台数据明细</strong>
+		<form action="../datareport/getdatareport" id="searchForm2" method="get" class="form-inline pull-left" style="margin-left: 2%;" onkeydown="if(event.keyCode==13){return false;}">
+            <input name="startTime2" id="startDate2" class="Wdate form-control" type="text" value="{{.startTime}}"
+                   onFocus="var endDate = $dp.$('endDate2');WdatePicker({dateFmt:'yyyy-MM-dd',
+                   onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate2\')}'})" autocomplete="off" style="width: 150px;"
+            />&nbsp;-
+            <input name="endTime2" id="endDate2" class="Wdate form-control" type="text" value="{{.endTime}}"
+                   onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate2\')}'})"
+                   autocomplete="off" style="width: 150px;" />&nbsp;
+            <div style="position: relative; display: inline-block;">
+            	<input type="hidden" id="pt_id" value="{{.product.Id}}" name="proId">
+				<input id="pt_name" class="form-control" placeholder="请输入平台名称" value="{{.product.Name}}" autocomplete="off">
+				<ul class="xl"></ul>
+            </div>
+            <button type="submit" class="btn btn-info">搜索</button>
+        </form>
+        <button type="button" class="btn btn-info pull-right" style="width: 150px;" id="export2">导出当前平台数据</button>
+	</div>
+	<div class="panel-body">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>日期</th>
+					<th>平台位置</th>
+					<th>PV</th>
+					<th>UV</th>
+					<th>我司统计注册</th>
+					<th>我司统计激活</th>
+					<th>平台返回注册</th>
+					<th>UV注册转化</th>
+					<th>当日价格</th>
+					<th>收入</th>
+					<th>每UV收益</th>
+				</tr>
+			</thead>
+			<tbody>
+			{{range $k,$v:= .dataReport}}
+			<tr>
+				<td>{{$v.DataTime.Format "2006-01-02"}}</td>
+				<td>{{$v.Sort}}</td>
+				<td>{{$v.PageLoadCount}}</td>
+				<td>{{$v.AccessCount}}</td>
+				<td>{{$v.PlatformRegisterCount}}</td>
+				<td>{{$v.ActivateUser}}</td>
+				<td>{{$v.RegisterCount}}</td>
+				<td>{{$v.UvRegister}} %</td>
+				<td>{{$v.Price}}</td>
+				<td>{{$v.Income}}</td>
+				<td>{{$v.PerUvIncome}}</td>
+			</tr>
+			{{end}}
+			</tbody>
+			<tfoot>
+				<tr>
+					<th >合计</th>
+					<th>-</th>
+					<th>{{.dataReportCount.PvAllCount}}</th>
+					<th>{{.dataReportCount.UvAllCount}}</th>
+					<th>{{.dataReportCount.PlatformRegisterAllCount}}</th>
+					<th>{{.dataReportCount.ActivateAllCount}}</th>
+					<th>{{.dataReportCount.RegisterAllCount}}</th>
+					<th>-</th>
+					<th>-</th>
+					<th>{{.dataReportCount.IncomeAll}}</th>
+					<th>-</th>
+				</tr>
+				<tr>
+					<th>平均</th>
+					<th>-</th>
+					<th>{{printf "%.2f" .dataReportAverage.PvAverage}}</th>
+					<th>{{printf "%.2f" .dataReportAverage.UvAverage}}</th>
+					<th>{{printf "%.2f" .dataReportAverage.PlatformRegisterAverage}}</th>
+					<th>{{printf "%.2f" .dataReportAverage.ActivateAverage}}</th>
+					<th>{{printf "%.2f" .dataReportAverage.RegisterAverage}}</th>
+					<th>{{printf "%.2f" .dataReportAverage.UvRegisterAverage}} %</th>
+					<th>-</th>
+					<th>{{printf "%.2f" .dataReportAverage.IncomeAverage}}</th>
+					<th>{{printf "%.2f" .dataReportAverage.PerUvIncomeAverage}}</th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
+
+
+
+<script>
+
+	//导出全部平台数据
+	$('#export1').on('click',function(){
+	    var startDate1 = $('#startDate1').val();
+	    var endDate1 = $('#endDate1').val();
+	    if(!startDate1){
+	    	alert('请选择开始时间');
+	    	return;
+	    }
+	    if(!endDate1){
+	    	alert('请选择结束时间');
+	    	return;
+	    }
+	    var url = '../datareport/exceltoall?startDate=' + startDate1 + '&endDate=' + endDate1;
+	    window.location.href = url;
+	});
+
+
+	//平台名称数据接入
+	$('#pt_name').off().on('keyup', function(e){
+	    var length = $('.xl li').length;
+	    var name = $('#pt_name').val();
+	    var html = '';
+	    //当按了下键的时候
+	    if(e.keyCode == 40){
+	        if(this.index == undefined || this.index >= length - 1){
+	            this.index = 0;
+	        }else{
+	            this.index ++;
+	        }
+	        $('.xl li').css('background','#fff').css('color','#666');
+	        $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+	        $('#pt_name').val($('.xl li').eq(this.index).text());
+	        $('#pt_id').val($('.xl li').eq(this.index).attr("data-id"));
+	        return;
+	    }
+	    //当按了上键的时候
+	    if(e.keyCode == 38){
+	        if(this.index == undefined || this.index <= 0){
+	            this.index = length - 1;
+	        }else{
+	            this.index --;
+	        }
+	        $('.xl li').css('background','#fff').css('color','#666');
+	        $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+	        $('#pt_name').val($('.xl li').eq(this.index).text());
+	        $('#pt_id').val($('.xl li').eq(this.index).attr("data-id"));
+	        return;
+	    }
+	    //当按了回车键的时候
+	    if(e.keyCode == 13){
+	        this.index = undefined;    //初始化
+	        name = $('#pt_name').val();
+	        $('.xl').empty().hide();
+	        return;
+	    }
+
+	    if (name.length <= 0) {
+	        $('.xl').empty().hide();
+	        return;
+	    }
+	    //平台名称模糊查询
+	    $.ajax({
+	        url: "../datareport/getonlineproduct",
+	        type: 'get',
+	        data: {
+	            name: name
+	        },
+	        success: function (res) {
+	            if (res.ret == 200) {
+	                //将数据显示到下拉框
+	                var data = res.products;
+	                if(data){
+	                    $.each(data, function (index, value) {
+	                        html += '<li data-id="' + value.Id + '">' + value.Name + '</li>';
+	                    });
+	                    $('.xl').empty().hide();
+	                    $('.xl').append(html).show();
+	                    //点击下拉框条目
+	                     $('.xl li').on('click', function () {
+	                        $('#pt_name').val($(this).text());
+	                        $('#pt_id').val($(this).attr("data-id"));
+	                        $('.xl').empty().hide();
+	                        name = $('#pt_name').val();
+	                    });
+	                }else{
+	                    $('.xl').empty().hide();
+	                }
+	            }
+	        }
+	    });
+	});
+
+
+	$('body').on('click', function(){
+		$('.xl').empty().hide();
+	});
+
+	//导出当前平台数据
+	$('#export2').on('click',function(){
+	    var startDate2 = $('#startDate2').val();
+	    var endDate2 = $('#endDate2').val();
+	    var pt_name = $.trim($('#pt_name').val());
+	    var pt_id = $('#pt_id').val();
+	    if(!startDate1){
+	    	alert('请选择开始时间');
+	    	return;
+	    }
+	    if(!endDate1){
+	    	alert('请选择结束时间');
+	    	return;
+	    }
+	    if(!pt_name){
+	    	alert('平台名称不得为空！');
+	    	return;
+	    }
+	    var url = '../datareport/exceltoone?startDate=' + startDate2 + '&endDate=' + endDate2 + '&proId=' + pt_id;
+	    window.location.href = url;
+	});
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

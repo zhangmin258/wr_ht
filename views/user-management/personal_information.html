@@ -1,0 +1,189 @@
+<style>
+    .loan_list {
+        width: 60%;
+        float: right;
+    }
+    
+    .loan_list li {
+        float: left;
+        margin: 0 2%;
+        color: #666;
+        font-weight: normal;
+    }
+    
+    .loan_list li span {
+        font-size: 15px;
+        color: #333;
+        font-weight: bold;
+    }
+    
+    .list_span_active {
+        color: #0000FF;
+        border: 1px solid #0000FF;
+    }
+
+</style>
+<div class="panel">
+    <div class="panel-body">
+        <h2 class="panel-title">个人信息</h2>
+        <ul class="p-info">
+            <li class="col-md-5">
+                <div class="title">姓名：</div>
+                <div class="desk">{{.user.VerifyRealName}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">性别：</div>
+                <div class="desk">{{.user.Sex}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">手机号：</div>
+                <div class="desk">{{.user.Account}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">身份证号：</div>
+                <div class="desk">{{idCradDispose .user.IdCard}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">注册时间：</div>
+                <div class="desk">{{.user.CreateTime.Format "2006-01-02 15:04:05"}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">信用评分：</div>
+                <div class="desk">{{.user.CreditCode}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">来源渠道：</div>
+                <div class="desk">{{.user.Source}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">H5收益：</div>
+                <div class="desk">{{.userMoney.H5Money}} 元</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">芝麻信用：</div>
+                <div class="desk">{{.user.Zm_score}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">API收益：</div>
+                <div class="desk">{{.userMoney.APIMoney}} 元</div>
+            </li>
+            <li class="col-md-10">
+                <div class="title" style="text-align: right; width: 10%; margin-right: 1%;">用户特征：</div>
+                <div class="desk" style="width: 60%;">
+                    <span class="tag_bg_red">多头借款</span>
+                    <span class="tag_bg_green">信用良好</span>
+                    <span class="tag_bg_red">关联过多</span>
+                    <span class="tag_bg_green">大额需求</span>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="panel">
+    <div class="panel-heading">消息记录</div>
+    <div class="panel-body">
+        <div class="task_list col-md-12" id="task_list1">
+            <div class="list_span col-md-3" data-url="/usermetadata/usersloandata">贷款记录</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/userslogindata">登录信息</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/usersmessagecenter">消息中心</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/invitefriend">邀请好友</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/userexchangerecord">积分兑换记录</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/userlotteryrecord">积分抽奖记录</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/userswalletdata">钱包收支记录</div>
+        </div>
+    </div>
+</div>
+<div class="personal_info_details">
+    <div class="panel" id="personal_info_details1"></div>
+</div>
+
+
+
+
+<div class="panel">
+    <div class="panel-heading">用户资料</div>
+    <div class="panel-body">
+        <div class="task_list col-md-12" id="task_list">
+            <div class="list_span col-md-3" data-url="/usermetadata/usersoperatedata">手机运营商</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/usersmetadata">有盾实名数据</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/usercredit">个人资信</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/usersalipaydata">支付宝</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/userstaobaodata">淘宝</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/usersjingdongdata">京东</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/usersbilldata">信用卡账单</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/usersfunddata">公积金</div>
+            <div class="list_span col-md-3" data-url="/usermetadata/userssecuritydata">社保</div>
+        </div>
+    </div>
+</div>
+<div class="personal_info_details">
+    <div class="panel" id="personal_info_details"></div>
+</div>
+
+
+
+<script type="text/javascript">
+    $(function() {
+        //消息记录
+        $("#task_list1 .list_span").off("click").on("click", function() {
+            if ($(this).attr("zmx")) {
+                return;
+            }
+            $(this).css('color', '#599cf4').css('border', '1px solid #599cf4').siblings().css('color', '#666').css('border', '1px solid #ccc');
+            $(this).siblings().removeAttr("zmx");
+            $(this).attr("zmx", "123");
+            var ranN = Math.random(1000000);
+            var url = $(this).attr("data-url");
+            url += "?id=" + {{.id }} + '&token=' + 123456 + "&" + ranN; // uid后缀
+            $.zget(url, {}, function(result) {
+                $("#personal_info_details1").empty().append(result);
+                execjs(result);
+            });
+        });
+
+        //用户资料
+        $("#task_list .list_span").off("click").on("click", function() {
+            if ($(this).attr("zmx")) {
+                return;
+            }
+            $(this).css('color', '#599cf4').css('border', '1px solid #599cf4').siblings().css('color', '#666').css('border', '1px solid #ccc');
+            $(this).siblings().removeAttr("zmx");
+            $(this).attr("zmx", "123");
+            var ranN = Math.random(1000000);
+            var url = $(this).attr("data-url");
+            url += "?id=" + {{.id}} + '&token=' + 123456 + "&" + ranN; // uid后缀
+            $.zget(url, {}, function(result) {
+                $("#personal_info_details").empty().append(result);
+                execjs(result);
+            });
+        });
+        $("#youdun-report").off("click").on("click", function() {
+            var id = {{.user.Id}};
+            var idCard = {{.user.IdCard}};
+            $.ajax({
+                url: '../usermetadata/searcherusersmetadata',
+                type: 'post',
+                data: {
+                   userId: id,
+                   idCard: idCard
+                },
+                success: function (res) {
+                    if (res.ret == 200) {
+                        alert(res.msg);
+                        var ranN = Math.random(1000000);
+                        var url ="/usermetadata/usersmetadata";
+                        url += "?id=" + id + '&token=' + 123456 + "&" + ranN; // uid后缀
+                        $.zget(url, {}, function(result) {
+                            $("#personal_info_details").empty().append(result);
+                            execjs(result);
+                        });
+                    }else{
+                        alert(res.err);
+                    }
+                }
+            });
+        });
+    });
+</script>

@@ -1,0 +1,309 @@
+<style>
+    label.col-sm-1{
+        width: 10%;
+    }
+    label span{
+        font-size: 20px;
+        color: red;
+        vertical-align: -5px;
+    }
+    .form-group{
+        margin-bottom: 30px;
+    }
+
+    .form-group label.col-sm-1{
+        width: 9.5%;
+    }
+
+    .form-group label.col-sm-2{
+        width: 19%;
+    }
+
+    .form-group .add,.form-group .delete{
+        width: 35px;
+        height: 33px;
+        cursor: pointer;
+        vertical-align: -35px;
+    }
+
+    .xl{
+        width: 300px;
+        overflow: text;
+        border: #ccc solid 1px;
+        position: absolute;
+        z-index: 100;
+        top: 34px;
+        left: 15px;
+        background: #fff;
+        border-radius: 5px;
+        display: none;
+        padding: 0;
+    }
+
+    .xl li{
+        line-height: 30px;
+        cursor: pointer;
+        padding-left: 10px;
+        background: #fff;
+        color: #666;
+    }
+
+    .xl li:hover{
+        background: #ccc;
+        color: maroon;
+    }
+
+</style>
+<div class="panel">
+    <div class="panel-heading title">新增微融代理产品</div>
+    <div class="panel-body" style="padding-top: 30px;">
+        <form action="agentproductsave" method="post" id="" class="form-horizontal">
+            <input type="hidden" name="agentId" value="{{.agentId}}">
+            <div class="form-group">
+                <label for="product_name" class="col-sm-1 control-label">产品名称&nbsp;<span>*</span></label>
+                <div class="col-sm-3" style="position: relative;">
+                    <input type="text" class="form-control" id="product_name"  autocomplete="off"  value="微融" readonly="readonly">
+                   <!--  <ul class="xl"></ul> -->
+                </div>
+            </div>
+
+            <div class="add_link">
+                <div class="form-group addLink" id="addLink">
+                    <label for="product_link" class="col-sm-1 control-label">产品链接1</label>
+                    <div class="col-sm-3">
+                        <span>{{.weirongUrl}}</span>
+                        <input type="text" id="pro1" class="form-control"  placeholder="" name="urlName"  value="">
+                    </div>
+                    <img src="../static/img/add.png" alt="" class="add">
+                </div>
+            </div>
+
+            <div style="width: 50%; float: left;">
+                <div class="form-group">
+                    <label for="cooperation_mode" class="col-sm-2 control-label">合作模式</label>
+                    <div class="col-sm-4">
+                        <select name="cooperation_mode" id="cooperation_mode" class="form-control">
+                            <option value="1">CPA</option>
+                            <option value="2">CPS</option>
+                            <option value="3">CPA+CPS</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="a_define" class="col-sm-2 control-label">A有效性定义</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="a_define" placeholder="A的定义可以为：注册、进件、绑卡、放款" name="cpa_define"  value="">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="a_price" class="col-sm-2 control-label">A的价格</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="a_price" placeholder="请输入A的价格" name="cpa_price"  value="">
+                    </div>
+                    <span style="vertical-align: -7px;">元</span>
+                </div>
+            </div>
+
+            <div style="width: 50%; float: right;">
+                <div class="form-group">
+                    <label for="settlement" class="col-sm-2 control-label">结算方式</label>
+                    <div class="col-sm-4">
+                        <select name="settlement" id="settlement" class="form-control">
+                            <option value="1" >对公</option>
+                            <option value="2" >对私</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="start_time" class="col-sm-2 control-label">合作开始日期</label>
+                    <div class="col-sm-6">
+                        <input name="startTime" id="startDate" class="form-control" placeholder="系统获取当前时间" value='' type="text" />
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="s_price" class="col-sm-2 control-label">S的价格</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="s_price" placeholder="请输入A的价格" name="cps_price"  value="">
+                    </div>
+                    <span style="vertical-align: -7px;">元</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="settlement_cycle" class="col-sm-1 control-label">结算周期</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="settlement_cycle" placeholder="结算周期为周结、半月结、月结。也可自定义输入详细信息，例如：每月10号前结算" value="" name="cleaning_cycle">
+                </div>
+            </div>
+            <button type="button" class="btn btn-info" style="margin: 0 auto; display: block;" id="sure">确定</button>
+        </form>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+
+    $(function(){
+        var html = '';
+        var count = 2;
+        $('.add_link').off().on('click','.add',function(){
+            html = '<div class="form-group addLink">'+
+                        '<label for="product_link" class="col-sm-1 control-label">产品链接'+count+'</label>'+
+                        '<div class="col-sm-3">'+
+                            '<plan>{{.weirongUrl}}</plan>'+
+                            '<input type="text" class="form-control" id="pro'+count+'" placeholder="" name="urlName"  value="">'+
+                        '</div>'+
+                        '<img src="../static/img/add.png" alt="" class="add">'+
+                        '<img src="../static/img/icon_delete.png" alt="" class="delete">'+
+                    '</div>'
+            count ++;
+            $('.add_link').append(html);
+        });
+
+        $('.add_link').on('click','.delete',function(){
+            $(this).parent().remove();
+            count--
+        });
+
+        //保存数据
+        $('#sure').off().on('click', function () {
+            var id = $('input[name=id]').val();
+            var productId = $('#productsId').val();
+            var agentId = $('input[name=agentId]').val();
+            var ProName = $('#product_name').val();
+            var urlList = [];
+            $.each($('.addLink'), function (index, value) {
+                var con = $(this).find('input').val();
+                urlList.push(con);
+                var agentUrlArray = new Array();
+                for (var i = 0; i < $(".agentInput").length; i++) {
+                    agentUrlArray.push($(".agentInput").eq(i).val());
+                }
+            });
+            var JointMode = $('#cooperation_mode option:selected').val();
+            var CleaningType = $('#settlement option:selected').val();
+            var CpaDefine = $('#a_define').val();
+            var CpaPrice = $('#a_price').val();
+            var CpsPrice = $('#s_price').val();
+            var CleaningCycle = $('#settlement_cycle').val();
+            if (!ProName) {
+                alert('请输入产品名称');
+            } else {
+                $.ajax({
+                    url: '/agentpro/agenwrsave',
+                    type: 'post',
+                    data: {
+                        id: id,
+                        ProId: productId,
+                        AgentId: agentId,
+                        UrlId: urlList.join(","),
+                        JointMode: JointMode,
+                        CpaDefine: CpaDefine,
+                        CpaPrice: CpaPrice,
+                        CleaningType: CleaningType,
+                        CpsPrice: CpsPrice,
+                        CleaningCycle: CleaningCycle
+                    },
+                    success: function (res) {
+                        if (res.ret == 200) {
+                            alert('新增成功！');
+                            getpage(window.sessionStorage.URl);
+                        }
+                    }
+                });
+            }
+        });
+    });
+
+
+</script>
+    
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

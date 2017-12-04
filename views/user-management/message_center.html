@@ -1,0 +1,114 @@
+
+
+<style>
+    td{
+        vertical-align: middle !important;
+    }
+
+</style>
+
+
+<div id="message_center" class="panel">
+    <div class="panel-heading">消息中心</div>
+    {{if eq .messcount 0}}
+    <div class="panel-body">
+        <strong style="padding-left: 45%;font-size: 16px; line-height: 2;">没有消息记录</strong>
+    </div>
+    {{else}}
+    <div class="panel-body">
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 10%;">标题</th>
+                <th class="text-center" style="width: 60%;">正文</th>
+               <!--  <th class="text-center" style="width: 10%;">类型</th> -->
+                <th class="text-center" style="width: 10%;">状态</th>
+                <th class="text-center" style="width: 20%;">获得时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range $k, $v := .messlist}}
+            <tr class="text-center">
+                <td>{{$v.Title}}</td>
+                <td>{{$v.Content}}</td>
+                <!-- <td class="text-center">{{if eq $v.MsgType 1}}新口子推荐
+                    {{else if eq $v.MsgType 2}}审核未通过
+                    {{else if eq $v.MsgType 3}}审核通过
+                    {{else if eq $v.MsgType 4}}未放款成功
+                    {{else if eq $v.MsgType 5}}跳转url
+                    {{else if eq $v.MsgType 6}}注册成功信息
+                    {{else}}-{{end}}
+                </td> -->
+                <td class="text-center">{{if eq $v.IsRead 0}}未读
+                    {{else if eq $v.IsRead 1}}已读
+                    {{else}}-{{end}}
+                </td>
+                <td class="text-center">{{$v.CreateTime.Format "2006-01-02 15:04:05"}}</td>
+            </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="7">
+                    <div class="fl">
+                        <div class="pagination">每页{{.pagesize}}条，总共{{.messcount}}条</div>
+                    </div>
+                    <div class="fl">
+                        <div class="pagination" id="pagination1" data-url="../usermetadata/usersmessagecenter.html?id={{.user.Id}}" currentPage="{{.messpage}}" pageCount="{{.messpagecount}}"></div>
+                        <script type="text/javascript">
+                            $(function() {
+                                $("#pagination1").my_page("","#message_center");
+                            });
+                        </script>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{end}}
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,87 @@
+
+<style>
+    table td{
+        vertical-align: middle !important;
+    }
+</style>
+
+<div class="panel">
+    <div class="panel-heading" style="padding-bottom: 40px;">
+        <span class="pull-left" style="font-weight: bold;">信用卡列表</span>
+        <a href="../creditcard/jumptoaddcreditcard" class="btn btn-info skip1 pull-right" style="width: 100px;">新增信用卡</a>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th width="25%">信用卡</th>
+                    <th>标题</th>
+                    <th>排列顺序</th>
+                    <th>状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {{range $k,$card := .creditCardList}}
+            <tr id="pro{{$card.Id}}">
+                <td><img src="{{$card.ImgUrl}}" alt="信用卡" class="img-responsive" width="50%"></td>
+
+                <td>{{$card.Title}}</td>
+                <td>{{$card.Sort}}</td>
+
+                {{if eq $card.IsUsed 0}}
+                <td>
+                    <span class="tag_bg_red">冻结</span>
+                </td>
+                 {{else if eq $card.IsUsed 1}}
+                <td>
+                     <span class="tag_bg_green">上线</span>
+                </td>
+            {{end}}
+                <td>
+                    <a href="/creditcard/jumptoupdatecreditcard?Id={{$card.Id}}" class="skip1">修改</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="javascript:;" onclick="deletePro({{$card.Id}})">删除</a>
+                </td>
+            </tr>
+            {{end}}
+            </tbody>
+            <tr>
+                <td colspan="5">
+                    <div class="fl">
+                        <div class="pagination">总共{{.count}}条</div>
+                    </div>
+                    <div class="fl">
+                        <div class="pagination" id="pagination2" data-url="../creditcard/getcreditcardlist" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                        <script type="text/javascript">
+                            $(function () {
+                                $("#pagination2").my_page();
+                            });
+                        </script>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    //确认删除
+    function deletePro(cardId) {
+        var confirm = window.confirm("你确定要删除吗？");
+        if(confirm == true){
+            $.zpost('/creditcard/delcreditcard',{
+                cardId : cardId
+            },function(result){
+                if(result.ret == 200){
+                    $("#pro" + cardId).remove();
+                    alert('删除成功！');
+                }else{
+                    alert(result.err);
+                }
+            });
+        }
+    }
+</script>

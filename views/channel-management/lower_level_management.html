@@ -1,0 +1,150 @@
+
+
+
+    <div class="panel">
+        <div class="panel-heading">下级代理</div>
+        <div class="panel-body">
+            <form action="getlowerlevellist" id="searchForm2" method="get" class="form-inline pull-left">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入代理商名称" style="width: 250px;" name="orgName" id="agentName">
+                </div>
+                <button type="submit" class="btn btn-info">搜索</button>
+            </form>
+            <div class="pull-right">
+                <a href="editagent" class="btn btn-info skip1" style="width: 100px;">新增代理商</a>
+            </div>
+            <div style="height: 20px; border-bottom: #ccc solid 1px; clear: both;"></div>
+            <table class="table table-hover">
+                <thead>
+                     <tr>
+                        <th class="text-center">编号</th>
+                        <th class="text-center">代理公司</th>
+                        <th class="text-center">联系人</th>
+                        <th class="text-center">联系人电话</th>
+                        <th class="text-center">操作</th>
+                    </tr>
+                </thead>
+                
+                <tbody>
+
+                {{range $k, $agent := .agentList}}
+                <tr class="text-center">
+                    <td>{{$agent.Id}}</td>
+                    <td>{{$agent.OrgName}}</td>
+                    <td>{{$agent.BusName}}</td>
+                    <td>{{$agent.BusPhone}}</td>
+                    <td>
+                        <a class="skip1" href="editagent?id={{$agent.Id}}">编辑公司资料</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a class="skip1" href="../agentpro/getagentproduct?AgentId={{$agent.Id}}">查看代理产品</a>
+                    </td>
+                </tr>
+                {{end}}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="5">
+                            <div class="fl">
+                                <div class="pagination">总共{{.count}}条</div>
+                            </div>
+                            <div class="fl">
+                                <div class="pagination" id="pagination2" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            </div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination2").my_page("#searchForm2");
+                                });
+                            </script>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+
+    <script type="text/javascript">
+
+    if(window.sessionStorage.agentName){
+        $('#agentName').val(window.sessionStorage.agentName);
+    }
+
+
+
+
+    </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

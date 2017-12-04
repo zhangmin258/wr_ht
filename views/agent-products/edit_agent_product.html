@@ -1,0 +1,351 @@
+<style>
+    label.col-sm-1 {
+        width: 10%;
+    }
+
+    label span {
+        font-size: 20px;
+        color: red;
+        vertical-align: -5px;
+    }
+
+    .form-group {
+        margin-bottom: 30px;
+    }
+
+    .form-group label.col-sm-1 {
+        width: 9.5%;
+    }
+
+    .form-group label.col-sm-2 {
+        width: 19%;
+    }
+
+    .form-group .add, .form-group .delete {
+        width: 35px;
+        height: 33px;
+        cursor: pointer;
+    }
+
+    #pro1{
+        width: 100%;
+    }
+
+    .xl {
+        width: 300px;
+        overflow: hidden;
+        border: #ccc solid 1px;
+        position: absolute;
+        z-index: 100;
+        top: 34px;
+        left: 15px;
+        background: #fff;
+        border-radius: 5px;
+        display: none;
+        padding: 0;
+    }
+
+    .xl li {
+        line-height: 30px;
+        cursor: pointer;
+        padding-left: 10px;
+        background: #fff;
+        color: #666;
+    }
+
+    .xl li:hover {
+        background: #ccc;
+        color: maroon;
+    }
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading">编辑代理产品</div>
+    <div class="panel-body" style="padding-top: 30px;">
+        <form action="agentproductsave" method="post" id="" class="form-horizontal">
+
+            <input type="hidden" value="{{.agentProduct.Id}}" readonly="true" name="id">
+            <input type="hidden" value="{{.agentProduct.AgentId}}" readonly="true" name="agentId">
+            <input type="hidden" value="{{.agentProduct.ProId}}" readonly="true" name="productId">
+
+            <div  class="form-group">
+                <label for="product_name" class="col-sm-1 control-label">产品名称&nbsp;<span>*</span></label>
+                <div class="col-sm-3" style="position: relative;">
+                    <input type="text" class="form-control" id="product_name" placeholder="请输入产品名称" autocomplete="off" value="{{.productName}}" readonly="true">     
+                    <ul class="xl"></ul>
+                </div>
+            </div>
+            <div class="add_link">
+                <div id="first" class="form-group">
+                    <label for="product_link" class="col-sm-1 control-label">产品链接1</label>
+                    <div name="urlDiv" class="col-sm-5">
+                        <select id="pro1" name="product_link" class="form-control">
+                            {{range $k, $Url := .allUrlList}}
+                                 <option value="{{$Url.Id}}" >{{$Url.Url}}</option>
+                            {{end}}
+                        </select>
+                    </div>
+                    <img id="addIcon" src="../static/img/add.png" alt="" class="add">
+                </div>
+            </div>
+
+            <div style="width: 50%; float: left;">
+                <div class="form-group">
+                    <label for="cooperation_mode" class="col-sm-2 control-label">合作模式</label>
+                    <div class="col-sm-4">
+                        <select name="cooperation_mode" id="cooperation_mode" class="form-control">
+                            <option value="1" {{if eq .agentProduct.JointMode 1}} selected="selected" {{end}}>CPA</option>
+                            <option value="2" {{if eq .agentProduct.JointMode 2}} selected="selected" {{end}}>CPS</option>
+                            <option value="3" {{if eq .agentProduct.JointMode 3}} selected="selected" {{end}}>CPA+CPS
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="a_define" class="col-sm-2 control-label">A有效性定义</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="a_define" placeholder="A的定义可以为：注册、进件、绑卡、放款"
+                               name="cpa_define" value="{{.agentProduct.CpaDefine}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="a_price" class="col-sm-2 control-label">A的价格</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="a_price" placeholder="请输入A的价格" name="cpa_price"
+                               value="{{.agentProduct.CpaPrice}}">
+                    </div>
+                    <span style="vertical-align: -7px;">元</span>
+                </div>
+            </div>
+
+            <div style="width: 50%; float: right;">
+                <div class="form-group">
+                    <label for="settlement" class="col-sm-2 control-label">结算方式</label>
+                    <div class="col-sm-4">
+                        <select name="settlement" id="settlement" class="form-control">
+                            <option value="1" {{if eq .agentProduct.CleaningType 1}} selected="selected" {{end}}>对公</option>
+                            <option value="2" {{if eq .agentProduct.CleaningType 2}} selected="selected" {{end}}>对私</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="start_time" class="col-sm-2 control-label">合作开始日期</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="start_time" placeholder="系统获取当前时间"
+                               value='{{.agentProduct.AgentTime.Format "2006-01-01"}}'>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="s_price" class="col-sm-2 control-label">S的价格</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="s_price" placeholder="请输入A的价格" name="cps_price"
+                               value="{{.agentProduct.CpsPrice}}">
+                    </div>
+                    <span style="vertical-align: -7px;">元</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="settlement_cycle" class="col-sm-1 control-label">结算周期</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="settlement_cycle"
+                           placeholder="结算周期为周结、半月结、月结。也可自定义输入详细信息，例如：每月10号前结算" name="cleaning_cycle"
+                           value="{{.agentProduct.CleaningCycle}}">
+                </div>
+            </div>
+            <button id="sub" type="button" class="btn btn-info" style="margin: 0 auto; display: block;">确定</button>
+        </form>
+    </div>
+</div>
+
+
+<script>
+
+    var count = 2;
+    var html = '';
+    //点击添加链接
+    $('.add_link').off().on('click', '.add', function(){
+        var proid = "pro" + count;
+        html =  '<div  class="form-group">'+
+                    '<label for="product_link" class="col-sm-1 control-label">产品链接' + count + '</label>'+
+                    '<div name="urlDiv" class="col-sm-5">'+
+                        '<select id="'+ proid +'" name="product_link" class="form-control">'+
+                            {{range $k, $Url := .allUrlList}}
+                            '<option value="{{$Url.Id}}" >{{$Url.Url}}</option>'+
+                            {{end}}
+                        '</select>'+
+                    '</div>'+
+                    '<img src="../static/img/add.png" alt="" class="add">'+
+                    '<img src="../static/img/icon_delete.png" alt="" class="delete">'+
+                '</div>';
+                // if (count>2){
+                //     html+='<img src="../static/img/add.png" alt="" class="add">' + '<img src="../static/img/icon_delete.png" alt="" class="delete">' + '</div>'
+                // }else{
+                //     html+='<img src="../static/img/add.png" alt="" class="add">' + '</div>'
+                // }
+        count++;
+        $('.add_link').append(html);
+    });
+
+    //删除链接
+    $('.add_link').on('click', '.delete', function () {
+        $(this).parent().remove();
+        count--;
+    });
+
+    //使用的链接数组
+    // var a = {{.urlList}};
+    // if(a != null){
+    //     for(var i=1; i<=a.length; i++){
+    //         var id="pro"+ (i+1);
+    //         //模拟点击
+    //         $('#addIcon').click();
+    //         //初始化链接内容
+    //         $('#'+ id).html($("#pro1").html());
+    //         //初始化选中
+    //         $('#'+ id).val(a[i-1].Id);
+    //     }
+    //     $("#first").remove();
+    // }
+    
+    
+    //保存数据
+    $('#sub').off().on('click', function () {
+        var id = $('input[name=id]').val();
+        var agentId = $('input[name=agentId]').val();
+        var productId = $('input[name=productId]').val();
+        var ProName = $('#product_name').val();
+        var urlList = [];
+        var urlDiv = $("div[name='urlDiv']");
+        $.each(urlDiv, function (index, value) {
+            var con = $(this).find('option:selected').val();
+            urlList.push(con);
+            var agentUrlArray = [];
+            for (var i = 0; i < $(".agentInput").length; i++) {
+                agentUrlArray.push($(".agentInput").eq(i).val());
+            }
+        });
+        var JointMode = $('#cooperation_mode option:selected').val();
+        var CleaningType = $('#settlement option:selected').val();
+        var CpaDefine = $('#a_define').val();
+        var CpaPrice = $('#a_price').val();
+        var CpsPrice = $('#s_price').val();
+        var CleaningCycle = $('#settlement_cycle').val();
+        if (!ProName) {
+            alert('请输入产品名称');
+        } else {
+            $.ajax({
+                url: '/agentpro/agentproductupdate',
+                type: 'post',
+                data: {
+                    Id: id,
+                    AgentId: agentId,
+                    ProId: productId,
+                    UrlId: urlList.join(","),
+                    OldUrlId: {{.agentProduct.UrlId}},
+                    JointMode: JointMode,
+                    CpaDefine: CpaDefine,
+                    CpaPrice: CpaPrice,
+                    CleaningType: CleaningType,
+                    CpsPrice: CpsPrice,
+                    CleaningCycle: CleaningCycle
+                },
+                success: function (res) {
+                    if (res.ret == 200) {
+                        alert('修改成功！');
+                        getpage(window.sessionStorage.URl);
+                    }
+                }
+            });
+        }
+    });
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

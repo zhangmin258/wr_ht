@@ -1,0 +1,346 @@
+    <style>
+        td{
+            vertical-align: middle !important;
+        }
+        .source-modal{
+            position: fixed;
+            top:0;
+            left:0;
+            bottom:0;
+            right: 0;
+            background-color: rgba(0,0,0,.5)
+        }
+        .source-modal>table{
+            position: absolute;
+            background-color: #fff;
+            width:600px;
+            top:50%;
+            left:50%;
+            transform: translate(-50%,-50%);
+        }
+    </style>
+
+    <div class="panel">
+        <div class="panel-heading">短信发送批次</div>
+        <div class="panel-body">
+            <form action="/smssendingbatches/getsendingbatches" id="searchForm" method="get" class="form-inline">
+                <div class="form-group">
+                    <select name="Source" id="Source" class="form-control" style="width: 200px; margin-right: 20px;">
+                        <option value="">全部渠道</option>
+                        <option value="1">微融短信</option>
+                        <option value="2">空间畅想</option>
+                        <option value="3">云融正通</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <input name="startTime" id="startDate" class="Wdate form-control" value="" type="text"
+                           onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',
+                          maxDate:'#F{$dp.$D(\'endDate\')}'})"
+                    />&nbsp;&nbsp;-&nbsp;
+                    <input name="endTime" id="endDate" class="Wdate form-control" type="text"
+                           onFocus="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',minDate:'#F{$dp.$D(\'startDate\')}'})"
+                           value="{{.end_time}}"/>&nbsp;&nbsp;&nbsp;
+                </div>
+                <button type="submit" class="btn btn-info">搜索</button>
+            </form>
+            <div style="height: 20px; border-bottom: #ccc solid 1px; clear: both;"></div>
+            <table class="table table-hover">
+                <thead>
+                     <tr>
+                        <th>发送时间</th>
+                        <th>短信供应商</th>
+                        <th width="30%" class="text-center">发送内容</th>
+                        <th  class="text-center">提交总数</th>
+                         <th>来源</th>
+                        <th>发送人</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $k,$batches := .SendBatches}}
+                    <tr>
+                        <td class="smsid" style="display: none;">{{$batches.SmsId}}</td>
+                        <td class="source" style="display: none;">{{$batches.Source}}</td>
+                        <td class="pushTime">{{ $batches.PushTime.Format "2006-01-02 15:04"}}</td>
+                         {{if  eq $batches.Plateform 1}}
+                        <td class="plateform">微融短信</td>
+                        {{else if  eq $batches.Plateform 2}}
+                        <td class="plateform">空间畅想</td>
+                        {{else if  eq $batches.Plateform 3}}
+                        <td class="plateform">云融正通</td>
+                        {{else}}
+                        <td class="plateform">未知</td>
+                        {{end}}
+                        <td class="content">{{$batches.Content}}</td>
+                        <td  class="text-center">{{$batches.PushCount}}</td>
+                        <td>{{if $batches.AccountSource}}{{$batches.AccountSource}}{{else}}-{{end}}</td>
+                        <td>{{$batches.Name}}</td>
+                        <td>
+                            <a class="link_statistics" href="javascript:;">链接统计</a>
+                        </td>
+                    </tr>
+                    {{end}}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="8">
+                            <div class="fl">
+                                <div class="pagination">总共{{.count}}条</div>
+                            </div>
+                            <div class="fl">
+                                <div class="pagination" id="pagination" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            </div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination").my_page("#searchForm");
+                                });
+                            </script>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+
+    <div class="panel">
+        <div class="panel-heading" style="text-align: center;">
+            <strong class="plateform_text"></strong>&nbsp;&nbsp;&nbsp;
+            <strong class="pushTime_text"></strong>&nbsp;&nbsp;&nbsp;
+            <strong>短信效果统计</strong>
+        </div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th class="text-center">到达成功数量</th>
+                        <th class="text-center">链接加载次数</th>
+                        <th class="text-center">点击次数</th>
+                        <th class="text-center">加载/到达</th>
+                        <th class="text-center">点击/到达</th>
+                        <th class="text-center">明细</th>
+                    </tr>
+                </thead>
+                <tbody id="cnt">
+                    
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class='source-modal' style="display: none;">
+        <table class='table table-bordered'>
+            <thead class='text-center'>
+                <tr>
+                    <th class="text-center">渠道</th>
+                    <th class="text-center">产品名称</th>
+                    <th class="text-center">点击数</th>
+                    <th class="text-center">加载页面数</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td rowspan="6">dianxin</td>
+                    <td>11111</td>
+                    <td>22222</td>
+                    <td rowspan="6">105</td>
+                </tr>
+                <tr>
+                    <td>11111</td>
+                    <td>22222</td>
+                </tr>
+                <tr>
+                    <td>111111</td>
+                    <td>22222</td>
+                </tr>
+                <tr>
+                    <td>1111111</td>
+                    <td>22222</td>
+                </tr>
+                <tr>
+                    <td>1111111</td>
+                    <td>22222</td>
+                </tr>
+                <tr>
+                    <td>1111111</td>
+                    <td>22222</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+
+<script type="text/javascript">
+
+    var startDates = $("#startDate").val();
+    var endDates = $("#endDate").val();
+    startDates =  startDates.replace("+", " ");
+    endDates =  endDates.replace("+", " ");
+    $("#startDate").val(startDates);
+    $("#endDate").val(endDates);
+
+    var smsid = $('.smsid').html();   //id
+    var source = $('.source').html(); //source
+    var pushTime = $('.pushTime').html();   //发送时间
+    var plateform = $('.plateform').html(); //短信供应商
+    var content = $('.content').html();     //短信文本
+
+    function ajax_load(smsid, source, pushTime, plateform, content){
+        $.ajax({
+            url: '/smssendingbatches/userlinkonproduct',
+            type: 'get',
+            data: {
+                SmsId: smsid,    
+                Source :source,
+                PushTime: pushTime,     
+                Plateform: plateform,     
+               // Content: content,
+                startDate : $("#startDate").val(),
+                endDate : $("#endDate").val()
+            },
+            success: function(res){
+                if(res.ret == 200){
+                    $('.plateform_text').html(res.Plateform);
+                    $('.pushTime_text').html(res.PushTime);
+                    var html =  '<tr class="text-center">'+
+                                    '<td>'+ res.ReachCount +'</td>'+
+                                    '<td>'+ res.LoadCount +'</td>'+
+                                    '<td>'+ res.ClickCount +'</td>'+
+                                    '<td>'+ res.LoadReach +'</td>'+
+                                    '<td>'+ res.ClickReach +'</td>'+
+                                    '<td>'+ '<a href="javascript:;" class="checkoutBtn">点击查看</a>'+'</td>'
+                                '</tr>';
+                    $('#cnt').html(html);
+                    $(".checkoutBtn").off().click(function(){
+                        if(source == undefined || source == ""){
+                            alert("该链接没有提供渠道，无法统计");
+                            return;
+                        }
+                        if(!res.proClickList ){
+                            alert("结果异常")
+                            return;
+                        }
+                        $(".source-modal").show();
+                        var body = '';
+                        for(var i = 0;i<res.proClickList.length;i++){
+                            if(i == 0){
+                                body+= '<tr>'+
+                                            '<td rowspan="'+res.proClickList.length+'">'+res.linkLoad.Source+'</td>'+
+                                            '<td>'+res.proClickList[i].Proname+'</td>'+
+                                            '<td>'+res.proClickList[i].ClickCount+'</td>'+
+                                            '<td rowspan="'+res.proClickList.length+'">'+res.linkLoad.LoadCount+'</td>'+
+                                        '</tr>';
+                            }else{
+                                body+= '<tr>'+
+                                            '<td>'+res.proClickList[i].Proname+'</td>'+
+                                            '<td>'+res.proClickList[i].ClickCount+'</td>'+
+                                        '</tr>';
+                            }
+                        }
+                        $(".source-modal tbody").html(body)
+
+                    })
+                    $(".source-modal").off().click(function(e){
+                        if(e.target == this){
+                            $(this).hide();
+                        }
+                    })
+                }
+            }
+        });
+    }
+
+    
+    //首次加载
+    ajax_load(smsid, source, pushTime, plateform, content);
+    
+
+    //点击链接统计
+    $('.link_statistics').off().on('click',function(){
+        smsid = $(this).parent().parent().find('.smsid').html();   //id
+        source = $(this).parent().parent().find('.source').html();   //source
+        pushTime = $(this).parent().parent().find('.pushTime').html();  //发送时间
+        plateform = $(this).parent().parent().find('.plateform').html();  //短信供应商
+        content = $(this).parent().parent().find('.content').html();  //短信文本
+        ajax_load(smsid, source, pushTime, plateform, content);
+    });
+
+    
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

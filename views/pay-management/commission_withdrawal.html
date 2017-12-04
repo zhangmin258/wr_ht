@@ -1,0 +1,175 @@
+<style>
+    td {
+        vertical-align: middle !important;
+    }
+</style>
+
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">
+        <strong class="pull-left" style="line-height: 30px;">待审核提现列表</strong>
+        <strong class="pull-right btn btn-info skip3" id="approveInfo">审批记录</strong>
+    </div>
+    <div class="panel-body">
+        <form action="/userdeposit/depositlist" id="searchFrom" method="get" class="form-inline"
+              style="padding-top: 5px;" onkeydown="if(event.keyCode==13)return false;">
+            <div class="form-group">
+                <input type="text" class="form-control phone_number" name="account" id="phone_number"
+                       placeholder="请输入用户手机号码！" style="width: 250px;">
+            </div>
+            <button type="submit" class="btn btn-info search">搜索</button>
+        </form>
+        <hr>
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th class="text-center">提现时间</th>
+                <th class="text-center">用户手机号</th>
+                <th class="text-center">提现金额</th>
+                <th class="text-center">查看</th>
+                <th class="text-center">操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range $k,$v:=.userDeposit}}
+            <tr class="text-center">
+                <td class="id" style="display: none;">{{$v.Id}}</td>
+                <td>{{$v.AmountTime.Format "2006-01-02 15:04:05"}}</td>
+                <td>{{$v.Account}}{{if eq $v.State 1}} <span style="color: red">(有拒绝订单)</span>{{end}}</td>
+                <td>{{printf "%.2f" $v.Amount}}</td>
+                <td>
+                    <a href="/userdeposit/withdrawinfo?userId={{$v.Uid}}" class="skip1">提现明细</a>&nbsp;&nbsp;&nbsp;
+                    <a href="/usermetadata/personalinformation?id={{$v.Uid}}" class="skip1">个人资料</a>
+                </td>
+                <td>
+                    <strong class="btn btn-info pass">通过</strong>&nbsp;&nbsp;&nbsp;
+                    <strong class="btn btn-info refuse">拒绝</strong>
+                </td>
+            </tr>
+            {{end}}
+
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="6">
+                    <div class="fl">
+                        <div class="pagination">总共{{.count}}条</div>
+                    </div>
+                    <div class="fl">
+                        <div class="pagination" id="pagination" data-url="" currentPage="{{.pageNum}}"
+                             pageCount="{{.pageCount}}"></div>
+                        <script type="text/javascript">
+                            $(function () {
+                                $("#pagination").my_page("#searchFrom");
+                            });
+                        </script>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<!-- 弹窗内容 -->
+<div id="content1" style="display: none;">
+    <p style="line-height: 3; text-align: center; color: #333;">确定通过提现申请？</p>
+    <p style="text-align: center;">
+        <input type="button" value="取消" class="btn btn-sm btn-default cancel">
+        <input type="button" value="确定" class="btn btn-sm btn-info" id="pass">
+    </p>
+</div>
+
+<div id="content2" style="display: none;">
+    <p style="line-height: 3; text-align: center; color: #333;">确定拒绝提现申请？</p>
+    <p style="text-align: center;">
+        <input type="button" value="取消" class="btn btn-sm btn-default cancel">
+        <input type="button" value="确定" class="btn btn-sm btn-info" id="refuse">
+    </p>
+</div>
+
+
+<script>
+
+
+    $('.search').off().on('click',function(){
+        var phone_number = $('#phone_number').val();
+        if(!phone_number){
+            alert('请输入手机号码进行搜索！');
+            return false;
+        }
+//        if(phone_number && !(/^1[34578]\d{9}$/.test(phone_number))){
+//            alert('输入的手机号码有误，请重新输入！');
+//            return false;
+//        }
+    });
+
+
+    //通过
+    $('.pass').off('click').on('click',function(){
+        layer.open({
+            type: 1,
+            title: '提示',
+            area: '300px',
+            content: $('#content1')
+        });
+        var id = $(this).parent().parent().find('.id').text();
+        $('#pass').off().on('click', function () {
+            layer.closeAll();
+            $.zpost("../userdeposit/withdrawdeposit", {
+                    'depId': id,
+                    'checkResult': 3
+                },
+                function (result) {
+                    if (result.ret==200){
+                        getpage("../userdeposit/depositlist");
+                        alert(result.msg);
+                    }else {
+                        alert(result.err);
+                    }
+                }
+            );
+        });
+    });
+
+    
+    //拒绝
+    $('.refuse').off('click').on('click',function(){
+        layer.open({
+            type: 1,
+            title: '提示',
+            area: '300px',
+            content: $('#content2')
+        });
+        var id = $(this).parent().parent().find('.id').text();
+        $('#refuse').off('click').on('click', function () {
+            layer.closeAll();
+            $.zpost("../userdeposit/refusewithdrawdeposit", {
+                    'depId': id,
+                    'checkResult': 5
+                },
+                function (result) {
+                    if (result.ret==200){
+                        getpage("../userdeposit/depositlist");
+                        alert(result.msg);
+                    }else {
+                        alert(result.err);
+                    }
+                }
+            );
+        });
+    });
+    
+    
+
+    //取消
+    $('.cancel').on('click', function () {
+        layer.closeAll();
+    });
+
+    //审批记录
+    $('#approveInfo').on('click', function () {
+        var url = "/userdeposit/approveinfo";
+        getpage(url);
+    });
+
+</script>

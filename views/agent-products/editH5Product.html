@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>H5代理产品新增</title>
+    <link rel="stylesheet" type="text/css" href="../static/css/addH5AgentProduct.css"/>
+</head>
+</body>
+<div class="main" id="main">
+    <h1>
+     <input type="hidden" id="proId" value="{{.product.ProId}}"/> <!--产品id-->
+        <span>H5代理产品</span>
+        <ul class="proTab" id="proTab">
+            <li class="liActive">机构信息</li>
+            <li>产品信息</li>
+            <li>结算信息</li>
+            <li>链接管理</li>
+        </ul>
+    </h1>
+    <div id="jigouDtl" class="divDisplay">
+        <ul class="jigouDtl">
+            <li class="liFirst">
+                <span></span>
+                <label>机构信息</label>
+            </li>
+            <li>
+                <label>机构名称</label>
+                <input type="hidden" id="orgId" value="{{.product.OrgId}}"/>  <!--机构id隐藏域-->
+                <input type="text" id="jigouName" value="{{.product.OrgName}}" />
+            </li>
+            <li>
+                <label>通讯录地址</label>
+                <input type="text" id="contactAddr" value="{{.product.OrgAddress}}" />
+            </li>
+            <li>
+                <label>联系邮箱</label>
+                <input type="text" id="contactMail" value="{{.product.OrgEmail}}"/>
+            </li>
+        </ul>
+        <ul class="businessContacts">
+            <li class="liFirst">
+                <span></span>
+                <label>商务联系人</label>
+            </li>
+            <li>
+                <label>联系人姓名</label>
+                <input type="hidden" id="busId" value="{{.product.BusId}}"/><!--联系人id隐藏域-->
+                <input type="text" id="contactName" value="{{.product.BusName}}" />
+            </li>
+            <li>
+                <label>电话</label>
+                <input type="text" id="contactPhone" value="{{.product.Phone}}"/>
+                <label>微信号</label>
+                <input type="text" id="weixinCode" value="{{.product.Wechat}}"/>
+            </li>
+            <li>
+                <label>QQ</label>
+                <input type="text" id="QQCode" value="{{.product.QQ}}"/>
+                <label>邮箱</label>
+                <input type="text" id="eMail" value="{{.product.BusEmail}}" />
+            </li>
+        </ul>
+        <button class="jigouDtlSave" id="jigouDtlSave">保 存</button>
+    </div>
+    <div id="proDtl">
+        <ul class="proDtl">
+            <li class="liFirst">
+                <span></span>
+                <label>产品信息</label>
+                <a>标 “*” 为必填信息</a>
+            </li>
+            <li>
+                <label>产品名称<b>*</b></label>
+                <input type="text" id="proName" value="{{.product.ProName}}"/>
+                <!--<input type="hidden" id="orgId" value="{{.product.OrgId}}"/>--><!--机构id隐藏域-->
+                <!--<input type="hidden" id="busId" value="{{.product.BusId}}"/>--><!--商务联系人id隐藏域-->
+                <label>产品类型</label>
+                <select id="product" >
+                    <option value="1">小额贷</option>
+                    <option value="2">银行贷</option>
+                    <option value="3">房抵贷</option>
+                    <option value="4">车抵贷</option>
+                </select>
+            </li>
+            <li>
+                <label class="labelFloat">产品LOGO<b>*</b></label>
+                <img id="imgDisplay" alt="proLogo" src="../static/img/addLogo.png" />
+                <form id="imgInput" enctype="multipart/form-data">
+                    <input type="file" class="imgSelect" id="imgSelect" name="proIcon"/>
+                </form>
+                <input type="hidden" id="imgUrl" value="{{.product.ProductLogo}}"/>
+            </li>
+        </ul>
+        <ul class="loanDtl">
+            <li class="liFirst">
+                <span></span>
+                <label>贷款信息</label>
+            </li>
+            <li>
+                <label>产品期数<b>*</b></label>
+                <input type="text" placeholder="请输入产品期数，以英文逗号隔开，例如1,3,5" id="proApplicable"
+                       class="proApplicable"  value="{{.product.LoanTermCount}}"/>
+                <select id="proApplicableUnit">
+                    <option value="day">天</option>
+                    <option value="month">月</option>
+                </select>
+                <label class="labelLeft">放款速度<b>*</b></label>
+                <input type="text" placeholder="请输入放款速度" id="LendingRate" value="{{.product.LoanSpeed}}"/>
+            </li>
+            <li>
+                <label>最小额度<b>*</b></label>
+                <input type="text" id="minLimit" value="{{.product.MinMoney}}"/>
+                <a>元</a>
+                <label>最大额度<b>*</b></label>
+                <input type="text" id="maxLimit" value="{{.product.MaxMoney}}"/>
+                <a>元</a>
+            </li>
+            <li>
+                <label>最小贷款期限<b>*</b></label>
+                <input type="text" id="minDeadline" value="{{.product.MinLoanTerm}}"/>
+                <select id="minDeadlineUnit">
+                    <option value="0" >天</option>
+                    <option value="1" >月</option>
+                </select>
+                <label>最大贷款期限<b>*</b></label>
+                <input type="text" id="maxDeadline" value="{{.product.MaxLoanTerm}}"/>
+                <select id="maxDeadlineUnit">
+                    <option value="0" >天</option>
+                    <option value="1" >月</option>
+                </select>
+            </li>
+            <li>
+                <label>最小利率<b>*</b></label>
+                <input type="text" id="minRate" value="{{.product.MinFee}}"/>
+                <select id="minRateUnit">
+                   <option value="2" >日利率</option>
+                    <option value="1" >月利率</option>
+                </select>
+                <label>最大利率<b>*</b></label>
+                <input type="text" id="maxRate" value="{{.product.MaxFee}}"/>
+                <select id="maxRateUnit">
+                    <option value="2" >日利率</option>
+                    <option value="1" >月利率</option>
+                </select>
+            </li>
+            <li>
+                <label>贷前服务费</label>
+                <input type="text" id="beforeLoanServiceFee" value="{{.product.LoanServiceBeforeFee}}"/>
+                <a>&nbsp;&nbsp;&nbsp;</a>
+                <label>滞纳金起始金额</label>
+                <input type="text" id="startingAmountlateFee" value="{{.product.LateFeeStartMoeny}}"/>
+            </li>
+            <li>
+                <label>展示服务费率</label>
+                <input type="text" id="displayServiceRate" value="{{.product.ShowServiceFee}}"/>
+                <a>&nbsp;&nbsp;&nbsp;</a>
+                <label>滞纳金率</label>
+                <input type="text" id="delayingPaymentRate" value="{{.product.LoanOverdueFee}}"/>
+            </li>
+            <li>
+                <label>最小管理费<b>*</b></label>
+                <input type="text" id="minAdministrativeFee" value="{{.product.MinManagementFee}}"/>
+                <select id="minAdministrativeFeeUnit">
+                     <option value="1" >日管理费</option>
+                    <option value="2" >月管理费</option>
+                </select>
+                <label>最大管理费<b>*</b></label>
+                <input type="text" id="maxAdministrativeFee" value="{{.product.MaxManagementFee}}"/>
+                <select id="maxAdministrativeFeeUnit">
+                     <option value="1" >日管理费</option>
+                    <option value="2" >月管理费</option>
+                </select>
+            </li>
+            <li>
+                <label class="labelFloat">利率详情<b>*</b></label>
+                <textarea id="rateDetails" >{{.product.InterestRateDetails}}</textarea>
+            </li>
+            <li>
+                <label class="labelFloat">还款方式<b>*</b></label>
+                <textarea id="repaymentWay" >{{.product.PaymentMethod}}</textarea>
+            </li>
+            <li>
+                <label class="labelFloat">提前还款<b>*</b></label>
+                <textarea id="advanceRepay" >{{.product.Prepayment}}</textarea>
+            </li>
+            <li>
+                <label class="labelFloat">逾期政策<b>*</b></label>
+                <textarea id="LatePolicy" >{{.product.LatePolicy}}</textarea>
+            </li>
+        </ul>
+        <input type="hidden" id="cooperationType" value="{{.product.CooperationType}}">
+        <button class="proDtlSave" id="proDtlSave">保 存</button>
+    </div>
+    <div id="settleDtl">
+        <ul class="cooperateWays">
+            <li class="liFirst">
+                <span></span>
+                <label>合作方式</label>
+            </li>
+            <li>
+                <input type="hidden" id="proId"/> <!--产品id-->
+
+                <label>合作模式</label>
+                <select id="cooperateModel">
+                    <option value="1">CPA</option>
+                    <option value="2">CPS</option>
+                    <option value="3">CPA+CPS</option>
+                </select>
+                <a>&nbsp;&nbsp;&nbsp;</a>
+                <label>结算方式</label>
+                <select id="settleWays">
+                   <option value="1">对公</option>
+                    <option value="2">对私</option>
+                </select>
+            </li>
+            <li>
+                <label>A有效性定义</label>
+                <input type="text" placeholder="A的定义可以为：注册、进件、绑卡、放款" style="font-size:14px;" id="ASelect" value="{{.product.CpaDefine}}"/>
+            </li>
+            <li>
+                <label>A的价格</label>
+                <input type="text" id="APrice" value="{{.product.CpaPrice}}"/>
+                <a>元</a>
+                <label>S的价格</label>
+                <input type="text" id="SPrice" value="{{.product.CpsPrice}}"/>
+                <a>元</a>
+            </li>
+            <li>
+                <label class="labelFloat">结算周期</label>
+                <textarea placeholder="结算周期为周结、半月结、月结。也可自定义输入详细信息，例如：每月10号前结算"
+                          id="settlementInterval" >{{.product.CleaningCycle}}</textarea>
+            </li>
+        </ul>
+        <ul class="invoiceDtl">
+            <li class="liFirst">
+                <span></span>
+                <label>开票信息</label>
+            </li>
+            <li>
+                <label>公司名称</label>
+                <input type="text" class="lInput" id="companyName" value="{{.product.CompanyName}}"/>
+            </li>
+            <li>
+                <label>公司地址</label>
+                <input type="text" class="lInput" id="companyAddr" value="{{.product.CompanyAddress}}"/>
+            </li>
+            <li>
+                <label>税号</label>
+                <input type="text" id="dutyParagraph" value="{{.product.TaxNumber}}"/>
+            </li>
+            <li>
+                <label>开户行</label>
+                <input type="text" id="openingBank" value="{{.product.AccountBank}}"/>
+                <label>银行账号</label>
+                <input type="text" id="bankAccount" value="{{.product.BankAccount}}"/>
+            </li>
+        </ul>
+        <ul class="backstageDtl">
+            <li class="liFirst">
+                <span></span>
+                <label>后台信息</label>
+            </li>
+            <li>
+                <label>公司网址</label>
+                <input type="text" class="lInput" id="companyWebsiteAddr" value="{{.product.BackURL}}"/>
+            </li>
+            <li>
+                <label>后台账号</label>
+                <input type="text" id="bgAccount" value="{{.product.BackAccount}}"/>
+                <label>后台密码</label>
+                <input type="text" id="bgPassword"  value="{{.product.BackPwd}}"/>
+            </li>
+            <li>
+                <label>渠道号</label>
+                <input type="text" id="channelNo" value="{{.product.FromNum}}" />
+            </li>
+        </ul>
+        <button class="settleDtlSave" id="settleDtlSave">保 存</button>
+    </div>
+    <div id="urlManagementDtl">
+        <ul class="addUrl">
+            <li class="liFirst">
+                <span></span>
+                <label>添加链接</label><!-- 链接id的隐藏域 -->
+                <input type="hidden" class="urlId" id="urlId" value="{{.product.UrlId}}" />
+            </li>
+           <li>
+                <label>链接</label>
+                <input type="text" class="lInput" id="url1" value="{{.product.Url}}" />
+            </li>
+            <li>
+                <label>链接2</label>
+                <input type="text" class="lInput" id="url2"/>
+            </li>
+            <li>
+                <label>链接3</label>
+                <input type="text" class="lInput" id="url3"/>
+            </li>
+            <li>
+                <label>链接4</label>
+                <input type="text" class="lInput" id="url4"/>
+            </li>
+        </ul>
+        <img src="../static/img/addUrl.png" class="newAddUrl" id="newAddUrl"/>
+        <button class="urlManagementDtlSave" id="urlManagementDtlSave">保 存</button>
+    </div>
+</div>
+<script type="text/javascript">
+    $(function () {
+        //产品类型，下拉列表匹配
+        var productType={{.product.ProductType}}  //产品类型
+        $("#product").val(productType)
+
+        //期数单位"天""月"
+        var LoanTermCountType = {{.product.LoanTermCountType}}
+        if (LoanTermCountType == "天"){
+            $("#proApplicableUnit").val("day")
+        }
+        if (LoanTermCountType == "月"){
+            $("#proApplicableUnit").val("month")
+        }
+        //最大/最小贷款期限单位
+        var LoanTermUnit = {{.product.LoanTermUnit}}
+        //alert({{.product.LoanTermUnit}})
+        $("#minDeadlineUnit").val(LoanTermUnit)
+        $("#maxDeadlineUnit").val(LoanTermUnit)
+        //最大/最小利率
+        var FeeMethod = {{.product.FeeMethod}}
+        $("#minRateUnit").val(FeeMethod)
+        $("#maxRateUnit").val(FeeMethod)
+        //最大/最小管理费
+        var ManagementFeeUnit = {{.product.ManagementFeeUnit}}
+        //alert({{.product.ManagementFeeUnit}})
+        $("#minAdministrativeFeeUnit").val(ManagementFeeUnit)
+        $("#maxAdministrativeFeeUnit").val(ManagementFeeUnit)
+
+        //产品清算下拉
+        var  cooperateModel =  {{.product.JointMode}}
+        //alert(cooperateModel)
+        $("#cooperateModel").val(cooperateModel)
+        //结算方式
+        var settleWays = {{.product.CleaningType}}
+        //alert(settleWays)
+        $("#settleWays").val(settleWays)
+
+
+
+        //头部主Tab切换
+        $("#proTab li").on("click", function () {
+            $("#proTab li").removeClass("liActive");
+            $(this).addClass("liActive");
+            if ($(this).html() == "机构信息") {
+                $("#main>div").removeClass("divDisplay");
+                $("#jigouDtl").addClass("divDisplay");
+            }
+            if ($(this).html() == "产品信息") {
+                $("#main>div").removeClass("divDisplay");
+                $("#proDtl").addClass("divDisplay");
+            }
+            if ($(this).html() == "结算信息") {
+                $("#main>div").removeClass("divDisplay");
+                $("#settleDtl").addClass("divDisplay");
+            }
+            if ($(this).html() == "链接管理") {
+                $("#main>div").removeClass("divDisplay");
+                $("#urlManagementDtl").addClass("divDisplay");
+            }
+        });
+        //机构信息和紧急联系人信息保存
+        $("#jigouDtlSave").on("click", function () {
+            /*alert( $("#jigouName").val())*/
+            $.zpost("/organization/save", {
+                    'OrgId': $("#orgId").val(),
+                    'OrgName': $("#jigouName").val(),
+                    'OrgAddress': $("#contactAddr").val(),
+                    'OrgEmail': $("#contactMail").val(),
+
+                    'BusId':$("#busId").val(),
+                    'BusName': $("#contactName").val(),
+                    'Phone': $("#contactPhone").val(),
+                    'Wechat': $("#weixinCode").val(),
+                    'QQ': $("#QQCode").val(),
+                    'BusEmail': $("#eMail").val()
+                },
+                function (result) {
+                    if (result.ret == 200) {
+                        $("#orgId").val(result.orgId)
+                        $("#busId").val(result.busId)
+                        /*alert($("#orgId").val())*/
+                        alert("保存成功")
+                    } else {
+                        alert(result.err)
+                    }
+                }
+            );
+        });
+        //产品信息保存
+        $("#proDtlSave").on("click", function () {
+            var productId=$("#proId").val();
+            //alert(productId)
+            $.zpost("/product/saveProduct", {
+                    'ProId':$("#proId").val(),
+                    'ProName': $("#proName").val(),
+                    'OrgId': $("#orgId").val(),
+                    'BusId': $("#busId").val(),
+                    'ProductType': $("#proType option:checked").index() + 1,
+                    'LoanTermCount': $("#proApplicable").val(),
+                    'LoanTermCountType': $("#proApplicableUnit option:checked").html(),
+                    'LoanSpeed': $("#LendingRate").val(),
+                    'MinMoney': $("#minLimit").val(),
+                    'MaxMoney': $("#maxLimit").val(),
+                    'MinLoanTerm': $("#minDeadline").val(),
+                    'MaxLoanTerm': $("#maxDeadline").val(),
+                    'LoanTermUnit': $("#minDeadlineUnit option:checked").index(),//做联动
+                    'MinFee': $("#minRate").val(),
+                    'MaxFee': $("#maxRate").val(),
+                    'FeeMethod': $("#minRateUnit option:checked").index() + 1,//做联动
+                    'LoanServiceBeforeFee': $("#beforeLoanServiceFee").val(),
+                    'LateFeeStartMoeny': $("#startingAmountlateFee").val(),
+                    'ShowServiceFee': $("#displayServiceRate").val(),
+                    'LoanOverdueFee': $("#delayingPaymentRate").val(),
+                    'MinManagementFee': $("#minAdministrativeFee").val(),
+                    'MaxManagementFee': $("#maxAdministrativeFee").val(),
+                    'ManagementFeeUnit': $("#minAdministrativeFeeUnit option:checked").index() + 1,//做联动
+                    'InterestRateDetails': $("#rateDetails").val(),
+                    'PaymentMethod': $("#repaymentWay").val(),
+                    'Prepayment': $("#advanceRepay").val(),
+                    'LatePolicy': $("#LatePolicy").val(),
+                    'ProductLogo': $("#imgUrl").val(),
+                    'CooperationType': 1,
+                },
+                function (result) {
+                    if (result.ret == 200) {
+                        alert("保存成功!")
+                        $("#proId").val(result.proId)
+
+                    } else {
+                        alert(result.err)
+
+                    }
+                }
+            );
+        });
+         //结算信息保存
+        $("#settleDtlSave").on("click", function () {
+            var productId=$("#proId").val();
+            //alert(productId)
+            $.zpost("/cleaning/saveCleaning", {
+                    'ProId': $("#proId").val(),
+                    'JointMode': $("#cooperateModel option:checked").index() + 1,
+                    'CleaningType': $("#settleWays option:checked").index() + 1,
+                    'CpaDefine': $("#ASelect").val(),
+                    'CpaPrice': $("#APrice").val(),
+                    'CpsPrice': $("#SPrice").val(),
+                    'CleaningCycle': $("#settlementInterval").val(),
+                    'CompanyName': $("#companyName").val(),
+                    'CompanyAddress': $("#companyAddr").val(),
+                    'TaxNumber': $("#dutyParagraph").val(),
+                    'AccountBank': $("#openingBank").val(),
+                    'BankAccount': $("#bankAccount").val(),
+                    'BackURL': $("#companyWebsiteAddr").val(),
+                    'BackAccount': $("#bgAccount").val(),
+                    'BackPwd': $("#bgPassword").val(),
+                    'FromNum': $("#channelNo").val()
+                },
+
+                function (result) {
+                    if (result.ret == 200) {
+                        alert("保存成功!")
+                        $("#orgId").val(result.proId)
+                    } else {
+                        alert(result.err)
+                    }
+                }
+            );
+        })
+        //链接信息保存  url1
+        $("#urlManagementDtlSave").on("click", function () {
+            $.zpost("/url/saveEditedUrl", {
+                    'Id': $("#urlId").val(),
+                    'Url': $("#url1").val()
+//                    '': $("#url2").val(),
+//                    '': $("#url3").val(),
+//                    '': $("#url4").val()
+                },
+                function (result) {
+                    if (result.ret == 200) {
+                        alert("保存成功！")
+                    } else {
+                        alert(result.err)
+                    }
+                }
+            );
+
+        });
+        //新增链接
+        var newUrlId = 5;
+        $("#newAddUrl").on("click", function () {
+            var addUrlLi = $("<li><label>新增链接</label><input type='text' class='lInput' id='url" + newUrlId + "' /></li>");
+            newUrlId++;
+            $("#urlManagementDtl ul").append(addUrlLi);
+        });
+        $("#imgSelect").on("change", function () {
+            var formData = new FormData($("#imgInput")[0]);
+            $.ajax({
+                url: '/product/uploadIcon',
+                type: 'POST',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.ret = 200) {
+                        $("#imgDisplay").attr("src", data.url)
+                        $("#imgUrl").val(data.url)
+                    } else {
+                        alert("上传失败！")
+                    }
+
+                }
+            });
+
+        });
+
+    })
+
+    //贷款期限单位联动
+    $("#minDeadlineUnit").on("change", function () {
+        $("#maxDeadlineUnit").val($("#minDeadlineUnit").val());
+    });
+    $("#maxDeadlineUnit").on("change", function () {
+        $("#minDeadlineUnit").val($("#maxDeadlineUnit").val());
+    });
+    //利率单位联动
+    $("#minRateUnit").on("change", function () {
+        $("#maxRateUnit").val($("#minRateUnit").val());
+    });
+    $("#maxRateUnit").on("change", function () {
+        $("#minRateUnit").val($("#maxRateUnit").val());
+    });
+    //管理费单位联动
+    $("#minAdministrativeFeeUnit").on("change", function () {
+        $("#maxAdministrativeFeeUnit").val($("#minAdministrativeFeeUnit").val());
+    });
+    $("#maxAdministrativeFeeUnit").on("change", function () {
+        $("#minAdministrativeFeeUnit").val($("#maxAdministrativeFeeUnit").val());
+    });
+</script>
+</body>
+</html>

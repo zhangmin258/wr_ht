@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>手机运营商数据</title>
+    <style>
+        
+    </style>
+</head>
+
+<body>
+
+    <div class="panel" style="padding-bottom: 50px;">
+        <div class="panel-heading">常用联系人电话Top3（近1个月）</div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>通话号码</th>
+                        <th>运营商</th>
+                        <th>归属地</th>
+                        <th>联系次数</th>
+                        <th>联系时间（分）</th>
+                        <th>主叫次数</th>
+                        <th>被叫次数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    
+                    {{range $k, $v := .calls_3}}
+                    <tr>
+                        <td>{{$v.Peer_number}}</td>
+                        <td>{{getOperator $v.Peer_number}}</td>
+                        <td>{{$v.Peer_num_loc}}</td>
+                        <td>{{$v.Call_cnt}}</td>
+                        <td>{{$v.Call_time}}</td>
+                        <td>{{$v.Dial_cnt}}</td>
+                        <td>{{$v.Dialed_cnt}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+
+        <div style="height: 50px; clear: both;"></div>
+
+        <div class="panel-heading">常用联系人电话Top3（近6个月）</div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>通话号码</th>
+                        <th>运营商</th>
+                        <th>归属地</th>
+                        <th>联系次数</th>
+                        <th>联系时间（分）</th>
+                        <th>主叫次数</th>
+                        <th>被叫次数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $k, $v := .calls_6}}
+                    <tr>
+                        <td>{{$v.Peer_number}}</td>
+                        <td>{{getOperator $v.Peer_number}}</td>
+                        <td>{{$v.Peer_num_loc}}</td>
+                        <td>{{$v.Call_cnt}}</td>
+                        <td>{{$v.Call_time}}</td>
+                        <td>{{$v.Dial_cnt}}</td>
+                        <td>{{$v.Dialed_cnt}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div style="height: 50px; clear: both;"></div>
+
+        <div class="panel-heading">本人通话活动地区</div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>地区</th>
+                        <th>通话次数</th>
+                        <th>呼入次数</th>
+                        <th>呼入时间</th>
+                        <th>呼出次数（分）</th>
+                        <th>呼出时间（分）</th>
+                        <th>呼入次数百分比</th>
+                        <th>呼出次数百分比</th>
+                        <th>呼入时间百分比</th>
+                        <th>呼出时间百分比</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $k, $v := .active_location}}
+                    <tr>
+                        <td>{{$v.Location}}</td>
+                        <td>{{$v.Call_cnt}}</td>
+                        <td>{{$v.Dialed_cnt}}</td>
+                        <td>{{$v.Dialed_time}}</td>
+                        <td>{{$v.Dial_cnt}}</td>
+                        <td>{{$v.Dial_time}}</td>
+                        <td>{{getPercentage $v.Dialed_cnt $v.Dial_cnt}}</td>
+                        <td>{{getPercentage $v.Dial_cnt $v.Dialed_cnt}}</td>
+                        <td>{{getPercentage $v.Dialed_time $v.Dial_time}}</td>
+                        <td>{{getPercentage $v.Dial_time $v.Dialed_time}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div style="height: 50px; clear: both;"></div>
+
+        <div class="panel-heading">联系人通话活动地区</div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>地区</th>
+                        <th>通话次数</th>
+                        <th>呼入次数</th>
+                        <th>呼入时间</th>
+                        <th>呼出次数（分）</th>
+                        <th>呼出时间（分）</th>
+                        <th>呼入次数百分比</th>
+                        <th>呼出次数百分比</th>
+                        <th>呼入时间百分比</th>
+                        <th>呼出时间百分比</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $k, $v := .contact_active_location}}
+                    <tr>
+                        <td>{{$v.Region_loc}}</td>
+                        <td>{{$v.Region_call_cnt}}</td>
+                        <td>{{$v.Region_dialed_cnt}}</td>
+                        <td>{{$v.Region_dialed_time}}</td>
+                        <td>{{$v.Region_dial_cnt}}</td>
+                        <td>{{$v.Region_dial_time}}</td>
+                        <td>{{$v.Region_dialed_cnt_pct}}</td>
+                        <td>{{$v.Region_dial_cnt_pct}}</td>
+                        <td>{{$v.Region_dialed_time_pct}}</td>
+                        <td>{{$v.Region_dial_time_pct}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+
+
+        <div style="height: 50px; clear: both;"></div>
+
+        <div class="panel-heading">分时间段统计</div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>时间段</th>
+                        <th>主叫次数</th>
+                        <th>主叫时间（分）</th>
+                        <th>被叫次数</th>
+                        <th>被叫时间（分）</th>
+                        <th>短信数量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        {{range $k, $v := .time_collection}}
+                        <tr>
+                            <td>{{$v.Time_step_zh}}</td>
+                            <td>{{$v.Item.Dial_cnt}}</td>
+                            <td>{{$v.Item.Dial_time}}</td>
+                            <td>{{$v.Item.Dialed_cnt}}</td>
+                            <td>{{$v.Item.Dialed_time}}</td>
+                            <td>无法统计</td>
+                        </tr>
+                        {{end}}
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div style="height: 50px; clear: both;"></div>
+
+        <div class="panel-heading">月使用信息</div>
+        <div class="panel-body">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>时间段</th>
+                        <th>主叫次数</th>
+                        <th>主叫时间（分）</th>
+                        <th>被叫次数</th>
+                        <th>被叫时间（分）</th>
+                        <th>短信数量</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $k, $v := .active_location_mon}}
+                    <tr>
+                        <td>{{$v.Cell_mth}}</td>
+                        <td>{{$v.Dial_cnt}}</td>
+                        <td>{{$v.Dial_time}}</td>
+                        <td>{{$v.Dialed_cnt}}</td>
+                        <td>{{$v.Dialed_time}}</td>
+                        <td>无法统计</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+
+<script>
+    $(function() {
+
+
+    });
+</script>

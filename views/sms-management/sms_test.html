@@ -1,0 +1,258 @@
+
+    
+    <style>
+        .form-group{
+            margin-bottom: 30px;
+        }
+
+    </style>
+
+
+    <div class="panel">
+        <div class="panel-heading">短信测试</div>
+        <div class="panel-body">
+            <form action="" method="get" id="" class="form-horizontal" style="padding-top: 30px;">
+                <div class="form-group">
+                    <label for="content" class="col-sm-1 control-label">短信文本</label>
+                    <div class="col-sm-3" style="text-align: right;">
+                        <textarea name="content" id="content" class="form-control" style="height: 100px;" placeholder="请输入短信文本！"></textarea>
+                        <dd class="sr">可输入<strong class="num" style="color: green;">70</strong>个字</dd>
+                        <dd class="cg" style="display: none;">已超过<strong class="num" style="color: red;"></strong>字，<span class="clear" style="cursor: pointer; color: #06f;">清尾</span></dd>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="test_number" class="col-sm-1 control-label">测试号码</label>
+                    <div class="col-sm-3">
+                        <input type="text" name="test_number" id="test_number" class="form-control" placeholder="请输入测试号码">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-sm-offset-2 col-sm-10">
+                        <button type="button" class="btn btn-info" id="send" style="margin-right: 20px;">发送</button>
+                        <button type="button" class="btn btn-info" id="send1" style="width: 100px;">第三方发送</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+
+
+    <div class="panel">
+        <div class="panel-heading" style="overflow: hidden;">
+            <strong class="pull-left">测试历史</strong>
+            <strong class="pull-right">总发送条数：555,555条</strong>
+        </div>
+        <div class="panel-body">
+            <form action="" id="searchForm2" method="get" class="form-inline">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="请输入发送文本" style="width: 250px;" name="send_text" id="send_text">
+                </div>
+                <button id="searchBtn" type="submit" class="btn btn-info">搜索</button>
+            </form>
+            <hr>
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>发送时间</th>
+                        <th>推送内容</th>
+                        <th>测试号码</th>
+                        <th>发送条数</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {{range $k, $history := .msgHistoryList}}
+                    <tr>
+                        <td>{{$history.PushDate}}</td>
+                        <td>{{$history.Content}}</td>
+                        <td>{{$history.Phone}}</td>
+                        <td>{{$history.PushCount}}</td>
+                    </tr>
+                    {{end}}
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            <div class="fl">
+                                <div class="pagination">总共{{.count}}条</div>
+                            </div>
+                            <div class="fl">
+                                <div class="pagination" id="pagination2" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                                <script type="text/javascript">
+                                    $(function () {
+                                        $("#pagination2").my_page("#searchForm2");
+                                    });
+                                </script>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+
+
+
+<script type="text/javascript">
+
+
+
+$(function(){
+
+
+    if(window.sessionStorage.send_text){
+        $('#send_text').val(window.sessionStorage.send_text);
+    }
+
+
+
+     //短信文本字数限制
+    $('#content').off().on('keyup',function(){
+        check_ps();
+    });
+
+    //清尾
+    $('.clear').on('click',function(){
+        var val =  $('#content').val().substring(0,70);
+        $('#content').val(val);
+        check_ps();
+    });
+
+
+    function check_ps(){
+        var len = $('#content').val().length;
+        var num = 70 - len;
+        if(num >= 0){
+            $('.sr').show();
+            $('.cg').hide();
+            $('.sr strong').html(num);
+        }else{
+            $('.sr').hide();
+            $('.cg').show();
+            $('.cg .num').html(Math.abs(num));
+            alert('你已经超出字数限制，请清尾！');
+        }
+    }
+
+
+
+    //发送按钮
+    $('#send').off().on('click',function(){ 
+        var content = $('#content').val().substring(0,70);   //短信文本
+        var test_number = $('#test_number').val();        //测试号码
+        if(!content){
+            alert('短信文本不得为空！');
+            return;
+        }
+        if(!test_number){
+            alert('测试号码不得为空！');
+            return;
+        }
+        $.ajax({
+            url: '/msgtest/sendmessage',
+            type: 'post',
+            data: {
+                Message: content,
+                Phone: test_number
+            },
+            success: function(res){
+                if(res.ret == 200){
+                    alert(res.msg);
+                }
+            }
+        });
+    });
+    
+});
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

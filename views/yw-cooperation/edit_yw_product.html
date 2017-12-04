@@ -1,0 +1,253 @@
+
+<style>
+    .form-group {
+        margin-bottom: 50px;
+    }
+
+    .form-group label {
+        color: #333;
+    }
+
+    label span {
+        font-size: 20px;
+        color: red;
+        vertical-align: -7px;
+    }
+
+    .xl {
+        width: 300px;
+        overflow: hidden;
+        border: #ccc solid 1px;
+        position: absolute;
+        z-index: 100;
+        top: 34px;
+        left: 15px;
+        background: #fff;
+        border-radius: 5px;
+        display: none;
+        padding: 0;
+    }
+
+    .xl li {
+        line-height: 30px;
+        cursor: pointer;
+        padding-left: 10px;
+        background: #fff;
+        color: #666;
+    }
+
+    .xl li:hover {
+        background: #ccc;
+        color: maroon;
+    }
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading">修改遥望代理产品</div>
+    <div class="panel-body" style="padding-top: 30px;">
+        <form action="" id="imgInput" enctype="multipart/form-data" method="" class="form-horizontal">
+            <!--产品名称-->
+            <div class="form-group" style="position: relative;" id="loan_product">
+                <label for="product_name" class="col-sm-1 control-label">产品名称&nbsp;<span>*</span></label>
+                <div class="col-sm-3">
+                    <input type="hidden" id="productsId" value="{{.product.Id}}">
+                    <input type="text" value="{{.product.Name}}" class="form-control" name="product_name" id="product_name" placeholder="请输入贷款产品名称" autocomplete="off">
+                    <ul class="xl"></ul>
+                </div>
+            </div>
+
+            <!--产品logo-->
+            <div class="form-group">
+                <label class="col-sm-1 control-label">产品logo</label>
+                <div class="col-sm-3">
+                    <img id="imgDisplay" alt="proLogo" src="{{.product.Logo}}" width="150" height="150"/>
+                    <div style="height: 10px;"></div>
+                    <input type="file" class="imgSelect" id="imgSelect" name="proIcon"/>
+                    <input type="hidden" id="imgUrl" value="{{.product.Logo}}"/>
+                </div>
+            </div>
+
+            <!--产品链接-->
+            <div class="form-group" id="jumpUrl">
+                <label for="link_url" class="col-sm-1 control-label">产品链接</label>
+                <div class="col-sm-3">
+                    <input type="text" value="{{.product.Url}}" class="form-control" id="link_url" placeholder="请输入链接地址">
+                </div>
+            </div>
+            
+            <!--产品状态-->
+            <div class="form-group">
+                <label for="isUsed" class="col-sm-1 control-label">产品状态</label>
+                <div class="col-sm-3">
+                    <select name="isUsed" id="isUsed" class="form-control">
+                        <option value="0" {{if eq .product.IsUse 0}}selected="selected" {{end}}>上线</option>
+                        <option value="1" {{if eq .product.IsUse 1}}selected="selected" {{end}}>下线</option>
+                    </select>
+                </div>
+            </div>
+
+            <!--产品标签-->
+            <div class="form-group" id="product_tag">
+                <label for="tag" class="col-sm-1 control-label">产品标签</label>
+                <div class="col-sm-3">
+                    <input type="text" value="{{.product.Tag}}" class="form-control" id="tag" placeholder="请输入产品标签">
+                </div>
+            </div>
+
+            <!--产品描述-->
+            <div class="form-group" id="product_description">
+                <label for="description" class="col-sm-1 control-label">产品描述</label>
+                <div class="col-sm-3">
+                    <input type="text" value="{{.product.Description}}" class="form-control" id="description" placeholder="请输入产品描述">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="button" class="btn btn-info" id="saveProduct">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    //图片上传
+    $("#imgSelect").off().on("change", function () {
+        var formData = new FormData($("#imgInput")[0]);
+        var file = $('#imgSelect').val();
+        if(!/\.(gif|jpg|jpeg|png|gif|jpg|png)$/i.test(file)){
+            alert("图片类型必须是.gif,jpeg,jpg,png中的一种");
+            return;
+        }
+        $.ajax({
+            url: '/yaowangproduct/uploadicon',
+            type: 'POST',
+            data: formData,
+            async: false,
+            cache: false,
+            contentType: false,
+            processData: false,
+            success: function (res) {
+                if (res.ret = 200) {
+                    $("#imgDisplay").attr("src", res.url)
+                    $("#imgUrl").val(res.url)
+                } else {
+                    alert("上传失败！")
+                }
+            }
+        });
+    });
+
+
+    //修改代理产品信息保存
+    $("#saveProduct").off().on("click", function () {
+        var product_name = $('#product_name').val();   //产品名称
+        var productsId = $('#productsId').val();    //产品id
+        var imgUrl = $('#imgUrl').val();            //产品logo
+        var link_url = $('#link_url').val();        //产品链接
+        var isUsed = $('#isUsed').val();            //产品状态
+        var description = $('#description').val();  //产品描述
+        var tag = $('#tag').val();                  //产品标签
+        if (!product_name) {
+            alert('产品名称不得为空！');
+        }else{
+            $.zpost("updateproduct", {
+                Name: product_name,
+                ProductId: productsId,
+                ImgUrl: imgUrl,
+                LinkUrl: link_url,
+                IsUsed: isUsed,
+                Description :description,
+                Tag :tag
+            }, function (result) {
+                if (result.ret == 200) {
+                    alert("保存成功！")
+                    getpage(window.sessionStorage.URl);
+                } else {
+                    alert(result.err)
+                }
+            });
+        }
+    });
+
+
+    //模糊查询
+    $('#product_name').off().on('keyup', function (e) {
+        var name = $('#product_name').val();
+        var html = '';
+        var length = $('.xl li').length;
+        //当按了下键的时候
+        if(e.keyCode == 40){
+            if(this.index == undefined || this.index >= length - 1){
+                this.index = 0;
+            }else{
+                this.index ++;
+            }
+            $('.xl li').css('background','#fff').css('color','#666');
+            $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+            $('#product_name').val($('.xl li').eq(this.index).text());
+            $('#productsId').val($('.xl li').eq(this.index).attr("data-id"));
+            return;
+        }
+        //当按了上键的时候
+        if(e.keyCode == 38){
+            if(this.index == undefined || this.index <= 0){
+                this.index = length - 1;
+            }else{
+                this.index --;
+            }
+            $('.xl li').css('background','#fff').css('color','#666');
+            $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+            $('#product_name').val($('.xl li').eq(this.index).text());
+            $('#productsId').val($('.xl li').eq(this.index).attr("data-id"));
+            return;
+        }
+        //当按了回车键的时候
+        if(e.keyCode == 13){
+            this.index = undefined;    //初始化
+            $('.xl').empty().hide();
+            return;
+        }
+        if (name.length <= 0) {
+            $('.xl').empty().hide();
+            return;
+        }
+
+        $.ajax({
+            url: "/agent/getproductlist",
+            type: 'get',
+            data: {
+                name: name
+            },
+            success: function (res) {
+                if (res.ret == 200) {
+                    var data = res.products;
+                    if (data) {
+                        $.each(data, function (index, value) {
+                            html += '<li data-id="' + value.Id + '">' + value.Name + '</li>';
+                        });
+                        $('.xl').empty();
+                        $('.xl').append(html).show();
+                        $('.xl li').on('click', function () {
+                            $('#product_name').val($(this).text());
+                            $('#productsId').val($(this).attr("data-id"));
+                            $('.xl').empty().hide();
+                        });
+                    }else {
+                        $('.xl').empty().hide();
+                    }
+                }
+            }
+        });
+        $('body').on('click', function () {
+            $('.xl').hide();
+        });
+    });
+
+
+
+</script>

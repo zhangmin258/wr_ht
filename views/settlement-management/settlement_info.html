@@ -1,0 +1,93 @@
+
+<style>
+	p{
+		line-height: 3;
+	}
+
+	.a, .s{
+		display: none;
+	}
+</style>
+
+
+
+	<div class="panel-heading">结算信息</div>
+	<div class="panel-body" style="padding: 30px 0;">
+		<div style="width: 45%; float: left; margin-left: 5%;">
+			<p>
+				<strong>合作模式：</strong>
+				<span class="cooperation_mode">
+					{{if eq .cleaning.JointMode 1}}CPA
+                    {{else if eq .cleaning.JointMode 2}}CPS
+                    {{else if eq .cleaning.JointMode 3}}CPA+CPS
+                    {{else}}-{{end}}
+				</span>
+			</p>
+			<p class="a">
+				<strong>A有效性定义：</strong>
+				<span>{{.cleaning.CpaDefine}}</span>
+			</p>
+			<p class="s">
+				<strong>S的首借百分比：</strong>
+				<span>{{.cleaning.CpsFirstPer}}%</span>
+			</p>
+		</div>
+		<div style="width: 45%; float: left; margin-left: 5%;">
+			<p>
+				<strong>结算方式：</strong>
+				<span>{{if eq .cleaning.CleaningType 1}}对公
+					{{else if eq .cleaning.CleaningType 2}}对私
+					{{else}}-{{end}}
+				</span>
+			</p>
+			<p class="a">
+				<strong>A的价格：</strong>
+				<span>{{.cleaning.CpaPrice}}元</span>
+			</p>
+			<p class="s">
+				<strong>S的复借百分比：</strong>
+				<span>{{.cleaning.CpsAgainPer}}%</span>
+			</p>
+		</div>
+		<p style="margin-left: 5%;">
+			<strong>结算周期：</strong>
+			<span>{{.cleaning.CleaningCycle}}</span>
+		</p>
+	</div>
+
+
+
+<script>
+
+	var cooperation_mode = $.trim($('.cooperation_mode').text());
+	if(cooperation_mode == 'CPA'){
+		$('.a').show();
+	}else if(cooperation_mode == 'CPS'){
+		$('.s').show();
+	}else if(cooperation_mode == 'CPA+CPS'){
+		$('.a').show();
+		$('.s').show();
+	}
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

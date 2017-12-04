@@ -1,0 +1,71 @@
+
+<div class="panel">
+    <div class="panel-heading">遥望产品管理</div>
+    <div class="panel-body">
+        <form action="" id="searchForm" method="get" class="pull-left form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="请输入产品名称" style="width: 250px;" name="name" id="proName">
+            </div>
+            <button type="submit" class="btn btn-info">搜索</button>
+        </form>
+        <a href="/yaowangproduct/addproductpage" class="btn btn-info skip1 pull-right" style="width: 100px;">新增产品</a>
+        <div style="height: 20px; border-bottom: #ccc solid 1px; clear: both;"></div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>产品名称</th>
+                    <th>上线状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $k, $product := .productList}}
+                <tr>
+                    <td>{{$product.Id}}</td>
+                    <td>{{$product.Name}}</td>
+                    {{if eq $product.IsUse 0}}
+                    <td><span class="tag_bg_green">上线</span></td>
+                    {{else if eq $product.IsUse 1}}
+                    <td><span class="tag_bg_red">下线</span></td>
+                    {{end}}
+                    <td>
+                        <a href="/yaowangproduct/editproductmange?id={{$product.Id}}" class="skip1">修改</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="/yaowangproduct/getyaowangproductlist" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination").my_page("#searchForm");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+    //产品名称
+    if(window.sessionStorage.proName){
+        $('#proName').val(window.sessionStorage.proName);
+    }
+
+
+</script>

@@ -1,0 +1,42 @@
+<table class="table table-hover table-striped table_thead_fixed">
+    <thead>
+    <tr>
+        <th>日期</th>
+        <th>注册用户</th>
+        <th>激活用户</th>
+        <th>完成OCR用户</th>
+        <th>认证完成用户</th>
+        <th>点击立即申请用户</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range $k, $dailyData := .dailyDataList}}
+    <tr>
+        <td>{{$dailyData.Date.Format "2006-01-02"}}</td>
+        <td>{{$dailyData.RegisterCount }}</td>
+        <td>{{$dailyData.LoginCount}}</td>
+        <td>{{$dailyData.OcrCount}}</td>
+        <td>{{$dailyData.IdentifyCount}}</td>
+        <td>{{$dailyData.ApplynowCount}}</td>
+    </tr>
+    {{end}}
+    </tbody>
+    <tfoot>
+    <tr>
+        <td colspan="6">
+            <div class="fl">
+                <div class="pagination"> 总共{{.count}}条</div>
+            </div>
+            <div class="fl">
+                <div class="pagination" id="pagination" data-url="/channel/getagentwrdatalistinfo?type={{.type}}"
+                     currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                <script type="text/javascript">
+                    $(function () {
+                        $("#pagination").my_page("#searchForm2", "#weirong_data_info_wl");
+                    });
+                </script>
+            </div>
+        </td>
+    </tr>
+    </tfoot>
+</table>

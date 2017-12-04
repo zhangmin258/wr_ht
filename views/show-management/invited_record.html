@@ -1,0 +1,118 @@
+
+
+
+    
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">用户{{accountDispose .user.Account}}邀请好友列表</div>
+    <div class="panel-body">
+        <form action="" id="searchFrom" method="get" class="form-inline" style="padding-top: 5px;">
+            <div class="form-group">
+                <input type="hidden" name="userId" value="{{.user.Id}}">
+                <input type="text" class="form-control phone_number" name="account" id="phone_number" placeholder="请输入用户手机号码！" style="width: 250px;">
+            </div>
+            <button type="submit" class="btn btn-info search">搜索</button>
+        </form>
+        <hr>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>邀请时间</th>
+                    <th>好友手机号</th>
+                    <th>设备型号</th>
+                    <th>邀请状态</th>
+                    <th>获得佣金</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range $k,$v:=.userInvitation}}
+                <tr>
+                    <td>{{$v.InvitationTime.Format "2006-01-02"}}</td>
+                    <td>{{$v.Account}}</td>
+                    <td>{{$v.MobileType}}</td>
+                    <td>{{if eq $v.State 1}}注册
+                        {{else if eq $v.State 2}}激活
+                        {{else if eq $v.State 3}}完成
+                        {{else}}-
+                        {{end}}
+                    </td>
+                    <td>{{if $v.Money}}{{printf "%.2f" $v.Money}}{{else}}-{{end}} 元</td>
+                </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination").my_page("#searchFrom");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+<script>
+
+$(function(){
+
+   	$('.search').off().on('click',function(){
+       	var phone_number = $('#phone_number').val();
+       	if(!phone_number){
+           alert('请输入手机号码进行搜索！');
+           return false;
+       	}
+//       	if(phone_number && !(/^1[34578]\d{9}$/.test(phone_number))){
+//           alert('输入的手机号码有误，请重新输入！');
+//           return false;
+//       	}
+   	});
+
+});
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

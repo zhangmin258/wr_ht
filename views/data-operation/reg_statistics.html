@@ -1,0 +1,64 @@
+
+
+
+
+
+<div class="panel">
+	<div class="panel-heading" style="padding-bottom: 45px;">
+		<strong class="pull-left" style="line-height: 30px;">点击--收益排名</strong>
+		<form action="../registered/getregistercount" id="searchForm" method="get" class="form-inline pull-left" style="margin-left: 10%;">
+            <input name="startTime" id="startDate" class="Wdate form-control" value="{{.startTime}}" type="text"
+                   onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd',
+                   onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}'})" autocomplete="off" style="width: 200px;"
+            />&nbsp;&nbsp;-&nbsp;
+            <input name="endTime" id="endDate" class="Wdate form-control" type="text"
+                   onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})"
+                   value='{{.endTime}}' autocomplete="off" style="width: 200px;" />&nbsp;
+            <button type="submit" class="btn btn-info">搜索</button>
+        </form>
+	</div>
+	<div class="panel-body">
+		<table class="table table-hover">
+			<thead>
+				<tr>
+					<th>平台名称</th>
+					<th>平台位置</th>
+					<th>访问用户(uv)</th>
+					<th>我司统计注册</th>
+					<th>激活统计</th>
+					<th>平台返回注册</th>
+					<th>每UV收益</th>
+					<th>UV收益排名</th>
+					<th>总收益</th>
+				</tr>
+			</thead>
+			<tbody>
+			{{range $k,$count := .proDates}}
+				<tr>
+					<td>{{$count.Name}}</td>
+					<td>{{$count.Sort}}</td>
+					<td>{{$count.AccessCount}}</td>
+					<td>{{$count.PlatformRegisterCount}}</td>
+					<td>{{$count.ActivateUser}}</td>
+					<td>{{$count.RegisterCount}}</td>
+					
+					<td>{{if eq $count.CooperationType 0}}-{{else}}{{printf "%.2f" $count.ClickEarnings}}{{end}}</td>
+					<td>{{if $count.Sorting}}{{$count.Sorting}}{{else}}-{{end}}</td>
+					<td>{{printf "%.2f" $count.AllEarnings}}</td>
+				</tr>
+			{{end}}
+			</tbody>
+			<tfoot>
+				<tr>
+					<th colspan="2">合计</th>
+					<th>{{.sumAccessCount}}</th>
+					<th>{{.sumPlatformRegisterCount}}</th>
+					<th>{{.sumActivateUser}}</th>
+					<th>{{.sumRegisterCount}}</th>
+					<th colspan="2">{{printf "%.2f" .sumPriceCount}}</th>
+					<th>{{.sumPrice}}</th>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>

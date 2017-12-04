@@ -1,0 +1,156 @@
+ <style>
+    #shebao td{
+        width: 25%;
+    }
+</style>
+<div class="panel">
+    <div class="panel-heading" style="background: #DFF1D9;">城市信息<span style="float:right; width:200px">最后更新时间:{{.createTime}}</span></div>
+    <div class="panel-body">
+        <table class="table table-striped table-bordered table-hover table-condensed">
+            <tbody>
+                <tr>
+                    <td width="50%">
+                        <span>所属城市：</span>
+                        <span>{{.securityinfo.City}}</span>
+                    </td>
+                    <td width="50%">
+                        <span>地区编码：</span>
+                        <span>{{.securityinfo.AreaCode}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<div class="panel">
+    <div class="panel-heading" style="background: #DFF1D9;">基本信息</div>
+    <div class="panel-body">
+        <table class="table table-striped table-bordered table-hover table-condensed" id="shebao">
+            <tbody>
+                <tr>
+                    <td>
+                        <span>社保卡号：</span>
+                        <span>{{.securityinfo.SocialSecurityNo}}</span>
+                    </td>
+                    <td>
+                        <span>个人编号：</span>
+                        <span>{{.securityinfo.PersonalNo}}</span>
+                    </td>
+                    <td>
+                        <span>姓名：</span>
+                        <span>{{.securityinfo.RealName}}</span>
+                    </td>
+                    <td>
+                        <span>缴存基数：</span>
+                        <span>{{.securityinfo.BaseNumber}}</span>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <span>最后缴存日期：</span>
+                        <span>{{.securityinfo.LastPayDate}}</span>
+                    </td>
+                    <td>
+                        <span>证件类型：</span>
+                        <span>{{.securityinfo.IdType}}</span>
+                    </td>
+                    <td>
+                        <span>证件号码：</span>
+                        <span>{{.securityinfo.IdCard}}</span>
+                    </td>
+                    <td>
+                        <span>名族：</span>
+                        <span>{{.securityinfo.Nation}}</span>
+                    </td>
+                </tr>
+                    <td>
+                        <span>生日：</span>
+                        <span>{{.securityinfo.BirthDay}}</span>
+                    </td>
+                    <td>
+                        <span>手机号码：</span>
+                        <span>{{.securityinfo.Phone}}</span>
+                    </td>
+                    <td>
+                        <span>家庭住址：</span>
+                        <span>{{.securityinfo.Address}}</span>
+                    </td>
+                    <td>
+                        <span>人员状态：</span>
+                        <span>{{.securityinfo.PersonnelStatus}}</span>
+                    </td>
+                </tr>
+                </tr>
+                    <td>
+                        <span>户口属性：</span>
+                        <span>{{.securityinfo.HouseholdRegistration}}</span>
+                    </td>
+                    <td>
+                        <span>首次参保时间：</span>
+                        <span>{{.securityinfo.FirstInsuredDate}}</span>
+                    </td>
+                    <td>
+                        <span>参加工作时间：</span>
+                        <span>{{.securityinfo.WorkTime}}</span>
+                    </td>
+                    <td>
+                        <span>参保单位：</span>
+                        <span>{{.securityinfo.InsuredUnit}}</span>
+                    </td>
+                </tr>
+                </tr>
+                    <td>
+                        <span>参保单位编码：</span>
+                        <span>{{.securityinfo.InsuredUnitCode}}</span>
+                    </td>
+                    <td>
+                        <span>单位类型：</span>
+                        <span>{{.securityinfo.UnitType}}</span>
+                    </td>
+                    <td>
+                        <span>缴存状态：</span>
+                        <span>{{.securityinfo.PayStatus}}</span>
+                    </td>
+                    <td>
+                        <span>开户日期：</span>
+                        <span>{{.securityinfo.BeginDate}}</span>
+                    </td>
+                </tr>
+                </tr>
+                    <td>
+                        <span>工伤保险基数：</span>
+                        <span>{{.securityinfo.IndustrialInsuranceBaseNumber}}</span>
+                    </td>
+                    <td>
+                        <span>失业保险基数：</span>
+                        <span>{{.securityinfo.UnemploymentInsuranceBaseNumber}}</span>
+                    </td>
+                    <td>
+                        <span>医疗保险基数：</span>
+                        <span>{{.securityinfo.MedicalInsuranceBaseNumber}}</span>
+                    </td>
+                    <td>
+                        <span>养老保险基数：</span>
+                        <span>{{.securityinfo.EndowmentInsuranceBaseNumber}}</span>
+                    </td>
+                </tr>
+                </tr>
+                    <td>
+                        <span>生育保险基数：</span>
+                        <span>{{.securityinfo.MaternityInsuranceBaseNumber}}</span>
+                    </td>
+                    <td>
+                        <span>抓取时间：</span>
+                        <span>{{.securityinfo.FetchTime}}</span>
+                    </td>
+                    <td colspan="2">
+                        <span>医疗保险账户余额：</span>
+                        <span>{{.securityinfo.MedicalInsuranceBalance}}</span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

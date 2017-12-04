@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="author" content="lock">
+    <meta name="keywords" content="微融">
+    <meta name="description" content="微融">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+
+    <link href="../../static/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../static/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+    <link href="../../static/css/layout.css" rel="stylesheet">
+    <link href="../../static/css/index.css" rel="stylesheet">
+    <link href="../../static/css/style-responsive.css" rel="stylesheet">
+    <link href="../../static/css/box.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../../favicon.ico">
+
+    <script src="../../static/js/jquery-1.9.0.min.js" type="text/javascript"></script>
+
+
+    <script src="../../static/js/bootstrap.min.js" type="text/javascript"></script>
+    <script src="../../static/js/jquery-ui-1.10.3.min.js" type="text/javascript"></script>
+    <script src="../../static/js/history.js" type="text/javascript"></script>
+    
+
+    <script src="../../static/js/common.js"></script>
+    
+    <script src="../../static/js/WdatePicker.js" type="text/javascript"></script>
+    <script src="../../static/js/layout.js"></script>
+    <script src="../../static/js/myPage.js" type="text/javascript"></script>
+     <script src="../../static/js/page.js" type="text/javascript"></script>
+    <script src="../../static/js/zTree/jquery.ztree.core.js" type="text/javascript"></script>
+    <script src="../../static/js/zTree/jquery.ztree.excheck.js" type="text/javascript"></script>
+    <link href="../../static/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" class="docs" />
+    <script src="../../static/js/echarts.js" type="text/javascript"></script> 
+    <script src="../../static/js/china.js" type="text/javascript"></script> 
+    <script src="../../static/layer/layer.js" type="text/javascript"></script>
+    <script src="../../static/js/js-xlsx/xlsx.full.min.js"></script>
+    <title>微融</title>
+</head>
+<body>
+
+    <div class="left-side sticky-left-side">
+        <a href="/"><img src="../../static/img/wrLogo.png" alt="微融" class="wr_logo"/></a>
+        <div class="left-side-inner">
+            <ul class="nav nav-pills nav-stacked custom-nav js-left-nav"></ul>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="header-section">
+            <a class="toggle-btn"><i class="header_icon_left"></i></a>
+            <div class="menu-right">
+                <ul class="notification-menu nt-menu">
+                    <li> <a style="width: 134px;height: 48px;" id="slidedown_btn" href="javascript:;" class="btn btn-default dropdown-toggle"
+                            data-toggle="dropdown"> <img src="../../static/img/img_01.png" alt="libai"/>{{.DisplayName}}<span class="caret"></span></a>
+                        <ul class="dropdown-menu dropdown-menu-usermenu pull-right">
+                            <li style="cursor: pointer;"><a onclick="ModifyPwdShow()"><i class="fa fa-cog"></i> 更换密码</a></li>
+                            <li style="cursor: pointer;"><a href="/loginout"><i class="fa fa-sign-out"></i> 退出</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            <div style='clear:both;'></div>
+            <div id='qingniu_Mes' style='position: fixed;top: 190px;left: 50%;transform: translateX(-50%)'>
+                <TEXTAREA id=Rt cols=130 style="height: 168px;width: 500px;border: 2px solid #599ef4;border-radius: 5px;display: none"></TEXTAREA>
+            </div>
+        </div>
+        <div class="wrapper">
+            {{.LayoutContent}}
+        </div>
+    </div>
+    <div class="dialog-modifypwd hide1" id="dialog-modifypwd" title="修改密码">
+        <div class="col-md-12">
+            <div class="panel">
+                <div class="panel-body">
+                    <ul class="p-info">
+                        <li class="col-md-12">
+                            <div class="col-md-4">用户名：</div>
+                            <div class="col-md-4">系统管理员</div>
+                        </li>
+                        <li class="col-md-12">
+                            <div class="col-md-4">原密码：</div>
+                            <div class="col-md-4"><input type="password" placeholder="请填写原密码" maxlength="25" id="orgpwd" value="" name="orgpwd"
+                                /></div>
+                        </li>
+                        <li class="col-md-12">
+                            <div class="col-md-4">新密码：</div>
+                            <div class="col-md-4"><input type="password" placeholder="请填写新密码" maxlength="25" id="newpwd" value="" name="newpwd"
+                                /></div>
+                        </li>
+                        <li class="col-md-12">
+                            <div class="col-md-4">确认密码：</div>
+                            <div class="col-md-4"><input type="password" placeholder="请再次填写新密码" maxlength="25" id="newpwd2" value="" name="newpwd2"
+                                /></div>
+                        </li>
+                        <li class="col-md-12">
+                            <div class="col-md-4"></div>
+                            <div class="col-md-8">
+                                <a class="btn btn-info" onclick="ModifyPwd()">确定</a>
+                                <span class="c_red col-md-16 error" style="float:right;display: block;"></span>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+     
+    <script>
+        
+        function ModifyPwdShow() {
+            $("#dialog-modifypwd").dialog("open");
+        }
+        // 联系历史修改
+        $('#dialog-modifypwd').dialog({
+            autoOpen: false,
+            modal: true,
+            width: 500,
+            maxHeight: 500,
+            position: ["center", 100]
+        });
+        function ModifyPwd() {
+            var orgpwd = $("#orgpwd").val();
+            var newpwd = $("#newpwd").val();
+            var newpwd2 = $("#newpwd2").val();
+            if (orgpwd == "" || newpwd2 == "" || newpwd == "") {
+                $(".dialog-modifypwd .error").html("请正确填写密码!");
+            } else if (orgpwd == newpwd) {
+                $(".dialog-modifypwd .error").html("新旧密码不能相同!");
+            } else if (newpwd !== newpwd2) {
+                $(".dialog-modifypwd .error").html("新密码与确认密码不一致!");
+            } else {
+                $.zpost("/system/modifypassword", { orgpwd: orgpwd, newpwd: newpwd, newpwd2: newpwd2 }, function (result) {
+                    if (!!result && result.ret == 200) {
+                        alert("密码修改成功!");
+                        window.location.href = "/loginout";
+                    } else {
+                        $(".dialog-modifypwd .error").html(result.error);
+                    }
+                });
+            }
+        }
+
+        //返回上一条历史记录
+        $('.toggle-btn').on('click',function(){
+            if(window.sessionStorage.URl){
+                getpage(window.sessionStorage.URl);
+            }
+        });
+        
+
+
+    </script>
+</body>
+</html>

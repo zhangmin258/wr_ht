@@ -1,0 +1,649 @@
+
+
+<style>
+
+    label{
+        font-weight: normal;
+    }
+
+    #form{
+        padding: 30px;
+    }
+
+    .public{
+        clear: both;
+        overflow: hidden;
+        padding-bottom: 50px;
+    }
+
+    .public .title{
+        vertical-align: top;
+        margin-right: 20px;
+    }
+
+    .public textarea{
+        width: 400px;
+        height: 100px;
+        max-width: 400px;
+        max-height: 100px;
+    }
+
+    .public select{
+        width: 200px;
+        height: 30px;
+    }
+
+    .public input[type="text"]{
+        width: 200px;
+        height: 30px;
+    }
+
+    .sms_text, .phone_num{
+        position: relative;
+    }
+
+    .sms_text .sr, .sms_text .cg, .phone_num .empty{
+        position: absolute;
+        left: 400px;
+        top: 100px;
+        font-size: 12px;
+    }
+    .sms_text .cg{
+        left: 410px;
+    }
+
+    .phone_num .empty{
+        left: 455px;
+    }
+
+    .sms_text textarea{
+        text-indent: 10px;
+    }
+
+    .phone_num textarea{
+        padding-left: 10px;
+    }
+
+    .file{
+        position: relative;
+        display: inline-block;
+        margin-left: 50px;
+        margin-right: 50px;
+        margin-top: 10px;
+        vertical-align: top;
+    }
+
+    .file span{
+        width: 100px;
+        height: 30px;
+        display: inline-block;
+        line-height: 30px;
+        text-align: center;
+        border: #ccc solid 1px;
+        border-radius: 5px;
+        margin-right: 10px;
+    }
+
+    .file input[type="checkbox"], .timed_push input[type="checkbox"]{
+        width: 20px;
+        height: 20px;
+        position: relative;
+        z-index: 10;
+        vertical-align: -5px;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+
+    .file img, .timed_push img{
+        width: 20px;
+        height: 20px;
+        position: relative;
+        z-index: 0;
+        left: -25px;
+        top: -1px;
+    }
+
+    .file .upload{
+        width: 100px;
+        height: 30px;
+        border: red solid 1px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        z-index: 10;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+
+    .file em{
+        font-style: normal;
+        color: #999;
+        font-size: 10px;
+    }
+
+    .count1{
+        display: inline-block;
+        margin-top: 20px;
+        vertical-align: top;
+    }
+
+    .count2{
+        display: inline-block;
+        vertical-align: middle;
+        margin: 0 50px;
+    }
+
+    #start_num, #end_num{
+        text-indent: 10px;
+        margin-right: 20px;
+    }
+
+
+    #content{
+        padding: 20px 30px;
+    }
+
+    #content p{
+        line-height: 2;
+    }
+
+    /*#content .title{
+        font-weight: bold;
+        width: 20%;
+        float: left;
+        display: block;
+       
+    }
+     #content .info{
+        width: 80%;
+        float: left;
+        display: block;
+    }*/
+
+    #content input{
+        width: 100px;
+        display: inline-block;
+        margin-right: 10px;
+    }
+
+</style>
+
+
+
+
+
+
+<div class="panel">
+    <div class="panel-heading">短信营销</div>
+    <div class="panel-body">
+        <form id="form">
+            <div class="sms_text public">
+                <span class="title">短信文本</span>
+                <textarea name="sms_text" id="sms_text" placeholder="提示：短信文本不能超过70个字，每条短信必带签名，例如：【个性贷】；每条短信必带：退订回T"></textarea>
+                <dd class="sr">可输入<strong class="num" style="color: green;">70</strong>个字</dd>
+                <dd class="cg" style="display: none;">已超过<strong class="num" style="color: red;"></strong>字<!-- ，<span class="clear" style="cursor: pointer; color: #06f;">清尾</span> --></dd>
+                <span id="msg" style="margin-left: 20%;font-size: 15px;color: #00B83F"></span>
+            </div>
+
+            <div class="phone_num public">
+                <div style="float: left;">
+                    <span class="title">接收号码</span>
+                    <textarea name="phone_num" id="phone_num" placeholder="提示：多个手机号码请用换行隔开"></textarea>
+                    <dd class="empty" style="cursor: pointer; color: #06f;">清空</dd>
+                </div>
+                <div style="float: left;">
+                    <dd class="file">
+                        <span>文件导入</span>
+                        <input type="hidden" id="file_name">
+                        <input type="checkbox" id="isUpload">
+                        <img src="../static/img/false.png" alt="">
+                        <input type="file" class="upload" disabled="disabled" style=" cursor: pointer;"><br>
+                        <em>手机号码文件为txt/excel格式，以换行区分</em>
+                    </dd>
+                    <span class="count1">发送条数：<span class="count11">0</span>条</span>
+                    <div></div>
+                    <dd class="file">
+                        <span style="border: none;">微融用户</span>
+                        <input type="checkbox" id="wr_user">
+                        <img src="../static/img/false.png" alt="">
+                    </dd>
+                    <dd class="file" id="num" style="display: none;">
+                        <label for="start_num">起始编号</label>
+                        <input type="type" id="start_num" name="start_num">
+                        <label for="end_num">结束编号</label>
+                        <input type="type" id="end_num" name="end_num">
+                        <em>(结束编号最大不得超过{{.count}} )</em>
+                    </dd>
+
+                </div>
+            </div>
+            <div class="short public">
+                <span class="title" style="vertical-align: middle;">短信通道</span>
+                <select name="short" id="short">
+                    <option value="0">请选择短信通道</option>
+                    <!--<option value="1">微融短信</option>-->
+                    <option value="2">空间畅想</option>
+                    <option value="3">云融正通</option>
+                </select>
+                <span class="count2">剩余条数：<span class="count22">0</span>条</span>
+                <input type="hidden" id="file_count">
+                <input type="hidden" id="weirong_count">
+                <span class="count3">剩余金额：<span class="count33">0</span>元</span>
+            </div>
+            <div class="timed_push public">
+                <span class="title" style="vertical-align: middle;">定时推送</span>
+                <input name="startTime" id="startDate" class="Wdate input-small" type="text" onFocus="var date = getNowFormatDate(); var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',
+                        onpicked:function(){endDate.focus();},minDate:date,maxDate:'#F{$dp.$D(\'endDate\')}'})" style="text-indent: 10px;" />
+
+                 <input name="endTime" id="endDate" class="Wdate input-small" type="text" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})" value="" style="display: none" />&nbsp;&nbsp;&nbsp;
+                 <label>
+                     <input type="checkbox" id="timed_push">
+                     <img src="../static/img/false.png" alt="未选中">
+                 </label>
+            </div>
+            <input type="button" value="发送" class="btn btn-info" style="margin: 0 auto; width: 100px; display: block;" id="send">
+        </form>
+    </div>
+</div>
+
+
+<!-- 弹窗内容 -->
+<div id="content" style="display: none;">
+    <p>
+        <span class="title">发送内容：</span>
+        <span class="info info1"></span>
+    </p>
+    <p>
+        <span class="title">发送条数：</span>
+        <span class="info info2">0条</span>
+    </p>
+    <p>
+        <span class="title">剩余条数：</span>
+        <span class="info info3">0条</span>
+    </p>
+    <p>
+        <span class="title">账户余额：</span>
+        <span class="info info4">0元</span>
+    </p>
+    <p style="display: none;" id="tuisong">
+        <span class="title">推送时间：</span>
+        <span class="info info5"></span>
+    </p>
+    <p style="text-align: center;">
+        <input type="button" value="取消" class="btn btn-default" id="cancel">
+        <input type="button" value="确定发送" class="btn btn-info" id="sure">
+    </p>
+</div>
+
+<script>
+
+    $('input[type="checkbox"]').on('click',function(){
+        if(this.checked){
+            $(this).siblings("img").attr("src","../static/img/true.png");
+　　　　}else{
+　　　　　　$(this).siblings("img").attr("src","../static/img/false.png");
+　　　　}
+    });
+
+    //短信文本字数统计
+    $('#sms_text').off().on('keyup',function(){
+        var len = $.trim($('#sms_text').val()).length;
+        var num = 70 - len;
+        if(num >= 0){
+            $('.sr').show();
+            $('.cg').hide();
+            $('.sr strong').html(num);
+        }else{
+            $('.sr').hide();
+            $('.cg').show();
+            $('.cg .num').html(Math.abs(num));
+        }
+    });
+
+    //接收号码
+    $('#phone_num').off('blur').on('blur',function(){
+        phone_num = $.trim($('#phone_num').val());
+        var arr_num = [];
+        var error_num = [];
+        arr_num = phone_num.split('\n');
+        if(phone_num.length === 0){
+            rowNumbers=0;
+            var weirongcount = $('#weirong_count').val();
+            var filecount = $('#file_count').val();
+            var rowNumber = Number(weirongcount) + Number(filecount);
+            $('.count11').html(rowNumber);
+        }
+        $.each(arr_num, function(index, value){
+            if(value && !(/^1[34578]\d{9}$/.test($.trim(value)))){
+                alert('输入的号码有误，请重新输入！');
+                error_num.push(value);
+            }
+        });
+        if(error_num.length >= 1){
+            return;
+        }
+        if(phone_num){
+            var arr = $('#phone_num').val().split('\n');
+            var res = [];
+            for(var i = 0; i < arr.length; res.indexOf(arr[i++]) === -1 && res.push(arr[i - 1]));
+            $('#phone_num').val(res.join('\n'));
+            if ($('#phone_num').val().length>0){
+                rowNumbers = $('#phone_num').val().split('\n').length;
+            };
+            var weirongcount = $('#weirong_count').val();
+            var filecount = $('#file_count').val();
+            rowNumbers = rowNumbers + Number(weirongcount) + Number(filecount);
+            $('.count11').html(rowNumbers);
+        }
+    });
+
+    //文件导入
+    var rowNumbers = 0;
+    var filesPath = '';
+    //文件上传
+    $(".upload").off().on("change", function () {
+        var upload = $(this).val();
+        if(!/\.(txt|xlsx)$/i.test(upload)){
+            alert("文件类型必须是xlsx或者txt格式");
+            return false;
+        }
+        $('#file_name').val(upload);
+        var reader = new FileReader();
+        var file = this.files[0];
+        reader.onload = function(e) {
+            filesPath = e.target.result;   //这里是把excel文件转成64位数据存入文本框中
+            layer.msg('文件正在加载中，请稍后', {
+                shade: [0.3,'black'],
+                time:20000
+            });
+                $.ajax({
+                    url: '/msgmarketing/receivefile',
+                    type: 'POST',
+                    data: {
+                        filesPath: filesPath
+                    },
+                    success: function (res) {
+                        layer.closeAll();
+                        if (res.ret == 200) {
+                            $('#msg').html(res.msg);
+                            if ($('#phone_num').val().length>0){
+                                rowNumbers = $('#phone_num').val().split('\n').length;
+                            };
+                            var weirongcount = $('#weirong_count').val();
+                            $('.count11').html(res.Count + rowNumbers + Number(weirongcount));
+                            $('#file_count').val(res.Count);
+                        }
+                        if (res.ret == 403) {
+                            console.log(res.msg);
+                        }
+                    }
+                });
+        };
+        reader.readAsDataURL(file);
+    });
+
+    //是否选择文件导入
+    $('#isUpload').on('click',function(){
+        if(this.checked){
+            $('.upload').removeAttr('disabled');
+        }else{
+            $('.upload').attr('disabled',true);
+            if ($('#phone_num').val().length>0){
+                rowNumbers = $('#phone_num').val().split('\n').length;
+            };
+            var weirong_count = $('#weirong_count').val();
+            $('.count11').html(rowNumbers + Number(weirong_count));
+            $('#file_count').val("");
+            $('#file_name').val("");
+            $('.upload').val("");
+            $('#msg').html("");
+            filesPath="";
+        }
+    });
+
+    //微融用户显示隐藏
+    $('#wr_user').on('click',function(){
+        if(this.checked){
+            $('#num').show();
+        }else{
+            $('#num').hide();
+            if ($('#phone_num').val().length>0){
+                rowNumbers = $('#phone_num').val().split('\n').length;
+            };
+            var file_count = $('#file_count').val();
+            $('.count11').html(rowNumbers + Number(file_count));
+            $('#weirong_count').val("");
+            $('#start_num').val("");
+            $('#end_num').val("");
+        }
+    });
+
+    //微融用户(编号验证)
+    var start_num = '';
+    var end_num = '';
+    function ajax_load(start_num, end_num){
+        var count_wr = end_num-start_num+1;
+        if ($('#phone_num').val().length>0){
+            rowNumbers = $('#phone_num').val().split('\n').length;
+        };
+        var file_count = $('#file_count').val();
+        $('.count11').html(count_wr + rowNumbers + Number(file_count));
+        $('#weirong_count').val(count_wr);
+    }
+    $('#start_num').on('blur',function(){
+        start_num = parseInt($(this).val());
+        end_num = parseInt($('#end_num').val());
+        if(start_num && end_num && start_num > end_num){
+            alert('起始编号必须小于结束编号！');
+            return;
+        }
+        if(start_num && end_num && end_num > {{.count}}){
+            alert('结束编号不得超过最大限制！');
+            return;
+        }
+        if(start_num && end_num && start_num <= end_num){
+            ajax_load(start_num, end_num);
+        }
+    });
+
+    $('#end_num').on('blur',function(){
+        start_num = parseInt($('#start_num').val());
+        end_num = parseInt($(this).val());
+        phone_num = $('#phone_num').val();
+        if(start_num && end_num && start_num > end_num){
+            alert('起始编号必须小于结束编号！');
+            return;
+        }
+        if(start_num && end_num && end_num > {{.count}}){
+            alert('结束编号不得超过最大限制！');
+            return;
+        }
+        if(start_num && end_num && start_num <= end_num){
+            ajax_load(start_num, end_num);
+        }
+    });
+
+    //清空号码
+    $('.empty').on('click',function(){
+        $('#phone_num').val('');
+        $('.count11').html(0);
+        phone_num = '';
+        $('#start_num').val('');
+         $('#end_num').val('');
+         $('#file_count').val('');
+         $('#weirong_count').val('');
+    });
+
+    //短信通道
+    $('#short').on('change',function(){
+        var short = $('#short').val();
+        $.ajax({
+            url: '/msgmarketing/showmsgbalance',
+            type: 'post',
+            data: {
+                ChannelName: short
+            },
+            success: function(res){
+                if(res.ret == 200){
+                    $('.count22').html(res.SMSCount);
+                    $('.count33').html(res.Balance);
+                }
+            }
+        });
+    });
+
+    //点击发送按钮
+    var sms_text = '';
+    var phone_num = '';
+    var fileName = "";
+    //定时推送
+    var pushTime = '';
+    $('#send').off('click').on('click',function(){
+            if($('#timed_push').is(':checked')){
+                pushTime = $('#startDate').val();
+            }else{
+                pushTime = '';
+            };
+            console.log(pushTime);
+        //短信文本验证
+        sms_text = $.trim($('#sms_text').val());
+        var len = $.trim($('#sms_text').val()).length;
+        fileName = $('#file_name').val();
+        // if(!sms_text){
+        //     alert('短信文本不得为空！');
+        //     return;
+        // }
+        // if (sms_text && sms_text.indexOf('【') < 0 ) {
+        //     alert("签名内容请用【】包裹");
+        //     return;
+        // }
+        // if (sms_text && sms_text.indexOf('】') < 0 ) {
+        //     alert("签名内容请用【】包裹");
+        //     return;
+        // }
+
+        // if(sms_text && sms_text.indexOf('【】') >= 0 ){
+        //     alert("签名内容不得为空");
+        //     return;
+        // }
+        // if (sms_text && sms_text.substring(len - 4) != "退订回T" ) {
+        //     alert("短信的最后4个字符必须为退订回T");
+        //     return;
+        // }
+
+        //起始编号验证
+         start_num = $('#start_num').val();
+         end_num = $('#end_num').val();
+        if(start_num && /^[0-9]*[1-9][0-9]*$/.test($.trim(start_num)) && !end_num){
+            alert('结束编号不得为空！');
+            return;
+        }
+        if(end_num && /^[0-9]*[1-9][0-9]*$/.test($.trim(end_num)) && !start_num){
+            alert('起始编号不得为空！');
+            return;
+        }
+        if(start_num && !/^[0-9]*[1-9][0-9]*$/.test($.trim(start_num))){
+            alert("起始编号必须为正整数！");
+            return;
+        }
+        if(end_num && !/^[0-9]*[1-9][0-9]*$/.test($.trim(end_num))){
+            alert("结束编号必须为正整数！");
+            return;
+        }
+        if(start_num && end_num && end_num > {{.count}}){
+            alert('结束编号不得超过最大限制！');
+            return;
+        }
+        if ($('#short').val()==0){
+            alert('请选择短信通道！');
+            return;
+        };
+
+        $('.info1').html(sms_text);
+        $('.info2').html($('.count11').html() + '条');
+        $('.info3').html($('.count22').html() + '条');
+        $('.info4').html($('.count33').html() + '元');
+        if(pushTime){
+            $('#tuisong').show();
+            $('.info5').html(pushTime);
+        }else{
+             $('#tuisong').hide();
+        }
+
+        layer.open({
+            type: 1,
+            title: '短信信息',
+            area: '500px',
+            content: $('#content')
+        });
+
+    });
+
+    //取消发送
+    $('#cancel').on('click',function(){
+        layer.closeAll();
+    });
+
+    //确定发送
+    $('#sure').off("click").on('click',function(){
+        layer.closeAll();
+        setTimeout(function () {
+            layer.msg('用户导入中，请稍后', {
+                shade: [0.3,'black'],
+                time:200000
+            });
+        },200);
+        var short = $('#short').val();
+            $.ajax({
+                url: '/msgmarketing/sendmarketingmsg',
+                type: 'post',
+                data: {
+                    Body: sms_text,
+                    MobilePhones: phone_num,
+                    ChannelName: short,
+                    PushTime: pushTime,
+                    Begin: start_num,
+                    End: end_num,
+                    fileName: fileName,
+                    filesPath: filesPath
+                },
+                success: function (res) {
+                    layer.closeAll();
+                    setTimeout(function () {
+                        if (res.ret == 200) {
+                            layer.msg(res.msg, {
+                                shade: [0.3, 'black'],
+                                time: 1000
+                            });
+                        }
+                        if (res.ret != 200) {
+                            layer.closeAll();
+                            setTimeout(function () {
+                                alert(res.msg);
+                            },500);
+                        };
+                        setTimeout(function () {
+                            window.location.reload();    //页面当前刷新
+                        },1300);
+                    },500);
+                }
+            });
+    });
+
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate + " " + date.getHours() + seperator2 + date.getMinutes();
+        return currentdate;
+    }
+
+</script>

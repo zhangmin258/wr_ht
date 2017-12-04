@@ -1,0 +1,394 @@
+<style>
+    .form-group {
+        margin-bottom: 30px;
+    }
+    #xlfile{
+        display: inline-block;
+        position: relative;
+    }
+    #File{
+        position: absolute;
+        z-index: 100;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading" style="padding-bottom: 35px;">
+        <strong class="pull-left">数据录入</strong>
+        <div class="pull-left" style="margin-left: 15%; width: 50%; font-size: 15px;">
+            <strong>运营商：</strong>
+            <strong>{{.agentProInfo.AgentName}}</strong>
+            <strong style="margin-left: 5%;">代理产品：</strong>
+            <strong>{{.agentProInfo.ProName}}</strong>
+        </div>
+        <div class="pull-right">
+            <button type="button" class="btn btn-info" style="width: 80px;" id="xlsxdown">下载模板</button>
+            <form id="xlfile">
+                <input type="button" onclick="clp()" class="btn btn-info" value="Excel导入"/>
+                <input type="file"  name="xlfile" id="File" style="width: 0;height: 0">
+            </form>
+        </div>
+    </div>
+    <div class="panel-body">
+        <form action="/productdata/updateProductData" id="searchForm" method="post" class="form-horizontal">
+            <div class="form-group">
+                <span id="info" style="color: green; font-size:large"></span>
+                <label for="startDate" class="col-sm-2 control-label">日期</label>
+                <div class="col-sm-3">
+                    <input id="startDate" class="Wdate input-small form-control is_disabled" value='{{.daliyData.Date.Format "2006-01-02"}}'
+                           type="text"
+                           onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd',onpicked:function(){
+                                getData(),
+                               endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}'})"/>
+
+                    <input id="endDate" class="Wdate input-small form-control" type="hidden"
+                           onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})"
+                           value="{{.end_time}}"/>
+                </div>
+            </div>
+            <div class="form-group" hidden="true">
+                <label for="product_id" class="col-sm-2 control-label">product_id</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="product_id" value="{{.ProductId}}"
+                           placeholder="请输入ProductId"></div>
+            </div>
+            <div class="form-group" hidden="true">
+                <label for="agent_id" class="col-sm-2 control-label">agent_id</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="agent_id" value="{{.AgentId}}" placeholder="请输入AgentId">
+                </div>
+            </div>
+            <div class="form-group" hidden="true">
+                <label for="id" class="col-sm-2 control-label">id</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="id" value="{{.daliyData.Id}}"></div>
+            </div>
+
+            <div class="form-group" hidden="true">
+                <label for="agent_product_id" class="col-sm-2 control-label">agent_product_id</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="agent_product_id" value="{{.agentProductId}}">
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="register_count" class="col-sm-2 control-label">注册人数</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control is_readonly" id="register_count" value="{{.daliyData.RegisterCount}}"
+                           placeholder="请输入注册人数">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="apply_count" class="col-sm-2 control-label">认证完成人数</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control is_readonly" id="apply_count" value="{{.daliyData.ApplyCount}}"
+                           placeholder="请输入认证完成人数">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="credit_extension_count" class="col-sm-2 control-label">授信人数</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control is_readonly" id="credit_extension_count" value="{{.daliyData.CreditCount}}"
+                           placeholder="请输入授信人数">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="loan_apply_count" class="col-sm-2 control-label">申请借款人数</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control is_readonly" id="loan_apply_count" value="{{.daliyData.ApplyLoanCount}}"
+                           placeholder="请输入申请借款人数">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="credit_count" class="col-sm-2 control-label">放款人数</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control is_readonly" id="credit_count" value="{{.daliyData.MakeLoanCount}}"
+                           placeholder="请输入放款人数">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="credit_money" class="col-sm-2 control-label">放款金额</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control is_readonly" id="credit_money" value="{{.daliyData.MakeLoanAmount}}"
+                           placeholder="请输入放款金额">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="credit_money" class="col-sm-2 control-label">合作模式&nbsp<b style="color:red; vertical-align: -2px;">*</b></label>
+                <div class="col-sm-3">
+                    <select id="CPASelect" class="form-control is_disabled" style="font-size:14px">
+                        <option value="1" {{if .daliyData}}{{if eq .daliyData.JointMode 1}}selected="selected"{{end}}{{end}}>CPA</option>
+                        <option value="2" {{if .daliyData}}{{if eq .daliyData.JointMode 2}}selected="selected"{{end}}{{end}}>CPS</option>
+                        <option value="3" {{if .daliyData}}{{if eq .daliyData.JointMode 3}}selected="selected"{{end}}{{end}}>CPA+CPS</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group" id="cpa_div">
+                <label for="credit_money" class="col-sm-2 control-label">CPA的价格&nbsp<b style="color:red; vertical-align: -2px;">*</b></label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control is_readonly" id="cpa_price" value="{{.daliyData.CpaPrice}}"
+                           placeholder="请输入CPA的价格">
+                </div>
+            </div>
+            <div class="form-group cps_div">
+                <label for="credit_money" class="col-sm-2 control-label">CPS的首借百分比</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control is_readonly" id="cps_first_per" value="{{.daliyData.CpsFirstPer}}"
+                           placeholder="请输入CPS的价格">
+                </div>
+            </div>
+            <div class="form-group cps_div">
+                <label for="credit_money" class="col-sm-2 control-label">CPS的复借百分比</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control is_readonly" id="cps_again_per" value="{{.daliyData.CpsAgainPer}}"
+                           placeholder="请输入CPS的价格">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="credit_money" class="col-sm-2 control-label">CPA结算的有效事件&nbsp<b style="color:red; vertical-align: -2px;">*</b></label>
+                <div class="col-sm-3">
+                    <select id="ASelect" class="form-control is_disabled" style="font-size:14px">
+                        <option {{if .daliyData}}{{if eq .daliyData.CpaDefine "注册"}}selected="selected"{{end}}{{end}}>注册</option>
+                        <option  {{if .daliyData}}{{if eq .daliyData.CpaDefine "认证"}}selected="selected"{{end}}{{end}}>认证</option>
+                        <option  {{if .daliyData}}{{if eq .daliyData.CpaDefine "授信"}}selected="selected"{{end}}{{end}}>授信</option>
+                        <option  {{if .daliyData}}{{if eq .daliyData.CpaDefine "申请借款"}}selected="selected"{{end}}{{end}}>申请借款</option>
+                        <option  {{if .daliyData}}{{if eq .daliyData.CpaDefine "放款"}}selected="selected"{{end}}{{end}}>放款</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-3 col-sm-9">
+                    {{if eq .cleaningState 0}}
+                    <button type="button" class="btn btn-info" id="btn">保存</button>
+                    {{else}}{{end}}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+    var joint_mode = $('#CPASelect').val();
+    if(joint_mode == 1){
+        $('#cpa_div').show();
+        $('.cps_div').hide();
+    }else if(joint_mode == 2){
+        $('.cps_div').show();
+        $('#cpa_div').hide();
+    }else if(joint_mode == 3){
+        $('#cpa_div').show();
+        $('.cps_div').show();
+    }
+    $('#CPASelect').on('change',function () {
+        joint_mode = $('#CPASelect').val();
+        if(joint_mode == 1){
+            $('#cpa_div').show();
+            $('.cps_div').hide();
+        }else if(joint_mode == 2){
+            $('.cps_div').show();
+            $('#cpa_div').hide();
+        }else if(joint_mode == 3){
+            $('#cpa_div').show();
+            $('.cps_div').show();
+        }
+    })
+    if ({{.cleaningState}} == 1) {
+        $(".is_readonly").attr("readonly",true);
+        $(".is_disabled").attr("disabled",true);
+    }
+    function getData() {
+        var agentProductId = $('#agent_product_id').val();
+        var id = $('#id').val();
+        var startDate = $('#startDate').val();
+        $.ajax({
+            url: '/productdata/getproductdateinfo',
+            type: 'post',
+            data: {
+                agentProductId:agentProductId,
+                id: id,
+                startDate: startDate
+            },
+            success: function (res) {
+                if (res.ret == 200) {
+                    var dailyData = res.dailyData;
+                    $('#register_count').val(dailyData.RegisterCount);
+                    $('#apply_count').val(dailyData.ApplyCount);
+                    $('#credit_extension_count').val(dailyData.CreditCount);
+                    $('#loan_apply_count').val(dailyData.ApplyLoanCount);
+                    $('#credit_count').val(dailyData.MakeLoanCount);
+                    $('#credit_money').val(dailyData.MakeLoanAmount);
+                    $('#CPASelect').val(dailyData.JointMode);
+                    $('#cpa_price').val(dailyData.CpaPrice);
+                    $('#cps_first_per').val(dailyData.CpsFirstPer);
+                    $('#cps_again_per').val(dailyData.CpsAgainPer);
+                    $("#ASelect").val(dailyData.CpaDefine);
+                    $('#id').val(dailyData.Id);
+                    $('#info').html('');
+                    if(dailyData.JointMode == 1){
+                        $('#cpa_div').show();
+                        $('.cps_div').hide();
+                    }else if(dailyData.JointMode == 2){
+                        $('.cps_div').show();
+                        $('#cpa_div').hide();
+                    }else if(dailyData.JointMode == 3){
+                        $('#cpa_div').show();
+                        $('.cps_div').show();
+                    }
+                }
+                if (res.ret == 403) {
+                    $('#register_count').val('');
+                    $('#apply_count').val('');
+                    $('#credit_extension_count').val('');
+                    $('#loan_apply_count').val('');
+                    $('#credit_count').val('');
+                    $('#credit_money').val('');
+                    $('#CPASelect').val('');
+                    $('#cpa_price').val('');
+                    $('#cps_first_per').val('');
+                    $('#cps_again_per').val('');
+                    $('#ASelect').val('');
+                     $('#id').val('');
+                    $('#info').html(res.err);
+                    $('#cpa_div').show();
+                    $('.cps_div').hide();
+                }
+            }
+        });
+    }
+
+
+    $('#btn').off('click').on('click', function () {
+        var id = $('#id').val();
+        var agent_product_id = $('#agent_product_id').val();
+        var startDate = $('#startDate').val();   //日期
+        var register_count = $('#register_count').val();      //注册人数
+        var apply_count = $('#apply_count').val();                //申请人数
+        var credit_extension_count = $('#credit_extension_count').val();   //授信人数
+        var loan_apply_count = $('#loan_apply_count').val();      //申请借款人数
+        var credit_count = $('#credit_count').val();      //放款人数
+        var credit_money = $('#credit_money').val();        //放款金额
+        var joint_mode = $('#CPASelect').val();        //合作模式
+        var cpa_price = $('#cpa_price').val();        //CPA的价格
+        var cps_first_per = $('#cps_first_per').val();        //CPS的价格
+        var cps_again_per = $('#cps_again_per').val();        //CPS的价格
+        var cpa_define = $("#ASelect").val();        //CPA结算的有效事件
+        if (!startDate) {
+            alert('日期不得为空');
+            return;
+        }
+        if (!joint_mode) {
+            alert('合作模式不得为空');
+            return;
+        } else if (joint_mode == 1 || joint_mode == 3) {
+            if (!cpa_price){
+                alert('CPA的价格不得为空');
+                return;
+            }
+        } else if (!cpa_define) {
+            alert('CPA结算的有效事件不得为空');
+            return;
+        }
+
+//        if (!startDate) {
+//            alert('日期不得为空');
+//        } else if (!register_count) {
+//            alert('注册人数不得为空');
+//        } else if (!apply_count) {
+//            alert('申请人数不得为空');
+//        } else if (!credit_extension_count) {
+//            alert('授信人数不得为空');
+//        } else if (!loan_apply_count) {
+//            alert('申请借款人数不得为空');
+//        } else if (!credit_count) {
+//            alert('放款人数不得为空');
+//        } else if (!credit_money) {
+//            alert('放款金额不得为空');
+//        } else {
+        $.ajax({
+            url: '/productdata/updateProductData',
+            type: 'post',
+            data: {
+                Id: id,
+                AgentProductId: agent_product_id,
+                DateTime: startDate,
+                RegisterCount: register_count,
+                ApplyCount: apply_count,
+                CreditCount: credit_extension_count,
+                ApplyLoanCount: loan_apply_count,
+                MakeLoanCount: credit_count,
+                MakeLoanAmount: credit_money,
+                JointMode:joint_mode,
+                CpaPrice:cpa_price,
+                CpsFirstPer:cps_first_per,
+                CpsAgainPer:cps_again_per,
+                CpaDefine:cpa_define
+            },
+            success: function (res) {
+                if (res.ret == 200) {
+                    alert(res.msg)
+                } else {
+                    alert("操作失败")
+                }
+
+                // getpage(window.sessionStorage.URl);
+            }
+        });
+    });
+
+
+    //跳转file点击事件
+    function clp(){
+        return  $("#File").click();
+    }
+
+
+
+    //文件上传
+    $("#File").off("change").on("change", function () {
+        var upload = $(this).val();
+        if(!/\.(xlsx)$/i.test(upload)){
+            alert("文件类型必须是xlsx格式");
+            return false;
+        }
+        var agent_product_id = $('#agent_product_id').val();
+        var filesPath = '';
+        var reader = new FileReader();
+        var file = this.files[0];
+        reader.onload = function(e) {
+            filesPath = e.target.result;   //这里是把excel文件转成64位数据存入文本框中
+            $.ajax({
+                url: '/productdata/datafromexcel',
+                type: 'POST',
+                data: {
+                    AgentProductId: agent_product_id,
+                    filesPath: filesPath
+                },
+                success: function (res) {
+                    if (res.ret == 200) {
+                        $('#info').html(res.msg)
+                    }
+                    if (res.ret == 403) {
+                        $('#info').html(res.err)
+                    }
+                }
+            });
+        };
+        reader.readAsDataURL(file);
+    });
+
+
+     $('#xlsxdown').on('click',function(){
+        var url = '/productdata/downloadexcel';
+        window.location.href = url;
+    });
+
+
+</script>
+
+

@@ -1,0 +1,56 @@
+ <style>
+    #purse th,td{
+        width: 20%;
+    }
+</style> 
+
+<div class="panel" id="purse">
+    <div class="panel-heading">钱包收支明细</div>
+    {{if eq .messcount 0}}
+    <div class="panel-body">
+        <strong style="padding-left: 45%;font-size: 16px; line-height: 2;">没有钱包收支记录</strong>
+    </div>
+    {{else}}
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="text-center">时间</th>
+                    <th class="text-center">类型</th>
+                    <th class="text-center">项目</th>
+                    <th class="text-center">消耗/收入金额(元)</th>
+                    <th class="text-center">余额(元)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $k,$v := .walletrecords}}
+                <tr class="text-center">
+                    <td>{{$v.CreateTime}}</td>
+                    <td>{{$v.PayOrGet}}</td>
+                    <td>{{$v.DealType}}</td>
+                    <td>{{$v.MoneyAmount}}</td>
+                    <td>{{$v.AfterMoneyAmount}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <div class="fl">
+                            <div class="pagination">每页{{.pagesize}}条，总共{{.messcount}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="../usermetadata/userswalletdata.html?id={{.user.Id}}" currentPage="{{.messpage}}" pageCount="{{.messpagecount}}"></div>
+                            <script type="text/javascript">
+                                $(function() {
+                                    $("#pagination").my_page("","#purse");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{end}}
+</div>

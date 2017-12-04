@@ -1,0 +1,223 @@
+
+<style>
+    td{
+        vertical-align: middle !important;
+    }
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading">
+        <strong>已结算平台列表</strong>
+        <form action="" style="display: inline-block; margin-left: 30%;" id="searchForm">
+            <input autocomplete="off" name="startTime" id="startDate" class="Wdate input-small form-control" value="" type="text"
+                    onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM',
+                    oncleared:function(){clean()},
+                    onpicked:function(){getHisData(),endDate.focus();},
+                    maxDate:'#F{$dp.$D(\'endDate\')}'})"
+                   style="width: 200px; display: inline-block;" placeholder="请选择月份" autocomplete="off" 
+            />&nbsp;&nbsp;&nbsp;
+            <input autocomplete="off" name="endTime" id="endDate" class="Wdate input-small form-control" type="hidden"
+                   onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})"
+                   value="" style="display: none;"/>
+            <select name="order" id="sort" class="form-control" style="width: 200px; display: inline-block;">
+                <option value="1">时间正序</option>
+                <option value="2">时间倒叙</option>
+                <option value="3">金额排序</option>
+            </select>
+        </form>
+    </div>
+    <div class="panel-body" id="clean">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th>结算日期</th>
+                <th>平台名称</th>
+                <th>结算始末日期</th>
+                <th>有效数量</th>
+                <th>放款金额</th>
+                <th>结算单价</th>
+                <th>结算金额</th>
+                <th>是否开票</th>
+                <th>备注</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range $k,$v:= .cleanHistoryInfo}}
+                <tr>
+                    <td>{{$v.SettleTime.Format "2006-01-02"}}</td>
+                    <td>{{$v.Name}}</td>
+                    <td>{{$v.BeginTime.Format "2006-01-02"}}~{{$v.EndTime.Format "2006-01-02"}}</td>
+                    <td>{{if $v.QuantityCount}}{{$v.QuantityCount}}{{else}}-{{end}}人次</td>
+                    <td>{{if $v.MakeLoanAmount}}{{printf "%.2f" $v.MakeLoanAmount}}{{else}}-{{end}}元</td>
+                    <td>{{$v.ProPrice}} 元</td>
+                    <td>{{printf "%.2f"  $v.SettleMoney}}元</td>
+                    <td>{{if eq $v.IsBilling 1}}已开票{{else}}未开票{{end}}</td>
+                    <td>{{$v.Remark}}</td>
+                    <td>
+                        <a href='../procleaning/showsettlementhistory?clId={{$v.Id}}&pid={{$v.ProId}}&startDate={{$v.BeginTime.Format "2006-01-02"}}&endDate={{$v.EndTime.Format "2006-01-02"}}' class="skip1">查看明细</a>
+                    </td>
+                </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="10">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count1}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination1" data-url="/cleanhis/cleaned" currentPage="{{.pageNum1}}" pageCount="{{.pageCount1}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination1").my_page("#searchForm","#clean");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<div class="panel">
+    <div class="panel-heading">
+        <strong>未结算平台列表</strong>
+        <form action="" style="display: inline-block; margin-left: 30%;" id="searchForm1">
+            <input autocomplete="off" name="startTime" id="startDate1" class="Wdate input-small form-control" value="" type="text"
+                   onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM',oncleared:function(){clean()},
+                       onpicked:function(){getData(),endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}'})"
+                   style="width: 200px; display: inline-block;" placeholder="请选择月份" autocomplete="off"
+            />&nbsp;&nbsp;&nbsp;
+            <input autocomplete="off" name="endTime" id="endDate1" class="Wdate input-small form-control" type="hidden"
+                   onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})"
+                   value="" style="display: none;"/>
+            <select name="order1" id="sort1" class="form-control" style="width: 200px; display: inline-block;">
+                <option value="1">时间正序</option>
+                <option value="2">时间倒叙</option>
+                <option value="3">金额排序</option>
+            </select>
+        </form>
+    </div>
+    <div class="panel-body" id="no_clean">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>未结起始日期</th>
+                    <th>平台名称</th>
+                    <th>有效数量</th>
+                    <th>放款金额</th>
+                    <th>待结算金额</th>
+                    <th class="text-center" style="width: 30%">结算周期</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range $k,$v:=.cleaning}}
+                <tr>
+                    <td>{{$v.Date.Format "2006-01-02"}}</td>
+                    <td>{{$v.Name}}</td>
+                    <td>{{if $v.QuantityCount}}{{$v.QuantityCount}}{{else}}-{{end}}人次</td>
+                    <td>{{if $v.MakeLoanAmount}}{{printf "%.2f" $v.MakeLoanAmount}}{{else}}-{{end}}元</td>
+                    <td>{{printf "%.2f" $v.CpaMoney}} 元</td>
+                    <td class="text-center">{{$v.CleaningCycle}}</td>
+                    <td>
+                        <a href='../settlement/settlepage?pid={{$v.Id}}&startDate={{$v.Date.Format "2006-01-02"}}' class="skip1">结算</a>
+                    </td>
+                </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count2}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination2" data-url="/cleanhis/noclean" currentPage="{{.pageNum2}}" pageCount="{{.pageCount2}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination2").my_page("#searchForm1","#no_clean");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+<script>
+
+    function clean(){
+        window.sessionStorage.clear();
+       getpage(window.location.href);
+    }
+
+    //未结算平台列表
+    function getData() {
+        var startDate = $('#startDate1').val();
+        var sort = $('#sort1').val();
+        $.ajax({
+            url: '/cleanhis/noclean',
+            type: 'post',
+            data: {
+                date: startDate,
+                order: sort
+            },
+            success: function (res) {
+                $('#no_clean').html(res)
+            }
+        });
+    }
+
+    $("#sort1").off("change").on("change",function(){
+        getData();
+    });
+
+    if(window.sessionStorage.start_time1 || window.sessionStorage.sort1){
+        $('#startDate1').val(window.sessionStorage.start_time1);
+        $('#sort1').val(window.sessionStorage.sort1);
+        getData();
+    }
+
+    //已结算平台列表
+    function getHisData() {
+        var startDate = $('#startDate').val();
+        var sort = $('#sort').val();
+        $.ajax({
+            url: '/cleanhis/cleaned',
+            type: 'post',
+            data: {
+                date: startDate,
+                order: sort
+            },
+            success: function (res) {
+                $('#clean').html(res)
+            }
+        });
+    }
+    $("#sort").off("change").on("change",function(){
+       getHisData();
+    });
+
+    if(window.sessionStorage.start_time || window.sessionStorage.sort){
+        $('#startDate').val(window.sessionStorage.start_time);
+        $('#sort').val(window.sessionStorage.sort);
+        getHisData();
+    }
+
+</script>
+
+
+
+
+
+
+

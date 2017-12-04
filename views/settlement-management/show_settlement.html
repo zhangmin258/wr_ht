@@ -1,0 +1,211 @@
+<style>
+    .three {
+        width: 50%;
+        display: inline-block;
+        margin: 0 auto;
+        text-align: center;
+    }
+
+    #remark {
+        width: 400px;
+        height: 100px;
+
+
+
+         word-wrap: d 
+        max-width: 400px;
+        max-height: 100px;
+    }
+</style>
+
+<div class="panel">
+    <div class="panel-heading">已结算明细</div>
+    <div class="panel-body">
+        <form action="/settlement/settlepage" class="form-horizontal" id="searchForm" method="post">
+            <!--<input name="startDate" autocomplete="off" id="startDate" class="Wdate input-small form-control" value="{{.startDate}}" type="text"
+                   onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd',onpicked:function(){start_time();},
+                       maxDate:'#F{$dp.$D(\'endDate\')}'})"
+                   style="width: 200px; display: inline-block;">&nbsp;&nbsp;-&nbsp;
+            <input name="endDate" autocomplete="off" id="endDate" class="Wdate input-small form-control" value="{{.endDate}}" type="text"
+                   onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',onpicked:function(){end_time();},minDate:'#F{$dp.$D(\'startDate\')}'})"
+                   value="" style="width: 200px; display: inline-block;"/>
+            <input type="submit" class="btn btn-info" value="搜索" style="margin-left: 20px;margin-bottom: 5px"/>-->
+            <span class="three" style="margin-left: 20%">
+                {{if eq .proInfo.Id 0}}<span style="color: red">获取产品信息失败</span>{{else}}
+				<input type="hidden" name="pid" id="pid" value="{{.pid}}">
+				<strong>平台名称：{{.proInfo.Name}}</strong>&nbsp;&nbsp;&nbsp;
+				<strong>合作方式：{{if eq .proInfo.JointMode 1}}CPA
+					{{else if eq .proInfo.JointMode 2}}CPS
+					{{else if eq .proInfo.JointMode 3}}CPA+CPS
+					{{end}}
+				</strong>&nbsp;&nbsp;&nbsp;
+                <strong>有效性定义：{{.proInfo.CpaDefine}}</strong>&nbsp;&nbsp;&nbsp;
+				<strong>单价：{{if eq .proInfo.JointMode 1}}{{.proInfo.CpaPrice}} 元
+					{{else if eq .proInfo.JointMode 2}}{{.proInfo.CpsPrice}} 元
+					{{else if eq .proInfo.JointMode 3}}{{.proInfo.CpaPrice}}+{{.proInfo.CpsPrice}}% 元
+					{{end}}</strong>
+                {{end}}
+            </span>
+        </form>
+        <hr>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>注册用户数量</th>
+                    <th>认证用户</th>
+                    <th>放款用户</th>
+                    <th>放款金额</th>
+                    <th>收益</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range $k,$v:= .cleaningData}}
+                <tr>
+                    <td>{{$v.Date.Format "2006-01-02"}}</td>
+                    <td>{{$v.RegisterCount}}</td>
+                    <td>{{$v.ApplyCount}}</td>
+                    <td>{{$v.MakeLoanCount}}</td>
+                    <td>{{printf "%.2f" $v.MakeLoanAmount}} 元</td>
+                    <td>{{printf "%.2f" $v.CpaMoney}} 元</td>
+                </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <th>总计</th>
+                    <th>{{.cleanCount.RegisterCount}}</th>
+                    <th>{{.cleanCount.ApplyCount}}</th>
+                    <th>{{.cleanCount.MakeLoanCount}}</th>
+                    <th>{{if .cleanCount.MakeLoanAmount}}{{printf "%.2f" .cleanCount.MakeLoanAmount}}{{else}}-{{end}} 元</th>
+                    <th>{{if .cleanCount.CpaMoney}}{{printf "%.2f" .cleanCount.CpaMoney}}{{else}}-{{end}} 元</th>
+                </tr>
+                <tr>
+                    <td colspan="6">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+            <input type="hidden" id="start" value="{{.startDate}}">
+            <input type="hidden" id="end" value="{{.endDate}}">
+        </table>
+        <hr>
+        <div style="width: 50%; float: left;" class="form-group">
+            <label for="remark" class="col-sm-1 control-label">备注</label>
+            <textarea name="remark" id="remark" class="form-control" disabled="disabled">{{.remark.Remark}}</textarea>
+        </div>
+        <div style="width: 50%; float: left; margin-top: 20px;" class="form-group">
+            <label for="invoice" class="col-sm-1 control-label" style="margin-top: 8px">开票</label>
+            <select name="invoice" id="invoice" class="form-control" style="width: 200px;" disabled="disabled">
+                <option {{if eq .remark.IsBilling 1}} selected="selected"{{end}}>已开票</option>
+                <option {{if eq .remark.IsBilling 2}} selected="selected"{{end}}>未开票</option>
+            </select>
+        </div>
+    </div>
+</div>
+
+
+
+
+<script>
+
+    function start_time(){
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        var endDate_year = endDate.split('-')[0];
+        var endDate_month = endDate.split('-')[1];
+        var startDate_year = startDate.split('-')[0];
+        var startDate_month = startDate.split('-')[1];
+        var new_endDate;
+        if(endDate_year != startDate_year || endDate_month != startDate_month){
+                    var limitDate = new Date(startDate);
+                    limitDate.setDate(new Date(limitDate.getFullYear(), limitDate
+                            .getMonth() + 1, 0).getDate()); //获取此月份的天数
+                    new_endDate = limitDate.getFullYear() + '-'
+                        + (limitDate.getMonth() + 1) + '-'
+                        + limitDate.getDate();
+                    $('#endDate').val(new_endDate);
+            }
+    }
+
+    function end_time(){
+        var endDate = $('#endDate').val();
+        var endDate_year = endDate.split('-')[0];
+        var endDate_month = endDate.split('-')[1];
+        var startDate = $('#startDate').val();
+        var startDate_year = startDate.split('-')[0];
+        var startDate_month = startDate.split('-')[1];
+        var startDate_day = startDate.split('-')[2];
+        if(endDate_year != startDate_year || endDate_month != startDate_month){
+                startDate_day = '01';
+        }
+        var new_startDate = endDate_year + '-' + endDate_month + '-' + startDate_day;
+        $('#startDate').val(new_startDate);
+    }
+
+    //结算
+    $("#settle").off().on("click", function () {
+        var confirm = window.confirm('是否确认结算？');
+        if(confirm){
+            var pid = $("#pid").val();
+            var startDate =$("#startDate").val();
+            var endDate = $("#endDate").val();
+            var remark = $("#remark").val();
+            var isBilling = $("#invoice").val();
+            console.log(pid,startDate,endDate,remark,isBilling);
+            if({{.count}}==0){
+                alert("选择时间段没有要结算的产品！")
+            }else{
+                $.zpost("/settlement/settlepro", {
+                    'pid': pid,
+                    'startDate': startDate,
+                    'endDate': endDate,
+                    'remark':remark,
+                    'isBilling':isBilling
+                }, function (result) {
+
+                    if (result.ret==200){
+                        alert(result.msg);
+                        getpage(window.sessionStorage.URl);   //跳到上一层历史记录
+                    }else{
+                        alert(result.err);
+                    }
+                });
+            }
+        }
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

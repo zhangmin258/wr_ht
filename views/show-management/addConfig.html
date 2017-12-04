@@ -1,0 +1,166 @@
+
+
+<style>
+	.form-group{
+		margin-bottom: 30px;
+	}
+</style>
+
+
+<div class="panel">
+	<div class="panel-heading">新增config</div>
+	<div class="panel-body">
+		<form action="" class="form-horizontal" style="padding-top: 30px;">
+			<div style="width: 50%; float: left;">
+				<div class="form-group">
+					<label for="id" class="col-sm-2 control-label">id</label>
+					<div class="col-sm-6">
+					    <input type="input" class="form-control" id="id" placeholder="" value="{{.config.Id}}" readonly="readonly">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="config_value" class="col-sm-2 control-label">config_value</label>
+					<div class="col-sm-6">
+					    <input type="input" class="form-control" id="config_value" placeholder="" value="{{.config.ConfigValue}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="remark" class="col-sm-2 control-label">remark</label>
+					<div class="col-sm-6">
+					    <input type="input" class="form-control" id="remark" placeholder="" value="{{.config.Remark}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="url_param" class="col-sm-2 control-label">url_param</label>
+					<div class="col-sm-6">
+					    <input type="input" class="form-control" id="url_param" placeholder="" value="{{.config.UrlParam}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="code" class="col-sm-2 control-label">code</label>
+					<div class="col-sm-6">
+					    <input type="input" class="form-control" id="code" placeholder="" value="{{.config.Code}}">
+					</div>
+				</div>
+			</div>
+			<div style="width: 50%; float: right;">
+				<div class="form-group">
+					<label for="config_key" class="col-sm-2 control-label">config_key</label>
+					<div class="col-sm-6">
+					    <input type="input" class="form-control" id="config_key" placeholder="" value="{{.config.ConfigKey}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="config_desc" class="col-sm-2 control-label">config_desc</label>
+					<div class="col-sm-6">
+					    <input type="input" class="form-control" id="config_desc" placeholder="" value="{{.config.ConfigDesc}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="config_url" class="col-sm-2 control-label">config_url</label>
+					<div class="col-sm-6">
+					    <input type="input" class="form-control" id="config_url" placeholder="" value="{{.config.ConfigUrl}}">
+					</div>
+				</div>
+				<div class="form-group">
+					<label for="title" class="col-sm-2 control-label">title</label>
+					<div class="col-sm-6">
+					    <input type="input" class="form-control" id="title" placeholder="" value="{{.config.Title}}">
+					</div>
+				</div>
+			</div>
+			<div class="form-group">
+			    <div class="col-sm-offset-5 col-sm-7">
+			      <button type="button" class="btn btn-info" id="btn">保存</button>
+			    </div>
+			</div>
+		</form>
+	</div>
+</div>
+
+
+
+<script type="text/javascript">
+
+var config_id = {{.config.Id}};
+if(config_id == 0){
+	$('.panel .panel-heading').text('新增config');
+}else{
+	$('.panel .panel-heading').text('编辑config');
+	$('#code').attr('readonly','readonly');
+}
+
+$('#btn').off().on('click',function() {
+
+    var id = $('#id').val();
+    var config_value = $('#config_value').val();
+    var remark = $('#remark').val();
+    var url_param = $('#url_param').val();
+    var code = $('#code').val();
+    var config_key = $('#config_key').val();
+    var config_desc = $('#config_desc').val();
+    var config_url = $('#config_url').val();
+    var title = $('#title').val();
+
+        $.zpost('/configs/saveconfig', {
+            Id: id,
+            ConfigValue: config_value,
+            Remark: remark,
+            UrlParam: url_param,
+            Code: code,
+            ConfigKey: config_key,
+            ConfigDesc: config_desc,
+            ConfigUrl: config_url,
+            Title: title
+        }, function (res) {
+            if (res.ret == 200) {
+                alert('保存成功！');
+                getpage(window.sessionStorage.URL);
+            } else {
+                alert(result.err)
+            }
+        });
+});
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

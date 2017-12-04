@@ -1,0 +1,215 @@
+
+<style>
+
+    .addAgentPro {
+        height: 30px;
+        line-height: 30px;
+        top: 5px;
+        position: relative;
+    }
+
+    .addAgentPro span {
+        width: 25px;
+        height: 25px;
+        display: inline-block;
+        background-color: #5A9DF4;
+        color: #fff;
+        text-align: center;
+        font: 20px/22px "微软雅黑" !important;
+        cursor: pointer;
+        border-radius: 50%;
+    }
+
+    .addAgentPro label {
+        color: #5A9DF4;
+    }
+
+    .addAgentPro ul {
+        display: none;
+        padding: 0 !important;
+        overflow: hidden;
+        position: absolute;
+        top: 30px;
+        right: -20px;
+        border: #ccc solid 1px;
+        background: #fff;
+    }
+    .addAgentPro ul li{
+        width: 140px;
+        height: 30px;
+        margin: 0 auto;
+        line-height: 30px;
+    }
+    .addAgentPro ul li a {
+        width: 100%;
+        height: 30px;
+        text-align: center;
+        display: block;
+        font: 13px/30px "微软雅黑" !important;
+        color: #000;
+        cursor: pointer;
+        padding-left: 0 10px;
+    }
+
+    .addAgentPro ul li a:hover {
+        background: #5A9DF4;
+        color: #fff;
+    }
+
+    #searchForm2 .form-control{
+        width: 200px;
+        height: 33px;
+        line-height: 33px;
+    }
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading" style="padding-bottom: 30px;">
+        <strong class="pull-left">产品列表</strong>
+        <p class="pull-right" style="width: 30%; text-align: right;">
+            <span style="margin-right: 5%;">使用中产品：{{.UsedCount}}</span>
+            <span>冻结中产品：{{.NotUsedCount}}</span>
+        </p>
+    </div>
+    <div class="panel-body">
+        <form action="/product/getProductList" method="get" id="searchForm2" class="form-inline pull-left" style="width: 80%;" onkeydown="if(event.keyCode==13)return false;">
+            <div class="form-group">
+                <input name="name" id="jg_name" type="text" class="form-control" placeholder="请输入产品名称或机构名称"/>
+            </div>
+            <div class="form-group">
+                <select name="cooperationType" id="cooperationModel" class="form-control">
+                    <option value="">请选择合作类型</option>
+                    <option value="0">API合作</option>
+                    <option value="1">H5合作</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select name="loanProducType" id="loanType" class="form-control">
+                    <option value="">请选择贷款类型</option>
+                    <option value="0">小额贷款</option>
+                    <option value="1">大额贷款</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <select name="productType" id="productType" class="form-control">
+                    <option value="">请选择产品类型</option>
+                    <option value="0">上线产品</option>
+                    <option value="1">下线产品</option>
+                    <option value="2">全部产品</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-info">搜索</button>
+            <button id="clearCondition" class="btn btn-info" type="button">清空条件</button>
+        </form>
+        <div class="addAgentPro pull-right" style="margin-right: 5%;">
+            <span id="goAddAgentPro"> + </span>
+            <label>新增代理产品</label>
+            <ul id="agentProSelect">
+                <li><a href="/product/jumpToAddH5" class="skip1">新增小额H5合作产品</a></li>
+                <li><a href="/product/jumpToAddAPI" class="skip1">新增小额API合作产品</a></li>
+                <li><a href="/product/jumpToAddH5?loan_product_type=1" class="skip1">新增大额H5合作产品</a></li>
+                <li><a href="/product/jumptoEditBigAPI?loan_product_type=1" class="skip1">新增大额API合作产品</a></li>
+            </ul>
+        </div>
+        <div style="height: 50px; border-bottom: #ccc solid 1px;"></div>
+        
+        <table class="table table-striped table-hover">
+            <thead>
+            <tr>
+                <th class="text-center">编 号</th>
+                <th class="text-center" width="300px">机构名称</th>
+                <th class="text-center">产品名称</th>
+                <th class="text-center">贷款金额</th>
+                <th class="text-center">贷款期限</th>
+                <th class="text-center">状态</th>
+                <th class="text-center">操 作</th>
+            </tr>
+            </thead>
+            <tbody class="text-center">
+            {{range $k, $product := .productList}}
+            <tr id=pro{{$product.Id}}>
+                <td>{{$product.Id}}</td>
+                <td>{{$product.OrgName}}</td>
+                <td style="font-weight:700">{{$product.Name}}</td>
+                <td>{{$product.MinMoney}}~{{printf "%.0f" $product.MaxMoney}}元</td>
+                <td>{{$product.MinLoanTerm}}~{{$product.MaxLoanTerm}}{{if eq $product.LoanTermUnit 0}}天{{end}}{{if eq $product.LoanTermUnit 1}}月{{end}}</td>
+                {{if eq $product.IsUse 0}}
+                <td><span class="tag_bg_green">上线</span></td>
+                {{else if eq $product.IsUse 1}}
+                <td><span class="tag_bg_red">下线</span></td>
+                {{end}}
+                <td>{{if eq $product.CooperationType 0 }}
+                    <a class="skip1" href="/product/editAPIProduct?id={{$product.Id}}">
+                    {{else if eq $product.CooperationType 1 }}
+                    <a class="skip1" href="/product/editH5Product?id={{$product.Id}}">
+                    {{end}}
+                    编辑</a>
+                </td>
+            </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination2" data-url="/product/getProductList" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination2").my_page("#searchForm2");
+                                });
+                            </script>  
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+    //机构名称
+    if(window.sessionStorage.jg_name){
+        $('#jg_name').val(window.sessionStorage.jg_name);
+    }
+
+    //合作类型
+   if(window.sessionStorage.cooperationModel){
+        $('#cooperationModel').val(window.sessionStorage.cooperationModel);
+    }
+
+    //贷款类型
+    if(window.sessionStorage.loanType){
+        $('#loanType').val(window.sessionStorage.loanType);
+    }
+
+    //产品类型
+    if(window.sessionStorage.productType){
+        $('#productType').val(window.sessionStorage.productType);
+    }
+
+    //添加代理产品
+    $("#goAddAgentPro").on("click", function () {
+        $("#agentProSelect").fadeIn('slow');
+        setTimeout(function(){
+       		$("#agentProSelect").fadeOut('slow');
+        },5000);
+    });
+
+
+    //清空条件
+    $("#clearCondition").off("click").on("click", function () {
+        var url = "/product/getProductList";
+        getpage(url);
+        window.sessionStorage.clear();
+    });
+
+</script>

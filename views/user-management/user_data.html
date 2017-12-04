@@ -1,0 +1,128 @@
+ <style>
+        #content {
+            overflow: hidden;
+            background: #fff;
+            border-radius: 5px;
+        }
+
+    </style>
+<div id="content">
+    <div class="panel-heading">
+        <strong>用户列表</strong>
+    </div>
+    <form action="/user/getUserList" method="get" id="searchForm2" onkeydown="if(event.keyCode==13)return false;">
+        <ul class="nav"
+            style="width: 100%; height: 70px; line-height: 70px; border-bottom: #ccc solid 1px; padding: 0 2%;">
+            <li class="pull-left">
+                <input name="account" type="text" class="phone_number" id="phone_number" value="" placeHolder="请输入手机号"/>&nbsp;&nbsp;
+            </li>
+
+            <li class="pull-left">
+                <input type="text" class="user_name" value="" placeHolder="请输入用户姓名"
+                       name="idName"/>&nbsp;&nbsp;
+            </li>
+            <li class="pull-left">
+                <input type="text" class="id_number" value="" placeHolder="请输入身份证号"
+                       name="idNo"/>&nbsp;&nbsp;
+            </li>
+
+            <li class="pull-left">
+                <input name="startTime" id="startDate" class="Wdate input-small" value="" type="text"
+                       onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd',
+                       onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}'})"
+                />&nbsp;-&nbsp;
+                <input name="endTime" id="endDate" class="Wdate input-small" type="text"
+                       onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})"
+                       value="{{.end_time}}"/>&nbsp;&nbsp;&nbsp;
+            </li>
+            <li class="pull-left">
+                <button id="button" type="submit" class="btn btn-info" style="color: #fff">搜索</button>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+            </li>
+            <span>
+                <button id="clearCondition" class="btn btn-info" type="button">清空条件</button>
+           </span> 
+        </ul>
+    </form>
+    <div style="padding: 0 1%;">
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+                <tr>
+                    <th>手机号</th>
+                    <th>姓名</th>
+                    <th>身份证号</th>
+                    <th>注册时间</th>
+                    <th>信用评分</th>
+                    <th>查看</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $k, $user := .userList}}
+                <tr>
+                    <td>{{$user.Account}}</td>
+                    <td>{{$user.VerifyRealName}}</td>
+                    <td>{{idCradDispose $user.IdCard}}</td>
+                    <td>{{$user.CreateTime.Format "2006-01-02 15:04:05"}}</td>
+                    <td> {{if eq $user.CreditCode 0.0000}}—{{else}}{{$user.CreditCode}}{{end}}</td>
+                    <td>
+                        <a class="skip1" href="../usermetadata/personalinformation.html?id={{$user.Uid}}">查看</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination2" data-url="/user/getUserList" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination2").my_page("#searchForm2");
+                                });
+                            </script>   
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script type="text/javascript" class="scriptData">
+    $(function () {
+
+        //手机号
+        if (window.sessionStorage.phone_number) {
+            $('.phone_number').val(window.sessionStorage.phone_number);
+        }
+        //用户姓名
+        if (window.sessionStorage.user_name) {
+            $('.user_name').val(window.sessionStorage.user_name);
+        }
+        //身份证号码
+        if (window.sessionStorage.id_number) {
+            $('.id_number').val(window.sessionStorage.id_number);
+        }
+        //开始时间
+        if (window.sessionStorage.startDate) {
+            $('#startDate').val(window.sessionStorage.startDate);
+        }
+        //结束时间
+        if (window.sessionStorage.endDate) {
+            $('#endDate').val(window.sessionStorage.endDate);
+        }
+    });
+
+    //清空条件
+    $("#clearCondition").off("click").on("click",function(){
+        var url = "/user/getUserList";
+        getpage(url);
+        window.sessionStorage.clear();
+    });
+
+
+      
+</script>
+

@@ -1,0 +1,256 @@
+
+<!-- 个人信息 -->
+
+<div class="panel panel_account_form">
+    <div class="panel-body">
+        <h2 class="panel-title">{{if ne .user.Id 0}}编辑账号{{else}}添加账号{{end}}</h2>
+        <!--<h2 class="panel-title">编辑账号</h2>-->
+        <ul class="p-info col-md-4">
+            <li class="col-md-12">
+                <div class="col-md-3">账号</div>
+                <div class="col-md-4"><input type="text" placeholder="请填写账号（5-30位字符）" maxlength="30" id="account" value="{{.user.Name}}" {{if ne .user.Id 0}} readonly disabled {{end}} name="account" /></div>
+                <div class="col-md-4 hide1 error account_num_error"></div>
+            </li>
+            <li class="col-md-12">
+                <div class="col-md-3">密码</div>
+                <div class="col-md-4"><input type="password" placeholder="请填写密码" maxlength="25" id="password" name="passwd" /></div>
+                <div class="col-md-4 hide1 error password_error"></div>
+            </li>
+            <li class="col-md-12">
+                <div class="col-md-3">使用人</div>
+                <div class="col-md-4"><input type="text" placeholder="请填写使用人姓名" id="name" value="{{.user.Displayname}}" name="username" /></div>
+                <div class="col-md-4 hide1 error user_name_error"></div>
+            </li>
+            <li class="col-md-12">
+                <div class="col-md-3">角色</div>
+                <div class="col-md-4">
+                   <select id="roleSel">
+                       <option value="-1">选择角色</option>
+                       {{range $k,$v :=.list}}
+                       <option value="{{$v.Id}}" {{if eq $.user.Role_id $v.Id}} selected="selected" checked {{end}}>{{$v.Displayname}}</option>
+                       {{end}}
+                   </select>
+                </div>
+            </li>
+            <li class="col-md-12">
+                <div class="col-md-3">岗位</div>
+                <div class="col-md-4">
+                    <!--<select name="post" id="account_post">-->
+                        <!--<option value="">请选择岗位</option>-->
+                        <!--&lt;!&ndash; 从岗位里取 &ndash;&gt;-->
+                        <!--{{range $k, $v := .list}}                        -->
+                        <!--<option value="{{$v.Id}}" {{if eq $.user.Role_id $v.Id}} selected="selected" checked {{end}}>{{$v.Displayname}}</option>-->
+                        <!--{{end}}-->
+                        <!--&lt;!&ndash; <option value="岗位">岗位</option> &ndash;&gt;-->
+
+                    <!--</select>-->
+                    <input id="station" name="station" type="text" value="" placeholder="选择岗位"/>
+                </div>
+                <div class="col-md-4 hide1 error post_error"></div>
+            </li>
+            <li class="col-md-12">
+                <div class="col-md-3">邮箱</div>
+                <div class="col-md-4"><input type="text" placeholder="请填写邮箱(选填)" id="email" value="{{.user.Email}}" name="email" /></div>
+                <div class="col-md-4 hide1 error user_name_error hide1"></div>
+            </li>
+
+            <li class="col-md-12">
+                <div class="col-md-3">账号状态</div>
+                <div class="col-md-4">
+                    <select name="status" id="account_status">
+                        <option {{if eq .user.Accountstatus "启用"}} selected {{end}} value="启用">启用</option>
+                        <option {{if eq .user.Accountstatus "禁用"}} selected {{end}} value="禁用">禁用</option>
+                    </select>
+                </div>
+                <div class="col-md-4 hide1 error account_status_error"></div>
+            </li>
+            <li class="col-md-12">
+                <div class="col-md-3"></div>
+                <div class="col-md-8">
+                    <a class="btn btn-info" onclick="AccountFormSubmit()">确定</a>
+                    <a class="btn btn-default" onclick="AccountFormBack()">取消</a>
+                </div>
+                <div class="col-md-1"></div>
+            </li>
+        </ul>
+        <div class="col-md-3 sys_box">
+            <div class="sys_box_header"><span class="fl sys_header_txt">岗位</span><span class="sys_box_close fr">×</span></div>
+            <div class="sys_box_content">
+                <ul id="treeRoot" class="ztree"></ul>
+            </div>
+        </div>
+        <input type="hidden" id="rid" value="{{.role.Id}}">
+        <input type="hidden" id="role_code" value=""/>
+        <input type="hidden" id="stationId" value=""/>
+    </div>
+</div>
+<div id="dialog-cancel" title="取消" class="hide1">loading...</div>
+<script>
+    var arr1 = [];
+
+    var isAccount=/.{5,30}/;//账号正则
+    var isPassword=/.{6,25}/;//密码正则
+    var isAccount_1=/^[\x21-\x7E]{5,30}$/;//账号要求正则
+    function AccountFormSubmit(){
+        var account = $("#account").val(),
+            password = $("#password").val(),
+            name = $("#name").val(),
+            account_status = $("#account_status").val(),
+            email = $("#email").val(),
+            uid = {{.user.Id}},
+            role_code=$("#role_code").val();
+
+
+
+        var stationId=$("#stationId").val();
+        stationId=stationId-100000;
+        var roleId=$("#roleSel").val();
+
+        
+
+        $(".error").html("");
+        $(".panel_account_form input,.panel_account_form select").removeClass("account_form_input_error");
+        if(!isAccount.test(account)){
+            $(".account_num_error").html("").append("账号长度应为5~30个字符").show().siblings(".error").hide();
+        }else if(!isAccount_1.test(account)){
+            $(".account_num_error").html("").append("账号只允许填写字母、数字、字符组合").show().siblings(".error").hide();
+        }else if( (!uid ||!!password)&&!isPassword.test(password)){
+            $(".password_error").html("密码长度不正确，仅限6~25个字符").show().siblings(".error").hide();
+        }else{
+            $.zpost("/system/user",{uid:uid,account:account,password:password,name:name,account_status:account_status,email:email,role_code:role_code,stationId:stationId,roleId:roleId},function(result){
+                //if(result.ret==0){该账号已存在}else 
+                if(result.ret==200){//成功
+                    alert("成功");
+                    return getpage('/system/userlist');
+                }else{
+                    alert(result.msg);
+                    $(".account_num_error").html(result.msg);
+                }
+            });
+        }
+    }
+
+    function confirmCancel(){
+        $('#dialog-cancel').dialog('close');
+        return getpage('/system/userlist');
+    }
+    function AccountFormBack(){
+        var account = $("#account").val(),
+            password = $("#password").val(),
+            name = $("#name").val(),
+            account_post = $("#account_post").val(),
+            account_status = $("#account_status").val();
+        if(!!account || !!password || !!name || !!account_post || !!account_status){
+            $('#dialog-cancel').html('<div class="pop_con" style="padding:12px 0 0;height:90px;"><div class="pop_con_inner"><i></i><span>是否放弃添加账号？</span></div></div><div style="text-align:center"><input id="btn_modify" class="btn btn-info" value="确定" onclick="confirmCancel()" type="button">&nbsp;&nbsp;&nbsp;&nbsp;<input class="btn" onclick="javascript:$(\'#dialog-cancel\').dialog(\'close\')" value="取消" type="button"></div>');
+            $('#dialog-cancel').dialog('open');
+        }else{
+            confirmCancel();
+        }
+    }
+
+    var rootSetting = {
+        view: {
+            showIcon: false
+        },
+        check: {
+            enable: true,
+            radioType: "all",
+            chkStyle: "radio",
+            
+        },
+        data: {
+            simpleData: {
+                enable: true,
+                rootPId: 0
+            }
+        },
+        callback: {
+            // onClick: zTreeOnClick,
+            onCheck: zTreeOnClick
+        }
+    };
+
+
+
+    function zTreeOnClick(event, treeId, treeNode) {        
+        if (treeNode.id > 99999) {
+            $("#station").val(treeNode.name);
+            $("#stationId").val(treeNode.id);
+    
+
+//            var arr1 = ['催收员M1','催收员M2','催收员M3','测试岗位角色','生产一组员','资产保全组长（生产）','贷后总监'];
+            // for(var i=0;i<arr1.length;i++){
+            //     if($('#station').val() == arr1[i]){
+            //         $('.rol').show();
+            //         break;
+            //     }else{
+            //         $('.rol').hide();
+            //     }
+            // }
+        }
+        $("#station").attr("disabled",true);
+    }
+    $(function(){
+        $("#station").attr("disabled",true);
+
+       
+        var stationId={{.user.Station_id}};
+
+        $('#dialog-cancel').dialog({
+            autoOpen: false,
+            modal: true,
+            width:260,
+            maxHeight: 300,
+            position: ["center", 100],
+            ok:function(){}
+        });
+        $.zpost("/system/getorganizationstation",{role_id:'all'},function(result){
+            if (!!result&&result.ret==200) {
+
+
+                // $.each(result.station,function(index,val){
+                //     arr1.push(val.Name);
+                // })
+
+
+                var treeDeptObj= $.fn.zTree.init($("#treeRoot"), rootSetting, result.organizationStationList);
+                treeDeptObj.expandAll(true);
+                
+                var stationId={{.user.Station_id}}
+                if (stationId>0){
+                    stationId=100000+parseInt(stationId)
+                    treeDeptObj = $.fn.zTree.getZTreeObj("treeRoot");
+                    var nodes = treeDeptObj.getNodesByParam("id", stationId, null);
+                    treeDeptObj.checkNode(nodes[0], true, false);
+                    treeDeptObj.selectNode(nodes[0]);
+                    $("#station").val(nodes[0].name);
+                    $("#stationId").val(stationId);
+                }
+            // var sta = $('#station').val();
+            // if(sta==''){
+            //     $('.rol').hide()
+            // }else{
+            //     for(var j =0;j<arr1.length;j++){
+            //         if(sta == arr1[j]){
+            //             $('.rol').show();
+            //             break;
+            //         }else{
+            //             $('.rol').hide();
+            //         }
+            //     }
+            // }
+
+            var rid = $("#rid").val();
+                if (rid==0) {
+                    return false;
+                }
+            } else if (!!result.msg) {
+                alert(result.msg);
+            } else {
+                alert('没有数据');
+            }
+        });
+    });
+
+    
+</script>

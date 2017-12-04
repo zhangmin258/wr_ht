@@ -1,0 +1,104 @@
+
+
+<style>
+    td{
+        vertical-align: middle !important;
+    }
+
+</style>
+
+
+<div id="invite_friend" class="panel">
+    <div class="panel-heading">邀请好友</div>
+    {{if eq .count 0}}
+    <div class="panel-body">
+        <strong style="padding-left: 45%;font-size: 16px; line-height: 2;">没有邀请记录</strong>
+    </div>
+    {{else}}
+    <div class="panel-body">
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 10%;">手机号</th>
+                <th class="text-center" style="width: 10%;">姓名</th>
+                <th class="text-center" style="width: 10%;">身份证</th>
+                <th class="text-center" style="width: 10%;">信用评分</th>
+                <th class="text-center" style="width: 10%;">注册时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range $k, $v := .userList}}
+            <tr>
+                <td class="text-center">{{$v.Account}}</td>
+                <td class="text-center">{{$v.Name}}</td>
+                <td class="text-center">{{idCradDispose $v.IdCard}}</td>
+                <td class="text-center">{{$v.CreditCode}}</td>
+                <td class="text-center">{{$v.CreateTime.Format "2006-01-02 15:04:05"}}</td>
+            </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="7">
+                    <div class="fl">
+                        <div class="pagination">每页{{.pagesize}}条，总共{{.count}}条</div>
+                    </div>
+                    <div class="fl">
+                        <div class="pagination" id="pagination1" data-url="../usermetadata/invitefriend?id={{.user.Id}}" currentPage="{{.page}}" pageCount="{{.pagecount}}"></div>
+                        <script type="text/javascript">
+                            $(function() {
+                                $("#pagination1").my_page("","#invite_friend");
+                            });
+                        </script>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{end}}
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

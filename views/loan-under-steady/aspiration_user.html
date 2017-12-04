@@ -1,0 +1,110 @@
+
+
+<div class="panel">
+    <div class="panel-heading" style="padding-bottom: 45px;">
+        <strong class="pull-left" style="line-height: 30px;">意愿用户列表</strong>
+        <span class="pull-right form-inline">
+            <input name="startTime" id="startDate" class="Wdate form-control" type="text" onFocus="var endDate = $dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd', onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}'})" />&nbsp;&nbsp;-&nbsp;    
+            <input name="endTime" id="endDate" class="Wdate form-control" type="text" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})" />&nbsp;&nbsp;&nbsp;  
+            <button type="button" class="btn btn-info" style="width: 80px;" id="export">导出</button>
+        </span>
+    </div>
+    <div class="panel-body">
+        <form action="" id="searchForm" method="get" class="form-inline" onkeydown="if(event.keyCode==13)return false;">
+            <input type="text" name="phone_number" id="phone_number" placeholder="请输入手机号码" class="form-control phone_number" style="width: 200px;">
+            <button type="button" class="btn btn-info" id="submit">搜索</button>
+        </form>
+        <div style="height: 20px; border-bottom: #ccc solid 1px; clear: both;"></div>
+        <table class="table table-hover">
+            <thead>
+                 <tr>
+                    <th>创建时间</th>
+                    <th>手机号</th>
+                    <th>姓名</th>
+                    <th>意愿类型</th>
+                    <th class="text-center">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $k,$v:=.behaviorUsersList}}
+                <tr>
+                    <td>{{$v.CreateTime}}</td>
+                    <td>{{$v.Account}}</td>
+                    <td>{{$v.Name}}</td>
+
+                    {{if eq $v.Action 1}}
+                    <td>页面停留时长</td>
+                    {{else if eq $v.Action 2}}
+                    <td>咨询客服</td>
+                    {{else if eq $v.Action 3}}
+                    <td>进入支付流程</td>
+                    {{end}}
+
+                    <td class="text-center">
+                        <a href="../usermetadata/personalinformation.html?id={{$v.Uid}}" class="skip1">查看资料</a>
+                    </td>
+                </tr>
+                {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="/usersbehavior/getusersbehavior" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination").my_page("#searchForm");
+                                });
+                            </script>   
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<script>
+
+    //导出按钮
+    $('#export').click(function(){
+        var startDate = $('#startDate').val();
+        var endDate = $('#endDate').val();
+        if(!startDate){
+            alert('开始时间不得为空！');
+            return;
+        }
+        if(!endDate){
+            alert('结束时间不得为空！');
+            return;
+        }
+        var url = '/usersbehavior/behaviorusersexportexcel?startTime=' + startDate + '&endTime=' + endDate;
+        window.location.href = url;
+    });
+
+    //点击搜索
+    $('#submit').on('click', function(){
+        var phone = $.trim($("#phone_number").val());
+        if(phone && !(/^1[34578]\d{9}$/.test(phone))){
+            alert('手机号码格式不正确！');
+            return;
+        }
+        $('#searchForm').submit();
+    });
+
+    if(window.sessionStorage.phone_number){
+        $('#phone_number').val(window.sessionStorage.phone_number);
+    }
+
+</script>
+
+
+
+
+
+
+
+

@@ -1,0 +1,127 @@
+<style>
+    form {
+        overflow: hidden;
+    }
+
+    form .left {
+        width: 50%;
+        float: left;
+    }
+
+    form .right {
+        width: 50%;
+        float: right;
+    }
+
+    .form-group {
+        margin: 30px 0;
+    }
+
+    .form-group label {
+        color: #333;
+    }
+    .form-group label span{
+        font-size: 20px;
+        color: red;
+        vertical-align: -5px;
+    }
+    .form-group textarea{
+        height: 100px;
+    }
+</style>
+<form class="form-horizontal" action="" method="get">
+    <div class="panel">
+        <div class="panel-heading">征信口子配置</div>
+        <input type="hidden" id="id" value="{{.holeConfig.Id}}">
+        <div class="panel-body">
+            <div class="left">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">融豆价格<span>*</span></label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="请输入所需融豆" name="rd_price" id="rd_price" value="{{.holeConfig.ScorePrice}}">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">标题1</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" placeholder="请输入标题" name="title1" id="title1" value="{{.holeConfig.DescribeTitle1}}">
+                    </div>
+                </div>
+                <div style="height: 50px;"></div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">标题2</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" placeholder="请输入标题" name="title2" id="title2" value="{{.holeConfig.DescribeTitle2}}">
+                    </div>
+                </div>
+            </div>
+            <div class="right">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">现金价格</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="请输入所需现金" name="xj_price" id="xj_price" value="{{.holeConfig.MoneyPrice}}">
+                    </div>
+                    <label class="control-label">元</label>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">内容1</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" placeholder="请输入内容" name="content1" id="content1" >{{.holeConfig.DescribeContent1}}</textarea>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">内容2</label>
+                    <div class="col-sm-6">
+                        <textarea class="form-control" placeholder="请输入内容" name="content2" id="content2" >{{.holeConfig.DescribeContent2}}</textarea>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-5 col-sm-7">
+                    <button type="button" class="btn btn-info" id="save">保存</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+
+<script type="text/javascript">
+    $('#save').off('click').on('click', function () {
+        var id=$('#id').val();
+        var rd_price=$('#rd_price').val();
+        var title1=$('#title1').val();
+        var title2=$('#title2').val();
+        var xj_price=$('#xj_price').val();
+        var content1=$('#content1').val();
+        var content2=$('#content2').val();
+        if (!rd_price){
+            alert("融豆价格不能为空");
+        }else{
+            $.ajax({
+                url: '../plateformhole/saveplacreditconfig',
+                type: 'get',
+                data: {
+                    Id:id,
+                    ScorePrice: rd_price,
+                    DescribeTitle1: title1,
+                    DescribeTitle2: title2,
+                    MoneyPrice: xj_price,
+                    DescribeContent1: content1,
+                    DescribeContent2: content2
+                },
+                success: function (res) {
+                    if (res.ret == 200) {
+                        alert(res.msg);
+                        getpage(window.sessionStorage.URl);   //跳到上一层历史记录
+                    }else{
+                        alert(res.err);
+                        getpage(window.sessionStorage.URl);   //跳到上一层历史记录
+                    }
+                }
+            });
+        }
+    })
+    
+</script>

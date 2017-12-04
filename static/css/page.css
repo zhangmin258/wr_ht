@@ -1,0 +1,140 @@
+
+
+
+
+.cen {
+    text-align: center;
+    font: bolder 18px/40px "微软雅黑";
+    font-style: normal;
+    border-bottom: 1px solid #ccc;
+}
+
+.lines td {
+    border: none !important;
+}
+
+.cright {
+    width: 10%;
+    text-align: right;
+}
+
+.cleft {
+    text-align: left;
+    width: 35%;
+}
+
+.b_hei {
+    height: 20px;
+    background-color: #EFF0F4;
+    z-index: 2;
+}
+
+#btn-container>div,#btn-container1>div,#btn-container2>div {
+    moz-user-select: -moz-none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none
+}
+
+.pageInfo,.pageInfo1,.pageInfo2 {
+    height: 30px;
+    line-height: 30px;
+    margin-right: 30px
+}
+
+.btn-fenye,.btn-fenye1,.btn-fenye2 {
+    padding: 0 15px;
+    display: inline-block;
+    font: 14px/30px "微软雅黑";
+    text-align: center;
+    border: 1px solid #ccc;
+    border-right: none;
+    cursor: pointer;
+    vertical-align: middle;
+    height: 30px;
+}
+
+.btn-fenye1:last-of-type {
+    border-right: 1px solid #ccc;
+}
+
+.btn-fenye.last,.btn-fenye1.last,.btn-fenye2.last {
+    border-right: 1px solid #ccc;
+}
+
+.btn-fenye.active,.btn-fenye:hover,.btn-fenye1.active,.btn-fenye1:hover,.btn-fenye2.active,.btn-fenye2:hover {
+    background-color: #599ef4;
+    color: #fff;
+}
+
+.active {
+    color: #599ef4
+}
+
+.f-tof {
+    display: inline-block;
+    width: 380px;
+}
+
+#tb_address1 tr,td {
+    height: 41px;
+}
+
+#tb_address2 tr,td {
+    height: 41px;
+}
+
+.sanjiao {
+    position: relative;
+}
+
+.triangle_border_up {
+    width: 0;
+    height: 0;
+    border-width: 0 30px 30px;
+    border-style: solid;
+    border-color: transparent transparent #595959;
+    opacity: 0.8;
+    position: absolute;
+    top: 4px;
+    left: 60px;
+    z-index: 200;
+}
+
+.triangle_border_up p {
+    margin: 0;
+    padding: 0;
+    padding-left: 5px;
+    padding-top: 5px;
+    position: absolute;
+    top: 22px;
+    left: -90px;
+    display: block;
+    width: 360px;
+    background-color: #595959;
+    border-radius: 5px;
+    z-index: 200;
+    color: #fff;
+    font-size: 14px;
+    word-break: normal;
+    white-space: pre-line;
+    word-wrap: break-word;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

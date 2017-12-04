@@ -1,0 +1,123 @@
+
+
+
+    
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">审批记录</div>
+    <div class="panel-body">
+        <form action="/userdeposit/approveinfo" id="searchFrom" method="get" class="form-inline" style="padding-top: 5px;">
+            <div class="form-group">
+                <input type="text" class="form-control phone_number" name="account" id="phone_number" placeholder="请输入用户手机号码！" style="width: 250px;">
+            </div>
+            <button type="submit" class="btn btn-info search">搜索</button>
+        </form>
+        <hr>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>提现时间</th>
+                    <th>用户手机号</th>
+                    <th>提现金额</th>
+                    <th class="text-center">查看</th>
+                    <th class="text-center">状态</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range $k,$v:=.userDeposit}}
+                <tr>
+                    <td>{{$v.AmountTime.Format "2006-01-02 15:04:05"}}</td>
+                    <td>{{$v.Account}}{{if gt $v.State 0}} <span style="color: red">(有拒绝订单)</span>{{end}}</td>
+                    <td>{{printf "%.2f" $v.Amount}}</td>
+                    <td class="text-center">
+                        <a href="/userdeposit/withdrawinfo?userId={{$v.Uid}}" class="skip1">提现明细</a>&nbsp;&nbsp;&nbsp;
+                        <a href="/usermetadata/personalinformation?id={{$v.Uid}}" class="skip1">个人资料</a>
+                    </td>
+                    <td class="text-center">{{if eq $v.CheckResult 1}}等待连连回调
+                        {{else if eq $v.CheckResult 2}}需要人工审核
+                        {{else if eq $v.CheckResult 3}}正常放款
+                        {{else if eq $v.CheckResult 4}}放款失败
+                        {{else if eq $v.CheckResult 5}}拒绝
+                        {{else}}没有相关记录
+                        {{end}}
+                    </td>
+                </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination").my_page("#searchFrom");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+<script>
+
+$(function(){
+
+    $('.search').off().on('click',function(){
+        var phone_number = $('#phone_number').val();
+        if(!phone_number){
+            alert('请输入手机号码进行搜索！');
+            return false;
+        }
+//        if(phone_number && !(/^1[34578]\d{9}$/.test(phone_number))){
+//            alert('输入的手机号码有误，请重新输入！');
+//            return false;
+//        }
+    });
+   
+
+});
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

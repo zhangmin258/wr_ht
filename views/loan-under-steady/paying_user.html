@@ -1,0 +1,277 @@
+
+<style>
+
+	.show_data {
+	    border: #ccc solid 1px;
+	    border-radius: 5px;
+	    overflow: hidden;
+	}
+
+	.show_data li {
+	    line-height: 50px;
+	    font-size: 18px;
+	    color: #333;
+	    font-weight: bold;
+	}
+
+	.show_data li span {
+	    width: 25%;
+	    display: block;
+	    float: left;
+	    text-align: center;
+	}
+
+	#content {
+	    padding: 20px 30px;
+	}
+
+	#content p {
+	    line-height: 2;
+	}
+
+	#content input[type="button"] {
+	    width: 80px;
+	    display: inline-block;
+	    margin-right: 20px;
+	}
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading">数据汇总</div>
+    <div class="panel-body">
+        <ul class="show_data">
+            <li>
+                <span>付费人次</span>
+                <span>付费金额</span>
+                <span>退款金额</span>
+                <span>累计总收入</span>
+            </li>
+            <li>
+                <span class="data1"></span>
+                <span class="data2"></span>
+                <span class="data3"></span>
+                <span class="data4"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="panel">
+	<div class="panel-heading" style="padding-bottom: 45px;">
+		<strong class="pull-left" style="line-height: 30px;">付费用户列表</strong>
+		<span class="pull-right form-inline">
+			<input name="startTime" id="startDate" class="Wdate form-control" type="text" onFocus="var endDate = $dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd', onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}'})" />&nbsp;&nbsp;-&nbsp;    
+            <input name="endTime" autocomplete="off" id="endDate" class="Wdate form-control" type="text" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})" />&nbsp;&nbsp;&nbsp;  
+            <button type="button" class="btn btn-info" style="width: 80px;" id="export">导出</button>
+		</span>
+	</div>
+	<div class="panel-body">
+		<form action="" id="searchForm" method="get" class="form-inline" onkeydown="if(event.keyCode==13)return false;">
+		    <input type="text" name="phone_number" id="phone_number" placeholder="请输入手机号码" class="form-control phone_number" style="width: 200px;">
+		    <button type="button" class="btn btn-info" id="submit">搜索</button>
+		</form>
+		<div style="height: 20px; border-bottom: #ccc solid 1px; clear: both;"></div>
+		<table class="table table-hover">
+		    <thead>
+		         <tr>
+		            <th>下单时间</th>
+		            <th>手机号</th>
+		            <th>姓名</th>
+		            <th class="text-center">操作</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+		    	{{range $k,$v:=.payUsersList}}
+		        <tr>
+		        	<td class="refunds_id" style="display: none;">{{$v.Uid}}</td>
+					<td class="refunds_time">{{$v.CreateTime.Format "2006-01-02 15:04:05"}}</td>
+					<td>{{$v.Account}}</td>
+					<td>{{$v.Name}}</td>
+					<td class="text-center">
+						<a href="../usermetadata/personalinformation.html?id={{$v.Uid}}" class="skip1">查看资料</a>&nbsp;&nbsp;&nbsp;
+						{{if eq $v.IsValid 1 }}
+						{{if eq $v.IsFinished 1}}
+						<span class="refunds" style="cursor: pointer; color: #398dee;">&nbsp;&nbsp;退款&nbsp;&nbsp;</span>
+						{{else}}
+						<span style="cursor: auto; color: red;">已退款</span>
+						{{end}}
+						{{else}}
+						<span style="cursor: auto; color: red;">已退款</span>
+						{{end}}
+					</td>
+		        </tr>
+		        {{end}}
+		    </tbody>
+		    <tfoot>
+		        <tr>
+		            <td colspan="4">
+		                <div class="fl">
+		                    <div class="pagination">总共{{.count}}条</div>
+		                </div>
+		                <div class="fl">
+		                    <div class="pagination" id="pagination" data-url="/supportloan/loanplandata" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+		                </div>
+		                <script type="text/javascript">
+		                    $(function () {
+		                        $("#pagination").my_page("#searchForm");
+		                    });
+		                </script>	
+		            </td>
+		        </tr>
+		    </tfoot>
+		</table>
+	</div>
+</div>
+
+<!-- 弹窗内容 -->
+<form id="content" style="display: none;" class="form-inline" onkeydown="if(event.keyCode==13)return false;">
+	<input type="hidden" id="refunds_id">
+	<input type="hidden" id="refunds_time">
+    <p class="form-group">
+    	<span>请输入退款金额</span>
+        <div class="input-group">
+          	<div class="input-group-addon">￥</div>
+          	<input type="number" class="form-control" id="refunds_price" name="refunds_price" min="0">
+        </div>
+    </p>
+    <p style="text-align: center; margin-top: 30px;">
+        <input type="button" value="取消" class="btn btn-default" id="cancel">
+        <input type="button" value="确定" class="btn btn-info" id="sure">
+    </p>
+</form>
+
+
+<script>
+	/* 
+	* formatMoney(s,type) 
+	* 功能：金额按千位逗号分割 
+	* 参数：s，需要格式化的金额数值. 
+	* 参数：type,判断格式化后的金额是否需要小数位. 
+	* 返回：返回格式化后的数值字符串. 
+	*/ 
+	function formatMoney(s, type) { 
+	    if (/[^0-9\.]/.test(s))  return "0";
+	    if (s == null || s == "") return "0"; 
+	    s = s.toString().replace(/^(\d*)$/, "$1."); 
+	    s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1"); 
+	    s = s.replace(".", ","); 
+	    var re = /(\d)(\d{3},)/; 
+	    while (re.test(s)) 
+	    s = s.replace(re, "$1,$2"); 
+	    s = s.replace(/,(\d\d)$/, ".$1"); 
+	    if (type == 0) {// 不带小数位(默认是有小数位) 
+	        var a = s.split("."); 
+	        if (a[1] == "00") { 
+	            s = a[0]; 
+	        } 
+	    } 
+	    return s; 
+	} 
+	$('.data1').text(formatMoney({{.payPersonCount}},0));
+	$('.data2').text(formatMoney({{.payMoneyCount}},2));
+	$('.data3').text(formatMoney({{.refundAmount}},2));
+	$('.data4').text(formatMoney({{.totalAmount}}, 2));
+
+
+	//导出按钮
+	$('#export').click(function(){
+		var startDate = $('#startDate').val();
+		var endDate = $('#endDate').val();
+		if(!startDate){
+			alert('开始时间不得为空！');
+			return;
+		}
+		if(!endDate){
+			alert('结束时间不得为空！');
+			return;
+		}
+		var url = '/supportloan/applyexportexcel?startTime=' + startDate + '&endTime=' + endDate;
+		window.location.href = url;
+	});
+
+
+	//点击搜索
+	$('#submit').on('click', function(){
+		var phone = $.trim($("#phone_number").val());
+		if(phone && !(/^1[34578]\d{9}$/.test(phone))){
+			alert('手机号码格式不正确！');
+			return;
+		}
+		$('#searchForm').submit();
+	});
+
+	
+	if(window.sessionStorage.phone_number){
+		$('#phone_number').val(window.sessionStorage.phone_number);
+	}
+
+	//点击退款
+	$('.refunds').off('click').on('click', function(){
+		var refunds_id = $.trim($(this).parent().siblings('.refunds_id').text());
+		var refunds_time = $.trim($(this).parent().siblings('.refunds_time').text());
+		$('#refunds_id').val(refunds_id);
+		$('#refunds_time').val(refunds_time);
+		layer.open({
+		    type: 1,
+		    title: '退款',
+		    area: '500px',
+		    content: $('#content'),
+		    cancel: function(){
+		    	$('#refunds_price').val('');
+		    }
+		});
+	});
+
+	$('#cancel').click(function(){
+		layer.closeAll();
+		$('#refunds_price').val('');
+	});
+
+	$('#sure').off('click').on('click', function(){
+		var refunds_id = $('#refunds_id').val();
+		var refunds_time = $('#refunds_time').val();
+		var refunds_price = parseFloat($('#refunds_price').val());
+		if(!refunds_price){
+			alert('请输入退款金额！');
+			return;
+		}
+		if(refunds_price && refunds_price <= 0){
+			alert('退款金额必须大于0！');
+			return;
+		}
+		$.ajax({
+			url: '/supportloan/refund',
+			type: 'post',
+			data: {
+				Uid: refunds_id,
+				CreateTime: refunds_time,
+				RefundAmount: refunds_price
+			},
+			success: function(res){
+				if(res.ret == 200){
+					alert(res.msg);
+					layer.closeAll();
+					getpage('/supportloan/loanplandata');
+				}else{
+					alert(res.msg);
+                    $('#refunds_price').focus();
+				}
+			}
+		});
+	});
+
+
+
+
+</script>
+
+
+
+
+
+
+
+

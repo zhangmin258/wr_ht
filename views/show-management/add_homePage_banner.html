@@ -1,0 +1,386 @@
+
+<style>
+    .form-group {
+        margin-bottom: 50px;
+    }
+
+    .form-group label {
+        color: #333;
+    }
+
+    label span {
+        font-size: 20px;
+        color: red;
+        vertical-align: -7px;
+    }
+
+    .xl {
+        width: 300px;
+        overflow: hidden;
+        border: #ccc solid 1px;
+        position: absolute;
+        z-index: 100;
+        top: 34px;
+        left: 15px;
+        background: #fff;
+        border-radius: 5px;
+        display: none;
+        padding: 0;
+    }
+
+    .xl li {
+        line-height: 30px;
+        cursor: pointer;
+        padding-left: 10px;
+        background: #fff;
+        color: #666;
+    }
+
+    .xl li:hover {
+        background: #ccc;
+        color: maroon;
+    }
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading">新增广告位</div>
+    <div class="panel-body" style="padding-top: 30px;">
+        <form action="addBanner" id="imgInput" enctype="multipart/form-data" method="" class="form-horizontal">
+            <!--展示位置-->
+            <div class="form-group">
+                <label for="itype" class="col-sm-1 control-label">展示位置</label>
+                <div class="col-sm-3">
+                    <select name="itype" id="itype" class="form-control">
+                        <option value="0">请选择</option>
+                        <option value="2">banner</option>
+                        <option value="3">广告位</option>
+                        <option value="4">教程攻略</option>
+                        <option value="5">活动页面</option>
+                    </select>
+                </div>
+            </div>
+            <!--展示时长-->
+            <div class="form-group" style="display: none;" id="show_time">
+                <label for="time" class="col-sm-1 control-label">展示时长</label>
+                <div class="col-sm-3">
+                    <input type="number" class="form-control" id="time" placeholder="请输入展示时长" autocomplete="off">
+                </div>
+            </div>
+            <!--展示顺序-->
+            <div class="form-group">
+                <label for="sort" class="col-sm-1 control-label">展示顺序</label>
+                <div class="col-sm-3">
+                    <input type="number" class="form-control" id="sort" placeholder="请输入展示位置数字编号" autocomplete="off">
+                </div>
+            </div>
+
+            <!--banner图-->
+            <div class="form-group">
+                <label class="col-sm-1 control-label">图片</label>
+                <div class="col-sm-3">
+                    <img id="imgDisplay" alt="proLogo" src="../static/img/addBanner.png" width="395" height="150"/>
+                    <div style="height: 10px;"></div>
+                    <input type="file" class="imgSelect" id="imgSelect" name="proIcon"/>
+                    <input type="hidden" id="imgUrl" value=""/>
+                </div>
+            </div>
+
+            <!--跳转类型-->
+            <div class="form-group" id="jumpType">
+                <label for="state" class="col-sm-1 control-label">跳转类型&nbsp;<span>*</span></label>
+                <div class="col-sm-3">
+                    <select name="state" id="state" class="form-control">
+                        <option value="0">请选择</option>
+                        <option value="1">跳转至贷款产品</option>
+                        <option value="2">跳转至外放H5页面</option>
+                        <option value="3">不做跳转</option>
+                        <option value="4">跳转到邀请好友页面</option>
+                    </select>
+                </div>
+            </div>
+            <!-- 指向位置 -->
+          <!--  <div class="form-group" id="toPosition">
+                <label for="to_position" class="col-sm-1 control-label">指向位置</label>
+                <div class="col-sm-3">
+                    <select name="to_position" id="to_position" class="form-control">
+                        <option value="1">链接</option>
+                        <option value="2">贷款产品</option>
+                    </select>
+                </div>
+            </div>-->
+
+            <!--指向链接-->
+            <div class="form-group" style="display: none;" id="jumpUrl">
+                <label for="link_url" class="col-sm-1 control-label">指向链接</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="link_url" placeholder="请输入链接地址">
+                </div>
+            </div>
+            <!--跳转页标题-->
+            <div class="form-group" style="display: none;" id="jumpTitle">
+                <label for="title" class="col-sm-1 control-label">跳转页标题</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="title" placeholder="请输入跳转页标题" value="{{.image.Title}}">
+                </div>
+            </div>
+            <!--贷款产品-->
+            <div class="form-group" style="display: none; position: relative;" id="loan_product">
+                <label for="product_name" class="col-sm-1 control-label">贷款产品</label>
+                <div class="col-sm-3">
+                     <input type="hidden" id="productsId" value="">
+                    <input type="text" class="form-control" name="product_name" id="product_name" placeholder="请输入贷款产品名称" autocomplete="off">
+                    <ul class="xl"></ul>
+                </div>
+            </div>
+
+            <!--Banner状态-->
+            <div class="form-group">
+                <label for="isUsed" class="col-sm-1 control-label">状态</label>
+                <div class="col-sm-3">
+                    <select name="" id="isUsed" class="form-control">
+                        <option value="0">冻结</option>
+                        <option value="1">上线</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="button" class="btn btn-info" id="saveProduct">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script type="text/javascript">
+
+    //预览链接
+    // function testLink(){
+    //     window.open($("#link_url").val())
+    // }
+
+    $(function () {
+
+        //展示位置跳转联动
+        $('#itype').on('change', function(){
+            var itype = $('#itype').val();
+            if(itype == 3){
+                $('#show_time').show();
+            }else{
+                $('#show_time').hide();
+            }
+        });
+
+        //指向位置跳转联动
+//        $('#to_position').on('change', function(){
+//            var to_position = $('#to_position').val();
+//            if(to_position == 1){
+//                $('#jumpUrl').show();
+//                $('#loan_product').hide();
+//            }else{
+//                $('#jumpUrl').hide();
+//                $('#loan_product').show();
+//            }
+//        });
+
+
+        //跳转类型的跳转联动
+
+         $("#state").on('change', function(){
+             var state = $('#state').val();
+             if (state == 1) {
+                 $("#loan_product").show()
+                 $("#jumpUrl").hide()
+                 $("#jumpTitle").hide()
+             }else if(state == 2) {
+                 $("#loan_product").hide()
+                 $("#jumpUrl").show()
+                 $("#jumpTitle").show()
+             }else{
+                 $("#loan_product").hide()
+                 $("#jumpUrl").hide()
+                 $("#jumpTitle").hide()
+             }
+         });
+
+
+        //图片上传
+        $("#imgSelect").off().on("change", function () {
+            var formData = new FormData($("#imgInput")[0]);
+            var file = $('#imgSelect').val();
+            if(!/\.(gif|jpg|jpeg|png|gif|jpg|png)$/i.test(file)){
+                alert("图片类型必须是.gif,jpeg,jpg,png中的一种");
+                return;
+            }
+            $.ajax({
+                url: '/product/uploadIcon',
+                type: 'POST',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (res) {
+                    if (res.ret = 200) {
+                        $("#imgDisplay").attr("src", res.url)
+                        $("#imgUrl").val(res.url)
+                    } else {
+                        alert("上传失败！")
+                    }
+                }
+            });
+        });
+
+
+        //保存
+        $("#saveProduct").off("click").on("click", function () {
+            var itype = $("#itype").val();              //展示位置
+            var time = $('#time').val();                //展示时长
+            var sort = $('#sort').val();                //展示顺序
+            var imgUrl = $('#imgUrl').val();            //上传的图片地址
+            var state = $('#state').val();   //指向位置
+            var link_url = $.trim($('#link_url').val());        //指向链接
+            var title = $.trim($('#title').val());        //指向链接标题
+            var product_name = $.trim($('#product_name').val());   //贷款产品名称
+            var productsId = $('#productsId').val();    //贷款产品id
+            var isUsed = $('#isUsed').val();            //状态
+            if(itype == 0){
+                alert('请选择展示位置！');
+                return;
+            }
+            if(itype == 3 && !time){
+                alert('请输入展示时长！');
+                return;
+            }
+            if(itype == 3 && time < 0){
+                alert('展示时长不得小于0！');
+                return;
+            }
+            if(!sort){
+                alert('请输入展示顺序！');
+                return;
+            }
+            if(!imgUrl){
+                alert('请上传图片！');
+                return;
+            }
+            if(state == 0){
+                alert('请选择跳转类型');
+                return;
+            }
+            if(state == 2 && !link_url){
+                 alert('请输入链接地址！');
+                 return;
+            }
+            if(state == 2 && !title){
+                alert('请输入跳转页标题！');
+                return;
+            }
+            if(state == 1 && !product_name){
+                 alert('请输入贷款产品！');
+                 return;
+            }
+
+            $.zpost('/banner/savebanner', {
+                Itype: itype,
+                ShowSec: time,
+                Sort: sort,
+                ImgUrl: imgUrl,
+                State: state,
+                LinkUrl: link_url,
+                Title: title,
+                ProductName: product_name,
+                IsUsed: isUsed
+            }, function(result){
+                if (result.ret == 200) {
+                    alert("保存成功！")
+                    getpage(window.sessionStorage.URl);
+                } else {
+                    alert(result.err)
+                }
+            });
+        });
+
+
+        //模糊查询
+        $('#product_name').off().on('keyup', function (e) {
+            var name = $('#product_name').val();
+            var html = '';
+            var length = $('.xl li').length;
+            //当按了下键的时候
+            if(e.keyCode == 40){
+                if(this.index == undefined || this.index >= length - 1){
+                    this.index = 0;
+                }else{
+                    this.index ++;
+                }
+                $('.xl li').css('background','#fff').css('color','#666');
+                $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+                $('#product_name').val($('.xl li').eq(this.index).text());
+                $('#productsId').val($('.xl li').eq(this.index).attr("data-id"));
+                return;
+            }
+            //当按了上键的时候
+            if(e.keyCode == 38){
+                if(this.index == undefined || this.index <= 0){
+                    this.index = length - 1;
+                }else{
+                    this.index --;
+                }
+                $('.xl li').css('background','#fff').css('color','#666');
+                $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+                $('#product_name').val($('.xl li').eq(this.index).text());
+                $('#productsId').val($('.xl li').eq(this.index).attr("data-id"));
+                return;
+            }
+            //当按了回车键的时候
+            if(e.keyCode == 13){
+                this.index = undefined;    //初始化
+                name = $('#product_name').val();
+                $('.xl').empty().hide();
+                return;
+            }
+
+            if (name.length <= 0) {
+                $('.xl').empty().hide();
+                return;
+            }
+
+            $.ajax({
+                url: "/agent/getproductlist",
+                type: 'get',
+                data: {
+                    name: name
+                },
+                success: function (res) {
+                    if (res.ret == 200) {
+                        var data = res.products;
+                        if (data) {
+                            $.each(data, function (index, value) {
+                                html += '<li data-id="' + value.Id + '">' + value.Name + '</li>';
+                            });
+                            $('.xl').empty();
+                            $('.xl').append(html).show();
+                            $('.xl li').on('click', function () {
+                                $('#product_name').val($(this).text());
+                                $('#productsId').val($(this).attr("data-id"));
+                                $('.xl').empty().hide();
+                                name = $('#product_name').val();
+                            });
+                        }else {
+                            $('.xl').empty().hide();
+                        }
+                    }
+                }
+            });
+            $('body').on('click', function () {
+                $('.xl').hide();
+            });
+        });
+    });
+
+
+</script>

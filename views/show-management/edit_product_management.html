@@ -1,0 +1,327 @@
+<style>
+    form {
+        overflow: hidden;
+    }
+
+    form .left {
+        width: 50%;
+        float: left;
+    }
+
+    form .right {
+        width: 50%;
+        float: right;
+    }
+
+    .form-group {
+        margin: 30px 0;
+    }
+
+    .form-group label {
+        color: #333;
+    }
+</style>
+<form class="form-horizontal" action="editProductMange" method="get">
+    <div class="panel">
+        <div class="panel-heading">产品状态</div>
+        <div class="panel-body">
+            <div class="left">
+                <div class="form-group">
+                    <input type="hidden" value="{{.product.Id}}" id="pid">
+                    <input type="hidden" value="{{.findproaddress.Id}}" id="paid">
+                    <label class="col-sm-2 control-label">上线状态</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="online_status">
+                            <option value="0" {{if eq .product.IsUse 0}}selected="selected" {{end}}>上线</option>
+                            <option value="1" {{if eq .product.IsUse 1}}selected="selected" {{end}}>下线</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">展示位置</label>
+                    <div class="col-sm-4">
+                        {{if eq .product.IsIndexShow 2}}
+                        <select class="form-control" id="homePage_show">
+                            <option value="2" selected="selected">大额页</option>
+                        </select>
+                        {{else}}
+                        <select class="form-control" id="homePage_show">
+                            <option value="1" {{if eq .product.IsIndexShow 1}}selected="selected" {{end}}>首页</option>
+                            <option value="0" {{if eq .product.IsIndexShow 0}}selected="selected" {{end}}>贷款页</option>
+                        </select>
+                        {{end}}
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">展示顺序</label>
+                    <div class="col-sm-4">
+                        {{if eq .product.IsIndexShow 0}}
+                        <input type="text" class="form-control" placeholder="请输入展示位置数字编号" value="{{.product.LoanSort}}" id="location">
+                        {{else if eq .product.IsIndexShow 1}}
+                        <input type="text" class="form-control" placeholder="请输入展示位置数字编号" value="{{.product.Sort}}" id="location">
+                        {{else if eq .product.IsIndexShow 2}}
+                        <input type="text" class="form-control" placeholder="请输入展示位置数字编号" value="{{.product.LargeLoanSort}}" id="location">
+                        {{end}}
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">产品标签</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="product_label">
+                            {{if eq .product.IsIndexShow 2}}
+                            <option value="">请选择</option> 
+                            <option value="房屋抵押" {{if eq .product.Tag "房屋抵押"}}selected="selected" {{end}}>房屋抵押</option> 
+                            <option value="车辆抵押" {{if eq .product.Tag "车辆抵押"}}selected="selected" {{end}}>车辆抵押</option> 
+                            <option value="公积金贷" {{if eq .product.Tag "公积金贷"}}selected="selected" {{end}}>公积金贷</option> 
+                            <option value="社保贷" {{if eq .product.Tag "社保贷"}}selected="selected" {{end}}>社保贷</option> 
+                            {{else}}
+                            <option value="">请选择</option> 
+                            <option value="新口子" {{if eq .product.Tag "新口子"}}selected="selected" {{end}}>新口子</option> 
+                            <option value="放款快" {{if eq .product.Tag "放款快"}}selected="selected" {{end}}>放款快</option> 
+                            <option value="高通过" {{if eq .product.Tag "高通过"}}selected="selected" {{end}}>高通过</option> 
+                            <option value="稳定口子" {{if eq .product.Tag "稳定口子"}}selected="selected" {{end}}>稳定口子</option>
+                            <option value="低利率" {{if eq .product.Tag "低利率"}}selected="selected" {{end}}>低利率</option>
+                            <option value="长分期" {{if eq .product.Tag "长分期"}}selected="selected" {{end}}>长分期</option>
+                            {{end}}
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="right">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">弹窗推荐</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="pop_up">
+                            <option value="1"{{if eq .product.IsPopUp 1}}selected="selected" {{end}}>是</option>
+                            <option value="0"{{if eq .product.IsPopUp 0}}selected="selected" {{end}}>否</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">导量上限</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="请输入导量上限，不设置则无限" value="{{.product.FullGuide}}" id="amount_online">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">产品推广</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="请输入产品推广，不设置则为0" value="{{.product.RecommendSort}}" id="recommend_sort">
+                    </div>
+                    <div style="margin-top: 6px;">
+                        <span style="color: green">默认为0时为不推广</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel">
+        <div class="panel-heading">申请条件</div>
+        <div class="panel-body">
+            <div class="left">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">最小年龄</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="请输入最小年龄" value="{{if eq .findproaddress.MinAge 0}}{{else}}{{.findproaddress.MinAge}}{{end}}"
+                               id="min_age">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">芝麻分最低要求</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="芝麻分最低要求"
+                               value="{{if eq .findproaddress.MinZmscore 0}}{{else}}{{.findproaddress.MinZmscore}}{{end}}" id="min_req">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">手机系统类型</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="app" name="app">
+                            <option value="0" {{if eq .findproaddress.AppPermit 0}}selected="selected" {{end}}>不限</option>
+                            <option value="1" {{if eq .findproaddress.AppPermit 1}}selected="selected" {{end}}>ios</option>
+                            <option value="2" {{if eq .findproaddress.AppPermit 2}}selected="selected" {{end}}>Android</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">有无公积金</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="provident_fund" name="provident_fund">
+                            <option value="1" {{if eq .findproaddress.IsProvidentFund 1}}selected="selected" {{end}}>无</option>
+                            <option value="2" {{if eq .findproaddress.IsProvidentFund 2}}selected="selected" {{end}}>有</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">有无社保</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="security" name="security">
+                            <option value="1" {{if eq .findproaddress.IsSocialSecurity 1}}selected="selected" {{end}}>无</option>
+                            <option value="2" {{if eq .findproaddress.IsSocialSecurity 2}}selected="selected" {{end}}>有</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="right">
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">最大年龄</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="请输入最大年龄" value="{{if eq .findproaddress.MaxAge 0}}{{else}}{{.findproaddress.MaxAge}}{{end}}"
+                               id="max_age">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">地域要求</label>
+                    <div class="col-sm-4">
+                        <select name="regional_req" id="regional_req" class="form-control">
+                            <option value="1" {{if eq .findproaddress.AddressType 1}}selected="selected" {{end}}>只贷给
+                            </option>
+                            <option value="2" {{if eq .findproaddress.AddressType 2}}selected="selected" {{end}}>不贷给
+                            </option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group" id="just_loan">
+                    <label class="col-sm-2 control-label">{{if eq .findproaddress.AddressType 2}}不贷给{{else}}只贷给{{end}}</label>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control" placeholder="请输入区域名称，以英文逗号隔开"
+                               value="{{.findproaddress.Address}}" id="address">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">是否有房</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="house" name="house">
+                            <option value="1" {{if eq .findproaddress.HouseProperty 1}}selected="selected" {{end}}>无</option>
+                            <option value="2" {{if eq .findproaddress.HouseProperty 2}}selected="selected" {{end}}>有</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="col-sm-2 control-label">是否有车</label>
+                    <div class="col-sm-4">
+                        <select class="form-control" id="car" name="car">
+                            <option value="1" {{if eq .findproaddress.CarProperty 1}}selected="selected" {{end}}>无</option>
+                            <option value="3" {{if eq .findproaddress.CarProperty 3}}selected="selected" {{end}}>有</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-5 col-sm-7">
+            <button type="button" class="btn btn-info" id="save">保存</button>
+        </div>
+    </div>
+
+</form>
+
+
+<script type="text/javascript">
+
+    $(function () {
+
+        if($('#regional_req').val() == 1){
+            $('#just_loan').find('label').text('只贷给');
+        }else{
+            $('#just_loan').find('label').text('不贷给');
+        }
+
+        $('#regional_req').on('change', function () {
+            $('#just_loan').find('label').text($(this).find('option:selected').text());
+        });
+
+
+        //展示位置如果为大额页，便不可修改
+        if($('#homePage_show').val() == 2){
+            $('#homePage_show').attr('disabled', 'disabled').css('background', '#eee');
+        }else{
+            $('#homePage_show').removeAttr('disabled').css('background', '#fff');
+        }
+
+        $('#save').off().on('click', function () {
+            //产品状态
+            var pid = $('#pid').val();
+            var paid = $('#paid').val();
+            var online_status = $("#online_status").val();   //上线状态
+            var homePage_show = $('#homePage_show').val();   //首页展示
+            var pop_up = $("#pop_up").val();    //弹窗推荐
+            var amount_online = $('#amount_online').val();   //导量上限
+            var recommend_sort = $('#recommend_sort').val();//产品推广
+            var location = $('#location').val();   //展示顺序
+            var product_label = $('#product_label').val();    //产品标签
+            //申请条件
+            var min_age = $('#min_age').val();   //最小年龄
+            var max_age = $('#max_age').val();   //最大年龄
+            var min_req = $('#min_req').val();   //芝麻分最低要求
+            var regional_req = $("#regional_req").find("option:selected").val();    //地域要求
+            var app = $("#app").find("option:selected").val();     //手机系统类型
+            var provident_fund = $('#provident_fund').find("option:selected").val();   // 公积金
+            var security = $('#security').find("option:selected").val();   // 社保
+            var house = $('#house').find("option:selected").val();   // 房
+            var car = $('#car').find("option:selected").val();   // 车
+            var address = $('#address').val();   // 只贷给/不贷给
+
+            
+            //判断分隔符是否为小写的,
+            if (address.indexOf("，") >= 0) {
+                alert('地址之间以小写“,”分割');
+                return;
+            }
+
+            if($(".location").val() == 0){
+                alert('顺位必须大于或等于1！');
+                return;
+            }
+
+            if(!product_label){
+                alert('请选择产品标签！');
+                return;
+            }
+
+            if(online_status == 1 && pop_up == 1){
+                alert('下线产品不支持弹框推荐！');
+                return;
+            }
+
+            $.zpost('/control/editproductinfo', {
+                PAId: paid,
+                Id: pid,
+                IsUse: online_status,
+                IsIndexShow: homePage_show,
+                Location:location,
+                IsPopUp: pop_up,
+                FullGuide: amount_online,
+                RecommendSort:recommend_sort,
+                Tag: product_label,
+                MinAge: min_age,
+                MaxAge: max_age,
+                MinZmScore: min_req,
+                AddressType: regional_req,
+                AppPermit: app,
+                IsProvidentFund:provident_fund,
+                IsSocialSecurity:security,
+                HouseProperty:house,
+                CarProperty:car,
+                Address: address
+            }, function (result) {
+                if (result.ret == 200) {
+                    alert('保存成功');
+                    getpage(window.sessionStorage.URl);
+                } else {
+                    alert(result.msg);
+                }
+            });
+        });
+    });
+
+
+</script>

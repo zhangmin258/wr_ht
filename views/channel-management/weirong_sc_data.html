@@ -1,0 +1,808 @@
+
+<link rel="stylesheet" type="text/css" href="../../static/css/page.css">
+<style>
+    .show_data {
+        border: #ccc solid 1px;
+        border-radius: 5px;
+        overflow: hidden;
+    }
+
+    .show_data li {
+        line-height: 50px;
+        font-size: 18px;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .show_data li span {
+        width: 25%;
+        display: block;
+        float: left;
+        text-align: center;
+    }
+
+    .nav {
+        margin-bottom: 20px;
+        overflow: hidden;
+    }
+
+    .nav .nav_user {
+        float: left;
+    }
+
+    .nav .nav_time {
+        float: right;
+        margin-top: 10px;
+    }
+
+    .nav .nav_user li {
+        float: left;
+        padding: 0 20px;
+        height: 40px;
+        line-height: 40px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .nav .nav_user li.state {
+        border-color: #599ef4 !important;
+        color: #fff;
+        background: #599ef4;
+    }
+
+    .nav .nav_time li {
+        float: left;
+        padding: 0 20px;
+        height: 30px;
+        line-height: 30px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        text-align: center;
+        cursor: pointer;
+    }
+
+    .nav .nav_time li.state {
+        border-color: #599ef4 !important;
+        color: #fff;
+        background: #599ef4;
+    }
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading" style="padding-bottom: 50px;">
+        <strong class="pull-left" style="line-height: 35px;">渠道数据</strong>
+        <div class="pull-right" style="font-weight: normal;">
+            <form action="" id="searchForm2" method="get" class="form-inline">
+                <input type="hidden" id="type" value="{{.type}}">
+                <select name="bao" id="bao" class="form-control" style="width: 200px;"></select>
+                <select name="source" id="source" class="form-control" style="width: 200px;"></select>
+            </form>
+        </div>
+    </div>
+    <div class="panel-body">
+        <ul class="show_data">
+            <li>
+                <span>累计注册用户</span>
+                <span>累计完成OCR用户</span>
+                <span>累计点击立即申请用户</span>
+                <span>累计放款用户</span>
+            </li>
+            <li>
+                <span class="zc"></span>
+                <span class="ocr"></span>
+                <span class="sq"></span>
+                <span class="fk"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="panel">
+    <div class="panel-heading" style="padding-bottom: 35px;">
+        <strong class="pull-left">数据明细</strong>
+        <button type="button" class="btn btn-info pull-right" style="width: 100px;" id="export">导出到Excel</button>
+    </div>
+    <div class="panel-body" id="weirong_data_info_sc">
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>注册用户</th>
+                    <th>完成OCR用户</th>
+                    <th>认证完成用户</th>
+                    <th>点击立即申请用户</th>
+                    <th>第三方导流量</th>
+                    <th>人均注册平台</th>
+                    <th>人均创造收益</th>
+                    <th>总收益</th>
+                </tr>
+            </thead>
+            <tbody id="data_detail"></tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="9" style="padding-top: 20px;">
+                        <div class="fl pageInfo1"></div>
+                        <div class="fl" id='btn-container1'></div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<div class="panel">
+    <div class="panel-heading" style="padding-bottom: 50px;">
+        <strong class="pull-left" style="line-height: 35px;">趋势分析</strong>
+        <form class="pull-right form-inline">
+            <input name="startTime" id="startDate" class="Wdate form-control" type="text" onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd', onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}'})"/>&nbsp;&nbsp;-&nbsp;
+            <input name="endTime" id="endDate" class="Wdate form-control" type="text" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})"/>     
+            <input type="button" value="确认" class="btn btn-info" id="timeConfirm">
+        </form>
+    </div>
+    <div class="panel-body">
+        <div class="nav">
+            <ul class="nav_user" id="userTab">
+                <li class="state">注册用户</li>
+                <li>完成OCR用户</li>
+                <li>认证完成用户</li>
+                <li>点击立即申请用户</li>
+            </ul>
+            <ul class="nav_time" id="timeTab">
+                <li class="state">日</li>
+                <li>周</li>
+            </ul>
+        </div>
+        <div id="main" style="width: 100%;height:550px;"></div>
+    </div>
+</div>
+
+
+<div class="panel">
+    <div class="panel-heading">各步转化率</div>
+    <div class="panel-body">
+        <div id="bar" style="width: 100%;height:550px;"></div>
+    </div>
+</div>
+
+
+
+<script type="text/javascript">
+   
+    
+    var pkgName = 0;
+    var sourName = '';
+
+    //根据默认值获取所有数据
+    $.ajax({
+        url: '/channel/getallpkgname',
+        type: 'get',
+        success: function(res){
+            var data = res.pkgName;
+            var options = '';
+            if(res.ret == 200 && data){
+                $.each(data, function(index, value){
+                    options += '<option value="'+ value.PkgId +'">'+ value.PkgName +'</option>';
+                });
+                $('#bao').html(options);
+                pkgName = $('#bao').val();
+                get_source(pkgName);
+            }else{
+                alert(res.err);
+            }
+        }
+    });
+
+    
+    //根据包名获取市场数据
+    $('#bao').on('change', function(){
+        pkgName = $('#bao').val();
+        get_source(pkgName);
+
+    });
+    
+    
+    function get_source(pkgName){
+        $.ajax({
+            url: '/channel/getsourcebypkg',
+            type: 'post',
+            data: {
+                pkgName: pkgName
+            },
+            success: function(res){
+                var data = res.source;
+                var options = '';
+                if(res.ret == 200 && data){
+                    $.each(data, function(index, value){
+                        options += '<option value="'+ value.Name +'">'+ value.Source +'</option>';
+                    });
+                    $('#source').html(options);
+                    sourName = $('#source').val();
+                    accumulated_data(pkgName, sourName);
+                    data_detail(pkgName, sourName, 1);
+
+                    //默认显示一个月的数据
+                    postData(startDate, stopDate, state, identifyCode, pkgName, sourName);
+                    //数据类型点击Tab切换
+                    $("#userTab li").off().on("click", function () {
+                        $(this).addClass('state').siblings().removeClass('state');
+                        state = $(this).index() + 1;
+                        postData(startDate, stopDate, state, identifyCode, pkgName, sourName);
+                    });
+                    //日周统计Tab切换
+                    $("#timeTab li").off().on("click", function () {
+                        $(this).addClass('state').siblings().removeClass('state');
+                        identifyCode = $(this).index() + 1;
+                        postData(startDate, stopDate, state, identifyCode, pkgName, sourName);
+                    });
+                    //起始，终止时间段数据获取
+                    $("#timeConfirm").off().on("click", function () {
+                        postData(startDate, stopDate, state, identifyCode, pkgName, sourName);
+                    });
+                    //各步转化率
+                    conversion_rate(pkgName, sourName);
+                }else{
+                    alert(res.err);
+                }
+            }
+        });
+    }
+
+
+    //根据包名和市场名获取全部数据
+    $('#source').on('change', function(){
+        pkgName = $('#bao').val();
+        sourName = $('#source').val();
+        accumulated_data(pkgName, sourName);
+        data_detail(pkgName, sourName, 1);
+        //默认显示一个月的数据
+        postData(startDate, stopDate, state, identifyCode, pkgName, sourName);
+        //数据类型点击Tab切换
+        $("#userTab li").off().on("click", function () {
+            $(this).addClass('state').siblings().removeClass('state');
+            state = $(this).index() + 1;
+            postData(startDate, stopDate, state, identifyCode, pkgName, sourName);
+        });
+        //日周统计Tab切换
+        $("#timeTab li").off().on("click", function () {
+            $(this).addClass('state').siblings().removeClass('state');
+            identifyCode = $(this).index() + 1;
+            postData(startDate, stopDate, state, identifyCode, pkgName, sourName);
+        });
+        //起始，终止时间段数据获取
+        $("#timeConfirm").off().on("click", function () {
+            postData(startDate, stopDate, state, identifyCode, pkgName, sourName);
+        });
+        //各步转化率
+        conversion_rate(pkgName, sourName);
+    });
+
+
+
+    //累计用户数据
+    function accumulated_data(pkgName, sourName){
+        $.ajax({
+            url: '/channel/getwrsctotaldata',
+            type: 'post',
+            data: {
+                pkgName: pkgName,
+                source: sourName
+            },
+            success: function(res){
+                if(res.ret == 200){
+                    $('.zc').text(res.registerCount);
+                    $('.ocr').text(res.ORCCount);
+                    $('.sq').text(res.ApplyNowCount);
+                    $('.fk').text(res.creditCount);
+                }else{
+                     alert(res.err);
+                }
+            }
+        });
+    }
+
+
+    //数据明细
+    function data_detail(pkgName, sourName, pageIndex){
+        var pageIndex = parseInt(pageIndex) || 1;
+        $.ajax({
+            url: '/channel/getwrscdatabycondition',
+            type: 'post',
+            // async: false,   //同步
+            data: {
+                pkgName: pkgName,
+                source: sourName,
+                page: pageIndex
+            },
+            success: function(res){
+                var html = '';
+                var data = res.dailyDataList;
+                if(res.ret == 200 && data.length){
+                    $.each(data, function(index, value){
+                        html += '<tr>'+
+                                    '<td class="date">'+ value.Date +'</td>'+
+                                    '<td>'+ value.RegisterCount +'</td>'+
+                                    '<td>'+ value.OcrCount +'</td>'+
+                                    '<td>'+ value.IdentifyCount +'</td>'+
+                                    '<td>'+ value.ApplynowCount +'</td>'+
+                                    '<td>'+ value.ProRegisterCount +'</td>'+
+                                    '<td>'+ value.UserPerCount +'</td>'+
+                                    '<td>'+ value.UserPerProfit +'</td>'+
+                                    '<td>'+ value.TotalProfit +'</td>'+//总收益
+                                '</tr>';
+                    });
+                    $('#data_detail').html(html);
+                    //格式化日期
+                    $.each($('.date'), function(index, value){
+                        var old_date = $(value).text();
+                        var new_date = new Date(old_date);
+                        var year = new_date.getFullYear(),
+                            month = (new_date.getMonth() + 1) < 10 ? '0' + (new_date.getMonth() + 1) : (new_date.getMonth() + 1),
+                            day = new_date.getDate() < 10 ? '0' + new_date.getDate() : new_date.getDate();
+                        $(value).text(year + '-' + month + '-' + day);
+                    });
+
+                    //按钮部分渲染
+                    var navHtml = "";
+                    var container = $("#btn-container1");
+                    
+                    if(res.pageCount > 5){
+                        if(pageIndex == 1){
+                            navHtml +=  '<div class="btn-fenye1">首页</div>'+
+                                        '<div class="btn-fenye1">上一页</div>';
+                        }else{
+                            navHtml +=  '<div class="btn-fenye1" onclick="data_detail(1)">首页</div>'+
+                                        '<div class="btn-fenye1" onclick="data_detail(pkgName, sourName, '+ (pageIndex - 1 || 1) +')">上一页</div>';
+                        }
+                    }else{
+                        if(pageIndex == 1){
+                            navHtml += '<div class="btn-fenye1">上一页</div>';
+                        }else{
+                            navHtml += '<div class="btn-fenye1" onclick="data_detail(pkgName, sourName, '+ (pageIndex - 1 || 1) +')">上一页</div>';
+                        }
+                    }
+                    
+                    if(res.pageCount > 5){
+                        if(res.pageCount - pageIndex < 2){  //如果后面两页不存在，则在前面添加倒数4，5页页码
+                            for(var i = res.pageCount - 2; i < pageIndex; i++){
+                                navHtml += '<div class="btn-fenye1" onclick="data_detail(pkgName, sourName, '+ (i - 2) +')">'+ (i - 2) +'</div>';
+                            }
+                        }
+                        var len = pageIndex + 2;
+                        for(var i = pageIndex - 2; i <= len; i++){//从当前页前2页开始循环，保证前面的页码能够加载出来，加载5个，则循环次数为5
+                            if(pageIndex - i == 0){//如果循环到当前page，则增加active状态
+                                navHtml += '<div class="btn-fenye1 active" onclick="data_detail(pkgName, sourName, '+ i +')">'+ i +'</div>';
+                            }else if(i - 1 < 0 || i - res.pageCount > 0) {//如果前2页没有东西，则不加载任何,如果后两页没有东西，也不加载
+
+                            }else{//加载普通按钮
+                                navHtml += '<div class="btn-fenye1" onclick="data_detail(pkgName, sourName, '+ i +')">'+ i +'</div>';
+                            }
+                        }
+                        if(pageIndex - 2 <= 0){//如果前面两页不存在，则后面补上页码
+                            for(var i = 0; i >= pageIndex - 2; i--){
+                                navHtml += '<div class="btn-fenye1" onclick="data_detail(pkgName, sourName, '+ (pageIndex + 3 - i) +')">'+ (pageIndex + 3 - i) +'</div>';
+                            }
+                        }
+                    }else{
+                        for(var i = 1; i <= res.pageCount; i++){
+                            if(res.pageNum == i){
+                                navHtml += '<div class="active btn-fenye1" onclick="data_detail(pkgName, sourName, '+ i +')">'+ i +'</div>';
+                            } else {
+                                navHtml += '<div class="btn-fenye1" onclick="data_detail(pkgName, sourName, '+ i +')">'+ i +'</div>';
+                            }
+                        }
+                    }
+                    if(res.pageCount > 5){
+                        if( pageIndex < res.pageCount ){
+                            navHtml +=  '<div class="btn-fenye1 lines" onclick="data_detail(pkgName, sourName, '+ ((pageIndex + 1) > len ? len : (pageIndex + 1)) +')">下一页</div>'+
+                                        '<div style="border-right: 1px solid #ccc;" class="btn-fenye1 last" onclick="data_detail(pkgName, sourName, '+ res.pageCount +')">末页</div>';
+                        }else{
+                            navHtml += '<div class="btn-fenye1 lines">下一页</div>'+
+                                       '<div style="border-right: 1px solid #ccc;" class="btn-fenye1 last">末页</div>';
+                        }
+                    }else{
+                        if( pageIndex < res.pageCount ){
+                            navHtml += '<div class="btn-fenye1 lines" onclick="data_detail(pkgName, sourName, '+ ((pageIndex + 1) > len ? len : (pageIndex + 1)) +')">下一页</div>';
+                        }else{
+                            navHtml += '<div class="btn-fenye1 lines">下一页</div>';
+                        }
+                    }
+                    container.html(navHtml);
+                    if(res.pageCount == 0){
+                        container.html("暂无数据").css("text-align", "center");
+                    }
+                    //页数信息
+                    var pageBar = "";
+                    pageBar = '<div>每页<span class="single_total1">' + res.pageSize + '</span>条&nbsp;&nbsp;&nbsp; 总共<span class="all_total1">' + res.pageCount + '</span>页</div>';
+                    $(".pageInfo1").html(pageBar);
+                    if (res.pageCount <= 5) {
+                        $(".lines").css('borderRight','1px solid #ccc');
+                    }
+                }else{
+                    alert(res.err);
+                }
+            }
+        });
+    }
+
+
+    //趋势分析
+    var nowDate=new Date();    
+    var days=new Date(nowDate.getFullYear(),nowDate.getMonth()+1,0);
+    var currentDate=getNowFormatDate();
+    var prevDate=addDate(nowDate,-days.getDate());
+
+    function getNowFormatDate() {
+        var date = new Date();
+        var seperator1 = "-";
+        var seperator2 = ":";
+        var month = date.getMonth() + 1;
+        var strDate = date.getDate();
+        if (month >= 1 && month <= 9) {
+            month = "0" + month;
+        }
+        if (strDate >= 0 && strDate <= 9) {
+            strDate = "0" + strDate;
+        }
+        var currentdate = date.getFullYear() + seperator1 + month + seperator1 + strDate
+        return currentdate;
+    }
+    function addDate(date,days){
+        var d=new Date(date);
+        d.setDate(d.getDate()+days);
+        var month=d.getMonth()+1;
+        var day = d.getDate();
+        if(month<10){
+            month = "0"+month;
+        }
+        if(day<10){
+            day = "0"+day;
+        }
+        var val = d.getFullYear()+"-"+month+"-"+day;
+        return val;
+    }
+    
+    //初始化当前时间
+    $('#startDate').val(prevDate);
+    $('#endDate').val(currentDate);
+
+    //初始化参数
+    var startDate = prevDate;   //起始时间
+    var stopDate = currentDate;  //结束时间
+    var state = 1;     //统计的数据类型
+    var identifyCode = 1;    //按日/周统计
+
+    var user_data = [];  //用户数据
+    var time_data = [];   //时间数据
+
+
+    //时间改变赋值
+    $('#startDate').on('blur', function () {
+        startDate = $(this).val();
+    });
+
+    $('#endDate').on('blur', function () {
+        stopDate = $(this).val();
+    });
+
+    
+    //AJAX数据请求函数
+    function postData(startD, stopD, userT, idenF, pkgName, sourName){
+        if (!startD || !stopD) {
+            alert("请输入起始时间和终止时间！");
+            return;
+        }
+        $.ajax({
+            type: "get",
+            url: "/channel/getWrSCStatisticsData",
+            data: {
+                startDate: startD,
+                stopDate: stopD,
+                state: userT,
+                identifyCode: idenF,
+                pkgName: pkgName,
+                source: sourName
+            },
+            success: function (res) {
+                if (res.ret == 200) {
+                    var data = res.data;
+                    var user = '';
+                    user_data = [];
+                    time_data = [];
+                    $.each(data, function (index, value) {
+                        user_data.push(value.Count);
+                        time_data.push(value.CreateDate);
+                    });
+                    switch(userT){
+                        case 1:
+                            user = '注册用户';
+                        break;
+                        case 2:
+                            user = '完成OCR用户';
+                        break;
+                        case 3:
+                            user = '认证完成用户';
+                        break;
+                        case 4:
+                            user = '点击立即申请用户';
+                        break;
+                    }
+                    drawCharts(user_data, time_data, user);
+                }else{
+                    alert(res.err); 
+                }
+            }
+        });
+    }
+    
+    //折线图
+    function drawCharts(a, b, c) {
+        var app = echarts.init(document.getElementById("main"));
+        app.title = '折柱混合';
+        var option = {
+            title: {
+                text: '',
+                subtext: ''
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'cross',
+                    label: {
+                        backgroundColor: '#6a7985'
+                    }
+                }
+            },
+            dataZoom: [
+                {
+                    type: 'slider',
+                    show: true,
+                    xAxisIndex: [0],
+                    start: 66,
+                    end: 100,
+                    filterMode: 'filter'
+                }
+            ],
+            grid: {
+                height: 450,
+                left: '3%',
+                right: '2%',
+                containLabel: true
+            },
+            legend: {
+                data: ['', '']
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    dataView: {readOnly: false},
+                    magicType: {type: ['line', 'bar']},
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            xAxis: {
+                type: 'category',
+                boundaryGap: false,
+                data: b
+            },
+            yAxis: {
+                type: 'value',
+                name: c + '(单位:个)',
+                axisLabel: {
+                    formatter: '{value} '
+                }
+            },
+            series: [
+                {
+                    name: c,
+                    type: 'line',
+                    data: a,
+                    itemStyle: {
+                        normal: {
+                            color: '#85BCCF',
+                            lineStyle: {
+                                color: '#85BCCF'
+                            }
+                        }
+                    },
+                }
+            ]
+        };
+        app.setOption(option);
+    }
+
+
+    //各步转化率
+    function conversion_rate(pkgName, sourName){
+        $.ajax({
+            url: '/channel/histogramdata',
+            type: 'post',
+            data: {
+                pkgName: pkgName,
+                source: sourName
+            },
+            success: function(res){
+                var title_arr = [];
+                var date_arr = [];
+                var data = res.histogramData;
+                if(res.ret == 200 && data.length){
+                    $.each(data, function(index, value){
+                        title_arr.push(value.Name);
+                        date_arr.push(value.Count);
+                    });
+                    draw_bar(title_arr, date_arr);
+                }else{
+                    alert(res.err);
+                }
+            }
+        });
+    }
+
+    //柱状图
+    function draw_bar(a, b){
+        var bar = echarts.init(document.getElementById("bar"));
+        bar.title = '折柱混合';
+        option = {
+            color: ['#3398DB'],
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {            // 坐标轴指示器，坐标轴触发有效
+                    type: 'shadow'        // 默认为直线，可选为：'line' | 'shadow'
+                }
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataZoom: {
+                        yAxisIndex: 'none'
+                    },
+                    dataView: {readOnly: false},
+                    magicType: {type: ['line', 'bar']},
+                    restore: {},
+                    saveAsImage: {}
+                }
+            },
+            grid: {
+                height: 450,
+                left: '0.2%',
+                right: '2%',
+                containLabel: true
+            },
+            xAxis: [
+                {
+                    type: 'category',
+                    data: a,
+                    axisTick: {
+                        alignWithLabel: true
+                    }
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '转化率',
+                    axisLabel: {
+                        formatter: '{value} %'
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: '转化率',
+                    type: 'bar',
+                    barWidth: '40%',
+                    data: b
+                }
+            ]
+        };
+        bar.setOption(option);
+    }
+
+
+   
+
+    
+
+
+
+    //导出到Excel接口
+    $('#export').on('click',function(){
+        var pkgName = $('#bao').val();
+        var source = $('#source').val();
+        var url = '/channel/scdatatoexcel?pkgName=' + pkgName + '&source=' + source;
+        window.location.href = url;
+    });
+    
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

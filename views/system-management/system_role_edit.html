@@ -1,0 +1,166 @@
+
+
+<!-- 添加 / 编辑岗位 -->
+<link class="docs" href="../static/css/zTreeStyle/zTreeStyle.css" rel="stylesheet" />
+<style type="text/css">
+ul.p-info .ztree li{display: list-item;margin-bottom: 0;}
+</style>
+<script type="text/javascript" src="../static/js/zTree/jquery.ztree.core.min.js"></script>
+<script type="text/javascript" src="../static/js/zTree/jquery.ztree.excheck.min.js"></script>
+<div class="panel panel_account_form">
+    <div class="panel-body">
+        <h2 class="panel-title">{{if ne .role.Id 0}}编辑角色{{else}}添加角色{{end}}</h2>
+        <!--<h2 class="panel-title">编辑岗位</h2>-->
+        <ul class="p-info">
+            <li class="col-md-8">
+                <div class="col-md-3">角色名称</div>
+                <div class="col-md-3"><input type="text" placeholder="请填写账号（15位字符）" maxlength="15" id="account" value="{{.role.Displayname}}" /></div>
+                <div class="col-md-4 hide1 error account_num_error"></div>
+            </li>
+           <!--  <li class="col-md-8">
+                <div class="col-md-3">账号状态</div>
+                <div class="col-md-3">
+                    <select name="post" id="account_status">
+                        <option value="启用">启用</option>
+                        <option value="禁用">禁用</option>
+                    </select>
+                </div>
+                <div class="col-md-4 hide1 error account_status_error"></div>
+            </li> -->
+            <li class="col-md-8">
+                <div class="col-md-3">权限</div>
+                <div class="col-md-3">
+                    <ul id="treeRoot" class="ztree"></ul>
+                </div>
+                <div class="col-md-4 hide1 error root_error"></div>
+            </li>
+            <li class="col-md-8">
+                <div class="col-md-3"></div>
+                <input class="hide" id="rid" value="{{.role.Id}}">
+                <div class="col-md-5"><a class="btn btn-info" onclick="Post_form_submit()">确定</a><a class="btn btn-default" onclick="Post_form_back()">取消</a></div>
+                <div class="col-md-4"></div>
+            </li>
+        </ul>
+    </div>
+</div>
+<script type="text/javascript">
+var rootSetting = {
+    view: {
+        showIcon: false
+    },
+    check: {
+        enable: true
+    },
+    data: {
+        simpleData: {
+            enable: true,
+            rootPId: 0
+        }
+    }
+};
+// var rootData = [
+//     {
+//         id:"1-1",
+//         name:"客户运营平台",
+//         open:true,
+//         pId:"RootSystem",
+//         checked:true
+//     },
+//     {
+//         id:"1-2",
+//         name:"客户运营平台2",
+//         open:true,
+//         pId:"RootSystem"
+//     },
+//     {
+//         id:"2-1",
+//         name:"客户中心",
+//         pId:"1-1"
+//     },
+//     {
+//         id:"2-2",
+//         name:"策略中心",
+//         open:true,
+//         pId:"1-1",
+//         checked:true
+//     },
+//     {
+//         id:"2-3",
+//         name:"客户中心2",
+//         open:true,
+//         pId:"1-2"
+//     },
+//     {
+//         id:"2-4",
+//         name:"策略中心2",
+//         open:true,
+//         pId:"1-2"
+//     }
+// ]
+$(function(){
+    $.zpost("/system/menudata", {role_id:'all'}, function(result) {
+        if (!!result&&result.ret==200) {
+            $.fn.zTree.init($("#treeRoot"), rootSetting, result.m);
+            var rid = $("#rid").val();
+            if (rid==0) {                
+                return false;
+            }            
+            $.zpost("/system/menudata", {rid:rid}, function(result) {
+                if (!!result&&result.ret==200) {
+                    var treeMenuObj = $.fn.zTree.getZTreeObj("treeRoot");
+                    treeMenuObj.checkAllNodes(false);
+                    if (!!result.m) {
+                        for (var i = 0; i < result.m.length; i++) {
+                            var nodes = treeMenuObj.getNodesByParam("id", result.m[i].id, null);
+                            if (!!nodes && nodes.length) {
+                                treeMenuObj.checkNode(nodes[0], true, false);
+                            }
+                        };
+                    }
+                }else {
+                    alert('没有数据.')
+                }
+            });
+        } else if (!!result.msg) {
+            alert(result.msg);
+        } else {
+            alert('没有数据');
+        }
+    })
+});
+
+function Post_form_back(){
+    return getpage('/system/rolelist');
+}
+function Post_form_submit(){
+    var account = $("#account").val();
+    var rid = $("#rid").val();
+    $(".error").html("");
+    if(!account){
+        $(".account_num_error").html("请填写账号");
+    }else{
+        var treeObj = $.fn.zTree.getZTreeObj("treeRoot");
+        var nodes = treeObj.getCheckedNodes(true);
+        if(nodes.length>0){
+            var checkIdArr = [];
+            for(var i=0; i<nodes.length; i++){
+                checkIdArr.push(nodes[i].id);
+            }
+            jQuery.zpost("/system/roleadd",{rid:rid,account:account,checkId:checkIdArr.join(",")},function(result){
+                if(!!result && result.ret==200){ // 成功
+                    alert('成功');
+                    Post_form_back();
+                }else if(!!result){ // 失败
+                    $(".account_num_error").html(result.err);                    
+                } else {
+                    alert('没有数据返回');
+                }
+            });
+        }else{
+            alert("请勾选权限")
+            $(".root_error").html("请勾选权限");
+        }
+    }    
+}
+
+</script>

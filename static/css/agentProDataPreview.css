@@ -1,0 +1,21 @@
+.main{ width:100%; height:auto; background-color:#fff; border-radius:10px; padding-bottom:50px; box-sizing:border-box; padding-bottom:30px; box-sizing:border-box; overflow:scroll; }
+.main>h1{ width:100%; height:64px; font:20px/64px "微软雅黑"; padding:0 35px; margin:0 auto 10px; box-sizing:border-box; border-bottom:1px dotted #ccc; position:relative !important; }
+.main>h1 select{ width:200px; height:30px; border:1px solid #999; border-radius:10px; margin-left:200px; }
+.main>h1 button{ width:150px; height:30px; border:none; background-color:#5A9DF4; color:#fff; border-radius:5px; margin-left:200px; cursor:pointer; }
+.main>h1 input{ width:200px; height:25px; padding:0 10px; box-sizing:border-box; border:1px solid #999; margin-left:200px; }
+.main .dataDisplay{ width:96%; height:auto; font:18px "微软雅黑"; border-collapse:collapse; border:1px solid #ccc; border-radius:10px !important; margin:15px auto 20px; }
+.main .dataDisplay th{ width:25%; height:auto; text-align:center; padding:20px 0 5px; box-sizing:border-box; }
+.main .dataDisplay td{ width:25%; height:auto; text-align:center; padding:20px 0; box-sizing:border-box; }
+.main .echartsWindow{ width:96%; height:auto; margin:0 auto; }
+.main .echartsWindow .headNav{ width:100%; height:40px; padding:0 30px; box-sizing:border-box; }
+.main .echartsWindow .headNav .userTab{ display:inline-block; width:auto; height:30px; padding:0; }
+.main .echartsWindow .headNav .userTab li{ float:left; width:auto; height:30px; padding:0 10px; box-sizing:border-box; line-height:30px; cursor:pointer; list-style:none; border:1px solid #999; border-radius:5px; margin-right:10px; }
+.tabLiActive{ background-color:#5A9DF4 !important; color:#fff; }
+.main .echartsWindow .headNav .timeTab{ float:right; display:inline-block; width:auto; height:27px; padding:0; }
+.main .echartsWindow .headNav .timeTab li{ float:left; width:auto; height:27px; padding:0 15px; box-sizing:border-box; line-height:27px; cursor:pointer; list-style:none; background-color:#CCC; border-radius:5px; margin-right:10px; }
+.main .echartsWindow .echartsDisplay{ width:100%; height:550px; }
+
+.main .userDataAdd{ width:96%; height:auto; border-collapse:collapse; border:1px solid #ccc; border-bottom:none; margin:10px auto; }
+.main .userDataAdd th{ width:12.5%; height:52px; font:bold 16px "微软雅黑"; color:#393939; text-align:center; border-bottom:1px solid #ccc; }
+.main .userDataAdd td{ width:12.5%; height:47px; font:16px "微软雅黑"; color:#686868; text-align:center; border-bottom:1px solid #ccc; }
+.main .userDataAdd td>span{ color:#5A9DF4; cursor:pointer; }

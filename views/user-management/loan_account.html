@@ -1,0 +1,106 @@
+
+
+<style>
+    td{
+        vertical-align: middle !important;
+    }
+
+</style>
+
+
+<div id="loan_account" class="panel">
+    <div class="panel-heading">网贷记账</div>
+    {{if eq .count 0}}
+    <div class="panel-body">
+        <strong style="padding-left: 45%;font-size: 16px; line-height: 2;">没有记账记录</strong>
+    </div>
+    {{else}}
+    <div class="panel-body">
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 10%;">平台名称</th>
+                <th class="text-center" style="width: 10%;">还款日</th>
+                <th class="text-center" style="width: 10%;">总期数</th>
+                <th class="text-center" style="width: 10%;">当前期数</th>
+                <th class="text-center" style="width: 10%;">每期应还</th>
+                <th class="text-center" style="width: 10%;">借款时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range $k, $v := .userList}}
+            <tr>
+                <td class="text-center">{{$v.PlatformName}}</td>
+                <td class="text-center">{{$v.RepaymentDay}}</td>
+                <td class="text-center">{{$v.TotalPeriods}}</td>
+                <td class="text-center">{{$v.CurrentPeriod}}</td>
+                <td class="text-center">{{$v.RepayEachPeriod}}</td>
+                <td class="text-center">{{$v.CreateTime.Format "2006-01-02"}}</td>
+            </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="7">
+                    <div class="fl">
+                        <div class="pagination">每页{{.pagesize}}条，总共{{.count}}条</div>
+                    </div>
+                    <div class="fl">
+                        <div class="pagination" id="pagination1" data-url="../usermetadata/loanaccount?id={{.user.Id}}" currentPage="{{.page}}" pageCount="{{.pagecount}}"></div>
+                        <script type="text/javascript">
+                            $(function() {
+                                $("#pagination1").my_page("","#loan_account");
+                            });
+                        </script>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{end}}
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

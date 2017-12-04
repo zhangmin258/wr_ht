@@ -1,0 +1,386 @@
+<style>
+    .panel-title span {
+        font-weight: normal;
+        color: #666;
+        font-size: 14px;
+        margin-left: 2%;
+    }
+    
+    .photo {
+        width: 50%;
+        overflow: hidden;
+        margin-left: 5%;
+    }
+    
+    .photo dl {
+        float: left;
+        padding: 0 5%;
+    }
+
+    .photo dl dt.photo-1{
+        width: 160px;
+        height: 103px;
+    }
+    .photo dl dt.photo-2{
+        width: 160px;
+        height: 160px;
+    }
+    .photo dl dt img{
+        width: 100%;
+        height: 100%;
+        display: block;
+        cursor: pointer;
+    }
+    
+    .photo dd {
+        line-height: 2;
+        text-align: center;
+    }
+
+    .photo_this {
+        position: fixed;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        background: rgba(0, 0, 0, 0.7);
+        text-align: center;
+        z-index: 1000;
+        display: none;
+    }
+
+    #photoss {
+        position: relative;
+        width: 900px;
+        height: 600px;
+        top: 50%;
+        left: 50%;
+        margin-left: -450px;
+        margin-top: -300px;
+        background: #fff;
+        border-radius: 5px;
+        user-select: none;
+        -webkit-user-select: none;
+        -ms-user-select: none;
+        -o-user-select: none;
+        -moz-user-select: none;
+    }
+
+    #pootod {
+        max-width: 465px;
+        max-height: 465px;
+        margin: 0 auto;
+        margin-top: 100px;
+    }
+
+    #pooted_btn {
+        width: 40px;
+        position: absolute;
+        bottom: 10px;
+        left: 49%;
+        z-index: 1001;
+        cursor: pointer;
+        display: none;
+    }
+
+    #photoss:hover #pooted_btn{
+        display: block;
+    }
+
+</style>
+
+<div class="panel">
+    <div class="panel-body">
+        <h2 class="panel-title">实名信息</h2>
+        <ul class="p-info">
+            <li class="col-md-5">
+                <div class="title">身份证姓名：</div>
+                <div class="desk">{{.idenuser.Id_name}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">民族：</div>
+                <div class="desk">{{.idenuser.Nation}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">身份证号：</div>
+                <div class="desk">{{.idenuser.Id_no}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">性别：</div>
+                <div class="desk">{{.idenuser.Gender}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">地址：</div>
+                <div class="desk">{{.idenuser.Address}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">有效期：</div>
+                <div class="desk">{{.idenuser.Start_card}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">相似度：</div>
+                <div class="desk tss1"><span>{{.idenuser.Be_idcard}}</span><a href="javascript:;" style="margin-left: 20px; color: green; display: none;">查看照片信息</a></div>
+            </li>
+            <!--<li class="col-md-5 tss" style="display: none;">
+                <div class="title">认证失败原因：</div>
+                <div class="desk"><span>{{.idenuser.Fail_reason}}</span></div>
+            </li>-->
+        </ul>
+
+
+        <div class="photo_information" style="display: none;">
+            <div style="height: 50px; clear: both;"></div>
+            <h2 class="panel-title">照片信息</h2>
+            <div class="photo">
+                <dl>
+                    <dt class="photo-1"><img src="{{.idenuser.Front_card}}" alt="" class="pimg"></dt>
+                    <dd>身份证正面照</dd>
+                </dl>
+                <dl>
+                    <dt class="photo-1"><img src="{{.idenuser.Back_card}}" alt="" class="pimg"></dt>
+                    <dd>身份证背面照</dd>
+                </dl>
+                <div style="clear: both;"></div>
+                <dl>
+                    <dt class="photo-2"><img src="{{.idenuser.Photo_get}}" alt="" class="pimg"></dt>
+                    <dd>头像照</dd>
+                </dl>
+                <dl>
+                    <dt class="photo-2"><img src="{{.idenuser.Photo_living}}" alt="" class="pimg"></dt>
+                    <dd>活体清晰照</dd>
+                </dl>
+            </div>
+        </div>
+
+
+        <div style="height: 50px; clear: both;"></div>
+        <h2 class="panel-title">申请借款平台信息<span>
+            {{.user_detail.Last_modified_time}}（更新时间）
+            </span></h2>
+        <ul class="p-info">
+            <li class="col-md-5">
+                <div class="title">申请借款平台：</div>
+                <div class="desk">{{.user_detail.Loan_platform_count}}个
+                </div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">实际借款平台：</div>
+                <div class="desk">{{.user_detail.Actual_loan_platform_count}}个
+                </div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">最近申请借款时间：</div>
+                <div class="desk">
+                    {{.user_detail.Loan_last_date}}
+                </div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">还款平台：</div>
+                <div class="desk">{{.user_detail.Repayment_platform_count}}个</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">还款笔数：</div>
+                <div class="desk">{{.user_detail.Repayment_times_count}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">最近还款时间：</div>
+                <div class="desk">
+                   {{.user_detail.Repayment_last_date}}
+                </div>
+            </li>
+            <!--<li class="col-md-5">
+                <div class="title">累计出现次数：</div>
+                <div class="desk">次</div>
+            </li>-->
+        </ul>
+
+        <div style="height: 50px; clear: both;"></div>
+        <h2 class="panel-title">用户基础信息<span>
+            {{if eq (.device|len) 0 }}暂无数据{{else}} {{.device1.Device_last_use_date}}（申请时间）{{end}}
+            </span></h2>
+        <ul class="p-info">
+            <li class="col-md-5">
+                <div class="title">操作设备名称：</div>
+                <div class="desk">{{if eq (.device|len) 0 }}暂无数据{{else}} {{.device1.Device_name}}{{end}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">同设备使用用户数：</div>
+                <div class="desk">{{if eq (.device|len) 0 }}暂无数据{{else}} {{.device1.Device_link_id_count}}个{{end}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">用户使用设备数：</div>
+                <div class="desk">{{if eq (.device|len) 0 }}暂无数据{{else}} {{.device1.Id_link_device_count}}个{{end}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">借贷App安装数量：</div>
+                <div class="desk">{{if eq (.device|len) 0 }}暂无数据{{else}}{{.device1.Device_detail.App_instalment_count}}个{{end}}</div>
+            </li>
+            <!--<li class="col-md-5">
+                <div class="title">真实ip：</div>
+                <div class="desk"></div>
+            </li>-->
+            <li class="col-md-5">
+                <div class="title">网络类型：</div>
+                <div class="desk">{{if eq (.device|len) 0 }}暂无数据{{else}}{{.device1.Device_detail.Network_type}}{{end}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">归属地：</div>
+                <div class="desk">{{if eq (.device|len) 0 }}暂无数据{{else}}{{.mobile.Mobile_detail.Province}}{{.mobile.Mobile_detail.City}}{{end}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">模拟器：</div>
+                <div class="desk ts">
+                    {{if eq (.device|len) 0 }}暂无数据{{else}}
+                    {{if eq .device1.Device_detail.Cheats_device "0"}} 无{{else}}有{{end}}
+                    {{end}}
+                    
+                </div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">设备越狱：</div>
+                <div class="desk ts">
+                    {{if eq (.device|len) 0 }}暂无数据{{else}}
+                    {{if eq .device1.Device_detail.Is_rooted "0"}} 无{{else}}有{{end}}
+                    {{end}}
+                   
+                </div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">使用代理：</div>
+                <div class="desk ts">
+                    {{if eq (.device|len) 0 }}暂无数据{{else}}
+                    {{if eq .device1.Device_detail.Is_using_proxy_port "0"}} 无{{else}}有{{end}}
+                    {{end}}
+                    
+                </div>
+            </li>
+        </ul>
+
+        <div style="height: 50px; clear: both;"></div>
+        <h2 class="panel-title">用户轨迹</h2>
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+                <tr>
+                    <th>申请时间</th>
+                    <th>姓名</th>
+                    <th>手机号</th>
+                    <!--<th>银行卡号</th>-->
+                    <th>设备名称</th>
+                    <th>设备精准ID</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $k,$v := .ydudcredit.Ydudcredit.Body.Devices}}
+                    {{if ge $k $.startpage}}
+                    {{if le $k $.endpage}}
+                <tr>
+                    <td>{{.Device_last_use_date}}</td>
+                    <td>{{$.ydudcredit.Ydudcredit.Body.User_detail.Name_credible}}</td>
+                    <td>
+                    {{range $i,$V :=$.ydudcredit.Ydudcredit.Body.Mobiles}} {{if eq $i 0}}
+                    {{$V.Mobile}}
+                    {{end}} {{end}}
+                    </td>
+                    <!--<td>&nbsp</td>-->
+                    <td>{{.Device_name}}</td>
+                    <td>{{.Device_id}}</td>
+                </tr>
+                    {{end}}
+                    {{end}}
+                {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="6">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination2" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                        </div>
+                        <script type="text/javascript">
+                            $(function() {
+                                $("#pagination2").my_page("#searchForm2");
+                            });
+                        </script>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+    
+ <div class='photo_this'>
+     <div id='photoss'>
+         <img id='pootod' src="">
+         <img id='pooted_btn' src="../../static/img/rotate.png">
+     </div>
+ </div>
+
+<script type="text/javascript">
+    $(function() {
+        $.each($('.ts'), function(index, value) {
+            if ($(this).text() == '是') {
+                $(this).css('color', 'red');
+            }
+        });
+
+        var tss1 = parseFloat($('.tss1 span').text());
+        if (tss1 >= 90) { //照片认证成功
+            $('.tss1 span').css('color', 'green');
+            $('.tss1 a').hide();
+            $('.tss').hide();
+        } else { //照片认证失败
+            $('.tss1 span').css('color', 'red');
+            $('.tss1 a').show();
+            $('.tss').show().find('span').css('color', 'red');
+        }
+
+        var flag = true;
+        $('.tss1 a').click(function() {
+            if (flag) {
+                $('.photo_information').show();
+                $(this).html('隐藏照片信息');
+                flag = false;
+            } else {
+                $('.photo_information').hide();
+                $(this).html('查看照片信息');
+                flag = true;
+            }
+        });
+
+        //点击图片放大
+        $('.pimg').off('click').on('click', function () {
+            var src = $(this).attr('src');
+            $('#pootod').attr('src', src);
+            $('.photo_this').show();
+
+        });
+        //阻止事件冒泡
+        $('#photoss').off('click').on('click', function(e){
+            e.stopPropagation();
+        });
+
+        //点击蒙层消失
+        $('.photo_this').off('click').on('click', function () {
+            $(this).hide();
+            currents = 0;
+            $('#pootod').css('transform', 'rotate('+ currents +'deg)');
+        })
+
+        var currents = 0;
+        $('#pooted_btn').off('click').on('click', function(e){
+            e.stopPropagation();
+            var w = $("#photoss").width();//容器宽度
+            var img_w = $('#pootod').width();//图片宽度
+            var img_h = $('#pootod').height();//图片高度
+            if (img_w > w) {//如果图片宽度超出容器宽度--要撑破了
+                var height = (w * img_h) / img_w; //高度等比缩放
+                $('#pootod').css({"width": w, "height": height});//设置缩放后的宽度和高度
+            }
+            currents = (currents + 90) % 360;
+            $('#pootod').css('transform', 'rotate('+ currents +'deg)');
+        });
+        
+    });
+</script>

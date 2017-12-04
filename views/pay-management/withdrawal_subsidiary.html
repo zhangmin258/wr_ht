@@ -1,0 +1,101 @@
+
+
+
+    
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">用户{{accountDispose .user.Account}}提现明细</div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>提现时间</th>
+                    <th>审批时间</th>
+                    <th>提现金额</th>
+                    <th class="text-center">状态</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range $k,$v:=.userDepositDetail}}
+                <tr>
+                    <td>{{$v.AmountTime.Format "2006-01-02 15:04:05"}}</td>
+                    <td>{{formatTimeToString $v.CheckTime}}</td>
+                    <td>{{printf "%.2f" $v.Amount}}</td>
+                    <td class="text-center">{{if eq $v.CheckResult 1}}等待连连回调
+                        {{else if eq $v.CheckResult 2}}需要人工审核
+                        {{else if eq $v.CheckResult 3}}正常放款
+                        {{else if eq $v.CheckResult 4}}放款失败
+                        {{else if eq $v.CheckResult 5}}拒绝
+                        {{else}}没有相关记录
+                        {{end}}
+                    </td>
+                </tr>
+            {{end}}
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="/userdeposit/withdrawinfo?userId={{.user.Id}}" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination").my_page("#searchFrom");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+<script>
+
+$(function(){
+
+   
+
+});
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

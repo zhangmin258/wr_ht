@@ -1,0 +1,210 @@
+
+<div class="panel">
+    <div class="panel-heading">APP内代理产品管理</div>
+    <div class="panel-body">
+        <form action="/control/getProductMange" id="searchForm2" method="get" class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="请输入产品名称或机构名称" style="width: 250px;" name="proName" id="proName">
+            </div>
+            <button id="searchBtn" type="submit" class="btn btn-info">搜索</button>
+            <select name="locationType" id="locationType" class="form-control" style="width: 200px; margin-left: 10%">
+                <option value="3">全部位置</option>
+                <option value="1">首页展示顺位</option>
+                <option value="0">贷款页展示顺位</option>
+                <option value="2">大额页展示顺位</option>
+            </select>
+        </form>
+        <hr>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>产品名称</th>
+                    <th>弹窗推荐</th>
+                    <th>上线状态</th>
+                    <th>展示位置</th>
+                    <th>导量上限</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+
+            <tbody>
+                 {{range $k, $product := .products}}
+                <tr>
+                    <td>{{$product.Id}}</td>
+                    <td>{{$product.Name}}</td>
+
+                    {{if eq $product.IsPopUp 0}}
+                      <td>否</td>
+                    {{else if eq $product.IsPopUp 1}}
+                       <td>是</td>
+                    {{end}}
+
+                    {{if eq $product.IsUse 1}}
+                      <td>
+                          <span class="tag_bg_red">下线</span>
+                      </td>
+                    {{else if eq $product.IsUse 0}}
+                       <td>
+                           <span class="tag_bg_green">上线</span>
+                       </td>
+                    {{end}}
+                    {{if eq $product.IsIndexShow 0}}
+                        <td>{{if eq $product.LoanSort -1}}—{{else}}{{$product.LoanSort}}{{end}}</td> 
+                    {{else if eq $product.IsIndexShow 1}}
+                        <td>{{if eq $product.Sort -1}}—{{else}}{{$product.Sort}}{{end}}</td>
+                    {{else}}
+                        <td>{{if eq $product.LargeLoanSort -1}}—{{else}}{{$product.LargeLoanSort}}{{end}}</td>
+                    {{end}}
+                    <td>{{$product.FullGuide}}</td>
+                    <td>
+                        <a class="skip1" href="./editProductMange?id={{$product.Id}}">修改</a>
+                    </td>
+                    {{end}}
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="8">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl" style="float:none;">
+                            <div class="pagination" id="pagination2" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination2").my_page("#searchForm2");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+
+
+
+$(function(){
+
+    //APP代理产品产品名称
+    if(window.sessionStorage.proName){
+        $('#proName').val(window.sessionStorage.proName);
+    }
+
+    //产品管理位置顺序
+    if(window.sessionStorage.locationType){
+       $('select[name="locationType"]').val(window.sessionStorage.locationType);
+    }
+
+
+    //位置下拉框更改事件
+    $("#locationType").on("change", function () {
+        var url = $("#searchForm2").prop("action");
+        var data = $("#searchForm2").serialize();
+        if (data) {
+            url = url.split('?')[0] + '?' + data ;
+        }
+        $.zget(url, {}, function (result) {
+            history.pushState({html: result}, "what", url);
+            $('.wrapper').html(result);
+            //execjs(result);
+            SearchCondition();
+        })
+    });
+});
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

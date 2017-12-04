@@ -1,0 +1,156 @@
+
+<div class="panel">
+    <div class="panel-heading">渠道用户详情</div>
+    <div class="panel-body">
+        <form action="" id="searchForm2" method="get" class="form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="请输入手机号" style="width: 250px;" name="phone_num" id="phone_num">&nbsp;&nbsp;
+                <input type="text" class="form-control" placeholder="请输入用户姓名" style="width: 250px;" name="user_name" id="user_name">&nbsp;&nbsp;
+                <select name="order_status" id="order_status" class="form-control" style="width: 250px;">
+                    <option value="1">待补充资料</option>
+                    <option value="2">审核未通过</option>
+                    <option value="3">待审核</option>
+                    <option value="4">审核通过</option>
+                    <option value="5">待放款</option>
+                    <option value="6">已放款</option>
+                    <option value="7">还款成功</option>
+                    <option value="8">逾期中</option>
+                </select>
+            </div>&nbsp;&nbsp;
+            <button type="submit" class="btn btn-info">搜索</button>
+        </form>
+        <div style="height: 20px; border-bottom: #999 solid 1px; clear: both;"></div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>手机号</th>
+                    <th>姓名</th>
+                    <th>申请时间</th>
+                    <th>借款金额</th>
+                    <th>借款期限</th>
+                    <th>订单状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            
+            <tbody>
+                <tr>
+                    <td>13823812343</td>
+                    <td>王尼玛</td>
+                    <td>2017-2-27 01:02:42</td>
+                    <td>500元</td>
+                    <td>500元</td>
+                    <td>拒绝</td>
+                    <td>
+                        <a class="skip1" href="javascript:;">查看</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <a class="skip1" href="javascript:;">撤销</a>
+                    </td>
+                </tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <div class="fl">
+                            <div class="pagination">总共0条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination2" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                        </div>
+                        <script type="text/javascript">
+                            $(function () {
+                                $("#pagination2").my_page("#searchForm2");
+                            });
+                        </script>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

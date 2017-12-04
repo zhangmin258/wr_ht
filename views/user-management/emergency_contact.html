@@ -1,0 +1,114 @@
+
+
+<style>
+    td{
+        vertical-align: middle !important;
+    }
+
+</style>
+
+
+<div id="message_center" class="panel">
+    <div class="panel-heading">紧急联系人</div>
+    {{if eq .count 0}}
+    <div class="panel-body">
+        <strong style="padding-left: 45%;font-size: 16px; line-height: 2;">没有紧急联系人</strong>
+    </div>
+    {{else}}
+    <div class="panel-body">
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+            <tr>
+                <th class="text-center" style="width: 10%;">关系</th>
+                <th class="text-center" style="width: 10%;">紧急联系人姓名</th>
+                <th class="text-center" style="width: 10%;">紧急联系人号码</th>
+                <th class="text-center" style="width: 10%;">电话是否异常</th>
+                <th class="text-center" style="width: 10%;">电话异常原因</th>
+                <th class="text-center" style="width: 20%;">创建时间</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range $k, $v := .emergencylist}}
+            <tr>
+                <td class="text-center">{{$v.Relation}}</td>
+                <td class="text-center">{{$v.LinkmanName}}</td>
+                <td class="text-center">{{$v.LinkmanPhoneNumber}}</td>
+                {{if eq $v.IsNormal 2}}
+                <td class="text-center">
+                    <span class="tag_bg_red">异常</span>
+                </td>
+                {{else if eq $v.IsNormal 1}}
+                <td class="text-center">
+                    <span class="tag_bg_green">正常</span>
+                </td>
+                {{end}}
+                <td class="text-center">{{$v.NormalReason}}</td>
+                <td class="text-center">{{$v.CreateTime.Format "2006-01-02 15:04:05"}}</td>
+            </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="7">
+                    <div class="fl">
+                        <div class="pagination">总共{{.count}}条</div>
+                    </div>
+                    <div class="fl">
+                        <div class="pagination" id="pagination1" data-url="../usermetadata/userscontact.html?id={{.user.Id}}" currentPage="{{.page}}" pageCount="{{.contactcount}}"></div>
+                        <script type="text/javascript">
+                            $(function() {
+                                $("#pagination1").my_page();
+                            });
+                        </script>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{end}}
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

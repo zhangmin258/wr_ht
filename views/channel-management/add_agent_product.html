@@ -1,0 +1,432 @@
+<style>
+    label.col-sm-1 {
+        width: 10%;
+    }
+
+    label span {
+        font-size: 20px;
+        color: red;
+        vertical-align: -7px;
+    }
+
+    .form-group {
+        margin-bottom: 30px;
+    }
+
+    .form-group label.col-sm-1 {
+        width: 9.5%;
+    }
+
+    .form-group label.col-sm-2 {
+        width: 19%;
+    }
+
+    .form-group .add, .form-group .delete {
+        width: 35px;
+        height: 33px;
+        cursor: pointer;
+    }
+    .form-group select[name='product_link']{
+        width: 100%;
+    }
+
+    .xl {
+        width: 300px;
+        overflow: text;
+        border: #ccc solid 1px;
+        position: absolute;
+        z-index: 100;
+        top: 34px;
+        left: 15px;
+        background: #fff;
+        border-radius: 5px;
+        display: none;
+        padding: 0;
+    }
+
+    .xl li {
+        line-height: 30px;
+        cursor: pointer;
+        padding-left: 10px;
+        background: #fff;
+        color: #666;
+    }
+
+    .xl li:hover {
+        background: #ccc;
+        color: maroon;
+    }
+
+</style>
+<div class="panel">
+    <div class="panel-heading title">新增代理产品</div>
+    <div class="panel-body" style="padding-top: 30px;">
+        <form action="agentproductsave" method="post" id="" class="form-horizontal">
+            <input type="hidden" name="agentId" value="{{.agentId}}">
+            <input type="hidden" id="productId" value="">
+            <div class="form-group">
+                <label for="product_name" class="col-sm-1 control-label">产品名称&nbsp;<span>*</span></label>
+                <div class="col-sm-3" style="position: relative;">
+                    <input type="text" class="form-control" id="product_name" placeholder="请输入产品名称" autocomplete="off">
+                    <ul class="xl"></ul>
+                </div>
+            </div>
+
+            <div class="add_link">
+                <div class="form-group addLink">
+                    <label for="product_link" class="col-sm-1 control-label">产品链接1</label>
+                    <div class="col-sm-5">
+                        <select name="product_link" class="form-control">
+
+                        </select>
+                    </div>
+                    <img src="../static/img/add.png" alt="" class="add">
+                </div>
+            </div>
+
+            <div style="width: 50%; float: left;">
+                <div class="form-group">
+                    <label for="cooperation_mode" class="col-sm-2 control-label">合作模式</label>
+                    <div class="col-sm-4">
+                        <select name="cooperation_mode" id="cooperation_mode" class="form-control">
+                            <option value="1">CPA</option>
+                            <option value="2">CPS</option>
+                            <option value="3">CPA+CPS</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="a_define" class="col-sm-2 control-label">A有效性定义</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="a_define" placeholder="A的定义可以为：注册、进件、绑卡、放款"
+                               name="cpa_define">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="a_price" class="col-sm-2 control-label">A的价格</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="a_price" placeholder="请输入A的价格" name="cpa_price">
+                    </div>
+                    <span style="vertical-align: -7px;">元</span>
+                </div>
+            </div>
+
+            <div style="width: 50%; float: right;">
+                <div class="form-group">
+                    <label for="settlement" class="col-sm-2 control-label">结算方式</label>
+                    <div class="col-sm-4">
+                        <select name="settlement" id="settlement" class="form-control">
+                            <option value="1">对公</option>
+                            <option value="2">对私</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="start_time" class="col-sm-2 control-label">合作开始日期</label>
+                    <div class="col-sm-6">
+                        <input name="startTime" id="startDate" class="form-control" placeholder="系统获取当前时间" type="text"/>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="s_price" class="col-sm-2 control-label">S的价格</label>
+                    <div class="col-sm-6">
+                        <input type="text" class="form-control" id="s_price" placeholder="请输入A的价格" name="cps_price">
+                    </div>
+                    <span style="vertical-align: -7px;">元</span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="settlement_cycle" class="col-sm-1 control-label">结算周期</label>
+                <div class="col-sm-4">
+                    <input type="text" class="form-control" id="settlement_cycle"
+                           placeholder="结算周期为周结、半月结、月结。也可自定义输入详细信息，例如：每月10号前结算" name="cleaning_cycle">
+                </div>
+            </div>
+            <button type="button" class="btn btn-info" style="margin: 0 auto; display: block;" id="sure">确定</button>
+        </form>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    
+        //模糊查询代理产品
+        var productName = '';
+        var productId = 0;
+        $('#product_name').off().on('keyup', function(e){
+            productName = $('#product_name').val();
+            var html = '';
+            var length = $('.xl li').length;
+            //当按了下键的时候
+            if(e.keyCode == 40){
+                if(this.index == undefined || this.index >= length - 1){
+                    this.index = 0;
+                }else{
+                    this.index ++;
+                }
+                $('.xl li').css('background','#fff').css('color','#666');
+                $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+                $('#product_name').val($('.xl li').eq(this.index).text());
+                $('#productId').val($('.xl li').eq(this.index).attr("data-id"));
+                return;
+            }
+            //当按了上键的时候
+            if(e.keyCode == 38){
+                if(this.index == undefined || this.index <= 0){
+                    this.index = length - 1;
+                }else{
+                    this.index --;
+                }
+                $('.xl li').css('background','#fff').css('color','#666');
+                $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+                $('#product_name').val($('.xl li').eq(this.index).text());
+                $('#productId').val($('.xl li').eq(this.index).attr("data-id"));
+                return;
+            }
+            //当按了回车键的时候
+            if(e.keyCode == 13){
+                this.index = undefined;    //初始化
+                productName = $('#product_name').val();
+                productId = $('#productId').val();
+                if(productId){
+                    product_url(productId);
+                }else{
+                    alert('输入的产品名称不存在，请重新输入！');
+                    var url = window.location.href;
+                    getpage(url);
+                }
+                $('.xl').empty().hide();
+                return;
+            }
+            if (productName.length <= 0) {
+                $('.xl').empty().hide();
+                return;
+            }
+            $.ajax({
+                url: "/agent/getproductlist",
+                type: 'get',
+                data: {
+                    name: productName
+                },
+                success: function(res){
+                    if(res.ret == 200){
+                        //将数据显示在下拉框中
+                        var data = res.products;
+                        if(data){
+                            $.each(data, function (index, value) {
+                                html += '<li data-id="' + value.Id + '">' + value.Name + '</li>';
+                            });
+                            $('.xl').empty().hide();
+                            $('.xl').append(html).show();
+                            //点击下拉框条目
+                            $('.xl li').on('click', function(){
+                                $('#product_name').val($(this).text());
+                                $('#productId').val($(this).attr("data-id"));
+                                $('.xl').empty().hide();
+                                productId = $('#productId').val();
+                                if(productId){
+                                    product_url(productId);
+                                }else{
+                                    alert('输入的产品名称不存在，请重新输入！');
+                                }
+                            });
+                        }else{
+                            $('.xl').empty().hide();
+                        }
+                    }
+                }
+            });
+            $('body').on('click', function () {
+                $('.xl').hide();
+            });
+        });
+
+        //根据产品ID查询产品链接
+        function product_url(productId){
+            $.ajax({
+                url: '/agentprourl/getproducturl',
+                type: 'get',
+                data: {
+                    id: productId
+                },
+                success: function(res){
+                    var options = '';
+                    if(res.ret == 200){
+                        var data = res.urls;
+                        if(data != null){
+                            $.each(data, function (index, value) {
+                                options += '<option value="' + value.Id + '">' + value.Url + '</option>'
+                            });
+                            $('select[name=product_link]').empty();
+                            $('select[name=product_link]').append(options);
+                            var count = 2;
+                            var html = '';
+                            $('.add_link').on('click', '.add', function () {
+                                html = '<div class="form-group addLink">' +
+                                    '<label for="product_link" class="col-sm-1 control-label">产品链接' + count + '</label>' +
+                                    '<div class="col-sm-5">' +
+                                        '<select name="product_link" class="form-control">' +
+                                            options +
+                                        '</select>' +
+                                    '</div>' +
+                                    '<img src="../static/img/add.png" alt="" class="add">' +
+                                    '<img src="../static/img/icon_delete.png" alt="" class="delete">' +
+                                    '</div>'
+                                count++;
+                                $('.add_link').append(html);
+                            });
+                            $('.add_link').on('click', '.delete', function () {
+                                $(this).parent().remove();
+                                count--
+                            });
+                        }else{
+                            $('select[name=product_link]').empty();
+                            $('select[name=product_link]').append("<option> -no more url can be used- </option>");
+                        }
+                    }
+                }
+            });
+        }
+
+
+
+        //保存数据
+        $('#sure').off().on('click', function () {
+            var id = $('input[name=id]').val();
+            var productId = $('#productId').val();
+            var agentId = $('input[name=agentId]').val();
+            var ProName = $('#product_name').val();
+            var urlList = [];
+            $.each($('.addLink'), function (index, value) {
+                var con = $(this).find('option:selected').val();
+                urlList.push(con);
+                var agentUrlArray = new Array();
+                for (var i = 0; i < $(".agentInput").length; i++) {
+                    agentUrlArray.push($(".agentInput").eq(i).val());
+                }
+            });
+            var JointMode = $('#cooperation_mode option:selected').val();
+            var CleaningType = $('#settlement option:selected').val();
+            var CpaDefine = $('#a_define').val();
+            var CpaPrice = $('#a_price').val();
+            var CpsPrice = $('#s_price').val();
+            var CleaningCycle = $('#settlement_cycle').val();
+            if (!ProName) {
+                alert('请输入产品名称');
+            } else {
+                $.ajax({
+                    url: '/agentpro/agentproductsave',
+                    type: 'post',
+                    data: {
+                        id: id,
+                        ProId: productId,
+                        AgentId: agentId,
+                        UrlId: urlList.join(","),
+                        JointMode: JointMode,
+                        CpaDefine: CpaDefine,
+                        CpaPrice: CpaPrice,
+                        CleaningType: CleaningType,
+                        CpsPrice: CpsPrice,
+                        CleaningCycle: CleaningCycle
+                    },
+                    success: function (res) {
+                        if (res.ret == 200) {
+                            alert('新增成功！');
+                            getpage(window.sessionStorage.URl);
+                        }
+                    }
+                });
+            }
+        });
+
+
+
+</script>
+    
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

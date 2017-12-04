@@ -1,0 +1,147 @@
+
+
+<style>
+    .form-group{
+        margin-right: 1%;
+    }
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading">订单汇总</div>
+    <div class="panel-body">
+        <form action="/businessloan/getBusinessLoanList" method="get" id="searchForm2" class="form-inline">
+            <div class="form-group">
+                <input type="text" name="account" placeholder="请输入手机号" class="form-control phone_number" style="width: 200px;" />
+            </div>
+            <div class="form-group">
+                <input type="text" name="userName" placeholder="请输入用户名" class="form-control user_name" style="width: 200px;" />
+            </div>
+            <div class="form-group">
+                {{if eq .cooperationType 0}}
+                <select id="orderState" name="orderState" class="form-control orderState" style="width: 200px;">
+                    <option value="">订单状态</option>
+                    <option value="SUPPLEMENT">待补充资料</option>
+                    <option value="REFUSE">审核未通过</option>
+                    <option value="WAITING">未审核</option>
+                    <option value="PASS">审核通过</option>
+                    <option value="PAYING">待放款</option>
+                    <option value="CONFIRM">已放款</option>
+                    <option value="FINISH">还款成功</option>
+                    <option value="OVERDUE">逾期中</option>
+                </select>
+                {{end}}
+            </div>
+            <input type="hidden" name="date" id="date" value="{{.date}}" placeholder="请输入日期"/>
+            <input type="hidden" name="productId" id="productId" value="{{.productId}}"/>
+            <input type="hidden" name="cooperationType" id="cooperationType" value="{{.cooperationType}}"/>
+
+            <button type="submit" class="btn btn-info">搜索</button>
+            <button type="button" id="clearCondition" class="btn btn-info" >清空条件</button>
+        </form>
+        <hr>
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+                <tr>
+                    <th>手机号</th>
+                    <th>姓名</th>
+                    <th>申请时间</th>
+                    <th>借款金额</th>
+                    <th>借款期限</th>
+                    <th>订单状态</th>
+                    <th class="text-center">操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range $k, $orderList := .orderList}}
+                <tr>
+                    <td>{{$orderList.Account}}</td>
+                    <td>{{$orderList.UserName}}</td>
+                    <td>{{$orderList.LoanTime.Format "2006-01-02 15:04:05"}}</td>
+                    <td>
+                        <span>{{$orderList.Money}}</span>元
+                    </td>
+                    <td>
+                        <span>{{$orderList.LoanTermCount}}</span>
+                        <span>天</span>
+                    </td>
+                    <td>{{if eq $orderList.State "SUPPLEMENT"}}
+                        待补充资料
+                        {{else if eq $orderList.State "WAITING"}}
+                        未审核
+                        {{else if eq $orderList.State "REFUSE"}}
+                        审核未通过
+                        {{else if eq $orderList.State "PASS"}}
+                        审核通过
+                        {{else if eq $orderList.State "PAYING"}}
+                        待放款
+                        {{else if eq $orderList.State "CONFIRM"}}
+                        已放款
+                        {{else if eq $orderList.State "FINISH"}}
+                        还款成功
+                        {{else if eq $orderList.State "BACKING"}}
+                        还款中
+                        {{else if eq $orderList.State "OVERDUE"}}
+                        逾期中
+                        {{end}}
+                    </td>
+                    <input type="hidden" name="id" value="{{$orderList.Id}}">
+                    <td class="text-center">
+                        <a class="skip1" href="/businessloan/getBusinessLoan?id={{$orderList.Id}}&cooperationType={{$.cooperationType}}">查看</a>&nbsp;&nbsp;
+                       <!--  <a href="">撤销</a> -->
+                    </td>
+                </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="7">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination2" data-url="/businessloan/getBusinessLoanList" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination2").my_page("#searchForm2");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+
+
+<script type="text/javascript">
+   
+
+    if(window.sessionStorage.phone_number){
+        $('.phone_number').val(window.sessionStorage.phone_number);   //手机号码
+    }
+
+    if(window.sessionStorage.user_name){
+        $('.user_name').val(window.sessionStorage.user_name);   //用户名
+    }
+
+    if(window.sessionStorage.orderState){
+        $('select[name="orderState"]').find('option:selected').text(window.sessionStorage.orderState);   //订单状态
+    }
+
+    //清除条件
+    $("#clearCondition").off("click").on("click",function(){
+        var url = "/businessloan/getBusinessLoanList?date={{.date}}&productId={{.productId}}&cooperationType={{.cooperationType}}";
+        getpage(url);
+        window.sessionStorage.clear();
+    });
+
+
+    
+
+</script>
+
+

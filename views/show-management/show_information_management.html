@@ -1,0 +1,109 @@
+
+<style>
+    table td{
+        vertical-align: middle !important;
+    }
+</style>
+
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">
+        <span class="pull-left" style="font-weight: bold; line-height: 30px;">图片管理</span>
+        <form action="" id="searchForm" method="get" class="pull-left" style="margin-left: 30%;">
+            <select name="imgType" id="imgType" class="form-control" style="width: 200px;">
+                <option value="0">全部</option>
+                <option value="2">banner</option>
+                <option value="3">广告位</option>
+                <option value="4">教程攻略</option>
+                <option value="5">活动页面</option>
+            </select>
+        </form>
+        <a href="/banner/jumptoaddbanner" class="btn btn-info skip1 pull-right" style="width: 100px;">新增图片管理</a>
+    </div>
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+            <tr>
+                <th width="25%">图片</th>
+                <th>类型</th>
+                <th>展示位置</th>
+                <th>状态</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+
+            <tbody>
+            {{range $k,$image := .imageList}}
+            <tr id="pro{{$image.Id}}">
+                <td><img src="{{$image.ImgUrl}}" alt="banner缩略图" class="img-responsive" width="50%"></td>
+                <td>
+                    {{if eq $image.Itype 2}}
+                        banner
+                    {{else if eq $image.Itype 3}}
+                        广告位
+                    {{else if eq $image.Itype 4}}
+                        教程攻略
+                    {{else if eq $image.Itype 5}}
+                        活动页面
+                    {{else}}-{{end}}
+                </td>
+                <td>{{$image.Sort}}</td>
+                {{if eq $image.IsUsed 0}}
+                <td>
+                    <span class="tag_bg_red">冻结</span>
+                </td>
+                {{else if eq $image.IsUsed 1}}
+                <td>
+                    <span class="tag_bg_green">上线</span>
+                </td>
+                {{end}}
+                <td>
+                    <a href="/banner/jumptoupdatebanner?Id={{$image.Id}}" class="skip1">修改</a>&nbsp;&nbsp;&nbsp;&nbsp;
+                    <a href="javascript:;" onclick="deletePro({{$image.Id}})">删除</a>
+                </td>
+            </tr>
+            {{end}}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+    //位置下拉框更改事件
+    $("#imgType").on("change", function () {
+        var url = $("#searchForm").prop("action");
+        var data = $("#searchForm").serialize();
+        if (data) {
+            url = url.split('?')[0] + '?' + data ;
+        }
+        $.zget(url, {}, function (result) {
+            history.pushState({html: result}, "what", url);
+            $('.wrapper').html(result);
+            //execjs(result);
+            SearchCondition();
+        })
+    });
+
+    //图片管理位置顺序
+    if(window.sessionStorage.imgType){
+       $('select[name="imgType"]').val(window.sessionStorage.imgType);
+    }
+
+    //确认删除
+    function deletePro(imageId) {
+        var confirm = window.confirm("你确定要删除吗？");
+        if(confirm == true){
+            $.zpost('/banner/delbanner',{
+                imageId: imageId
+            },function(result){
+                if(result.ret == 200){
+                    $("#pro" + imageId).remove();
+                    alert('删除成功！');
+                }else{
+                    alert(result.err);
+                }
+            });
+        }
+    }
+</script>

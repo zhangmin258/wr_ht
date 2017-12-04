@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>产品订单详情</title>
+</head>
+</body>
+
+    <div class="panel">
+        <div class="panel-heading">借款信息</div>
+        <div class="panel-body">
+            <ul class="p-info">
+                <li class="col-md-5">
+                    <div class="title">姓名：</div>
+                    <div class="desk">{{.userorder.Verify_real_name}}</div>
+                </li>
+                <li class="col-md-5">
+                    <div class="title">手机号：</div>
+                    <div class="desk">{{.userorder.Account}}</div>
+                </li>
+                <li class="col-md-5">
+                    <div class="title">申请时间：</div>
+                    <div class="desk">{{.userorder.Create_time.Format "2006-01-02 03:04:05"}}</div>
+                </li>
+                <li class="col-md-5">
+                    <div class="title">借款机构：</div>
+                    <div class="desk">{{.userorder.Name}}</div>
+                </li>
+                <li class="col-md-5">
+                    <div class="title">借款金额：</div>
+                    <div class="desk">{{.userorder.Money}}元</div>
+                </li>
+                <li class="col-md-5">
+                    <div class="title">借款期限：</div>
+                    <div class="desk">{{.userorder.Loan_term_count}}天</div>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+
+    <div class="panel">
+        <div class="panel-heading">还款计划</div>
+        <div class="panel-body">
+            <table class="table table-hover table-striped table_thead_fixed">
+                <thead>
+                    <tr>
+                        <th>还款时间</th>
+                        <th>应还金额</th>
+                        <th>逾期费用</th>
+                        <th>状态</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>2017-05-27</td>
+                        <td>3000元</td>
+                        <td>4000元</td>   
+                        <td>
+                            <span class="tag_bg_event">待补充资料</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2017-05-27</td>
+                        <td>3000元</td>
+                        <td>4000元</td>   
+                        <td>
+                            <span class="tag_bg_event">待审核</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2017-05-27</td>
+                        <td>3000元</td>
+                        <td>4000元</td>   
+                        <td>
+                            <span class="tag_bg_black">审核未通过</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2017-05-27</td>
+                        <td>3000元</td>
+                        <td>4000元</td>   
+                        <td>
+                            <span class="tag_bg_green">审核通过</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2017-05-27</td>
+                        <td>3000元</td>
+                        <td>4000元</td>   
+                        <td>
+                            <span class="tag_bg_event">待放款</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2017-05-27</td>
+                        <td>3000元</td>
+                        <td>4000元</td>   
+                        <td>
+                            <span class="tag_bg_black">放款失败</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2017-05-27</td>
+                        <td>3000元</td>
+                        <td>4000元</td>   
+                        <td>
+                            <span class="tag_bg_green">已放款</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2017-05-27</td>
+                        <td>3000元</td>
+                        <td>4000元</td>   
+                        <td>
+                            <span class="tag_bg_green">还款成功</span>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>2017-05-27</td>
+                        <td>3000元</td>
+                        <td>4000元</td>   
+                        <td>
+                            <span class="tag_bg_red">逾期中</span>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="4">
+                            <div class="fl">
+                                <div class="pagination">总共50条</div>
+                            </div>
+                            <div class="fl">
+                                <div class="pagination" id="pagination" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                                <script type="text/javascript">
+                                    $(function() {
+                                        $("#pagination").my_page();
+                                    });
+                                </script>
+                            </div>
+                        </td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>

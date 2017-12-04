@@ -1,0 +1,102 @@
+
+
+
+<div id="loan_records" class="panel">
+    <div class="panel-heading" style="padding-bottom: 30px;">
+        <p style="float: left;">贷款记录</p>
+        {{if eq .loancount 0}}
+
+        {{else}}
+        <ul class="loan_list">
+            <li>申请借款：<span>{{.loancount}}次</span></li>
+            <li>借款成功：<span>{{.passcount}}次</span></li>
+            <li>总借款金额：<span>{{.maxmoney}}万</span></li>
+            <li>还款成功：<span>{{.finishcount}}次</span></li>
+            <li>逾期：<span>{{.overduecount}}次</span></li>
+        </ul>
+        {{end}}
+
+    </div>
+    {{if eq .loancount 0}}
+    <div class="panel-body">
+        <strong style="padding-left: 45%;font-size: 16px; line-height: 2;">没有贷款记录</strong>
+    </div>
+    {{else}}
+    <div class="panel-body">
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+            <tr>
+                <th>借款平台</th>
+                <th>借款金额</th>
+                <th>借款期限</th>
+                <th>起止时间</th>
+                <th>状态</th>
+                <!--<th>订单详情</th>-->
+            </tr>
+            </thead>
+            <tbody>
+            {{range $k, $v := .loanlist}}
+            <tr>
+                <td>{{$v.Name}}</td>
+                <td>{{$v.Money}}元</td>
+                <td>{{$v.Loan_term_count}}天</td>
+                <td>{{$v.Create_time.Format "2006-01-02"}} 至 {{if eq $v.State "FINISH"}} {{$v.Finish_time.Format "2006-01-02"}} {{else}} 至今 {{end}}</td>
+                <td>
+                    {{if eq $v.State "SUPPLEMENT"}}
+                    <span class="tag_bg_event">待补充资料</span> {{else if eq $v.State "REFUSE"}}
+                    <span class="tag_bg_black">审核未通过</span> {{else if eq $v.State "WAITING"}}
+                    <span class="tag_bg_event">待审核</span> {{else if eq $v.State "PASS"}}
+                    <span class="tag_bg_green">审核通过</span> {{else if eq $v.State "PAYING"}}
+                    <span class="tag_bg_event">待放款</span> {{else if eq $v.State "PAYFAILED"}}
+                    <span class="tag_bg_black">放款失败</span> {{else if eq $v.State "CONFIRM"}}
+                    <span class="tag_bg_green">已放款</span> {{else if eq $v.State "FINISH"}}
+                    <span class="tag_txt_green">还款成功</span> {{else if eq $v.State "OVERDUE"}}
+                    <span class="tag_bg_red">逾期中</span> {{else}} {{end}}
+                </td>
+                <!--<td>
+                    <a class="skip1" href="../usermetadata/proOrderDetails.html?id={{$v.Id}}">查看</a>
+                </td>-->
+            </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="6">
+                    <div class="fl">
+                        <div class="pagination">每页{{.pagesize}}条，总共{{.loancount}}条</div>
+                    </div>
+                    <div class="fl">
+                        <div class="pagination" id="pagination" data-url="../usermetadata/usersloandata.html?id={{.user.Id}}" currentPage="{{.loanpage}}" pageCount="{{.loanpagecount}}"></div>
+                        <script type="text/javascript">
+                            $(function() {
+                                $("#pagination").my_page("","#loan_records");
+                            });
+                        </script>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{end}}
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,43 @@
+<div class="panel-heading">数据明细</div>
+<div class="panel-body">
+    <table class="table table-hover">
+        <thead>
+        <tr>
+            <th class="text-center">日期</th>
+            <th class="text-center">注册用户</th>
+            <th class="text-center">认证用户</th>
+            <th class="text-center">放款用户</th>
+            <th class="text-center">活跃用户</th>
+        </tr>
+        </thead>
+        <tbody class="text-center">
+        {{range $k,$dData := .detailData}}
+        <tr>
+            <td>{{$dData.CreateDate}}</td>
+            <td>{{$dData.RegisterCount}}</td>
+            <td>{{$dData.AuthCount}}</td>
+            <td>{{$dData.LoanCount}}</td>
+            <td>{{$dData.ActiveCount}}</td>
+        </tr>
+        {{end}}
+        </tbody>
+        <tfoot>
+        <tr>
+            <td colspan="6">
+                <div class="fl">
+                    <div class="pagination">总共{{.count}}条</div>
+                </div>
+                <div class="fl">
+                    <div class="pagination" id="pagination" data-url="/user/getUserDataDetail"
+                         currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                    <script type="text/javascript">
+                        $(function () {
+                            $("#pagination").my_page("", "#dataSum");
+                        });
+                    </script>
+                </div>
+            </td>
+        </tr>
+        </tfoot>
+    </table>
+</div>

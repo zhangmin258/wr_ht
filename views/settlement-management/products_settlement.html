@@ -1,0 +1,346 @@
+
+
+    <style>
+        .show_data {
+            border: #ccc solid 1px;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .show_data li {
+            line-height: 50px;
+            font-size: 18px;
+            color: #333;
+            font-weight: bold;
+        }
+
+        .show_data li span {
+            width: 50%;
+            display: block;
+            float: left;
+            text-align: center;
+        }
+
+        .agent_name{
+            margin-left: 40%;
+            position: relative;
+        }
+
+        .agent_name input[type="text"]{
+            width: 300px;
+            height: 35px;
+            text-indent: 10px;
+            border: #ccc solid 1px;
+            border-radius: 5px;
+            
+        }
+
+        .xl{
+            width: 300px;
+            overflow: text;
+            border: #ccc solid 1px;
+            border-top: none;
+            position: absolute;
+            z-index: 100;
+            top: 35px;
+            left: 8px;
+            padding: 0;
+            display: none;
+        }
+
+        .xl li {
+            line-height: 30px;
+            cursor: pointer;
+            padding-left: 10px;
+            background: #fff;
+            color: #666;
+        }
+
+        .xl li:hover {
+            background: #ccc;
+            color: maroon;
+        }
+
+    </style>
+
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">
+        <strong class="pull-left">数据汇总</strong>
+        <strong class="btn btn-info pull-right skip3" id="settle_exl">结算报表</strong>
+    </div>
+    <div class="panel-body">
+        <ul class="show_data">
+            <li>
+                <span>已结费用</span>
+                <span>未结费用</span>
+            </li>
+            <li>
+                <span class="has_cost"></span>
+                <span class="hasnot_cost"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="panel" id="dataSum">
+    <div class="panel-heading" style="padding-bottom: 60px;">
+        <strong class="pull-left" style="line-height: 50px;">数据明细</strong>
+          <form>  
+            <div class="agent_name pull-left" style="margin-top: 10px;">
+                <input type="text" name="agent_name" id="agent_name" placeholder="请输入产品名称" onkeydown="if (event.keyCode == 13) return false;" value="{{.product.Name}}" autocomplete="off">
+                <input type="hidden" name="agent_id" id="agent_id" value="{{.product.Id}}">
+                <ul class="xl"> </ul>
+            </div>
+         </form> 
+        <button type="button" class="btn btn-info pull-right skip3" style="margin-top: 20px;" id="settle">结算</button>
+    </div>
+    <div class="panel-body" id="pro_cleaning_data">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>日期</th>
+                    <th>注册用户</th>
+                    <th>认证用户</th>
+                    <th>放款用户</th>
+                    <th>放款金额</th>
+                    <th>当日单价</th>
+                    <th>收益</th>
+                    <th>结算状态</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody>
+            {{range $k,$v:=.proCleaning}}
+                <tr>
+                    <td>{{$v.Date.Format "2006-01-02"}}</td>
+                    <td>{{$v.RegisterCount}}</td>
+                    <td>{{$v.ApplyCount}}</td>
+                    <td>{{$v.MakeLoanCount}}</td>
+                    <td>{{printf "%.2f" $v.MakeLoanAmount}}元</td>
+                    <td>
+                        {{if eq $v.JointMode 1}}CPA：{{$v.CpaPrice}}
+                        {{else if eq $v.JointMode 2}}CPS：{{$v.CpsPrice}} %
+                        {{else}}
+                        CPA+CPS：{{$v.CpaPrice}}+{{$v.CpsPrice}} %
+                        {{end}}
+                    </td>
+                    <td>{{printf "%.2f" $v.CpaMoney}}元</td>
+                    <td>{{if eq $v.State 0}}未结算{{else}}已结算{{end}}</td>
+                    <td>
+                        {{if eq $v.State 0}}
+                        <a class="skip1" href="../productdata/showDetailedData?id={{$v.Id}}&agentProductId={{$v.AgentProductId}}&createDate={{$v.Date}}&cleaningState=0">修改</a>&nbsp;&nbsp;&nbsp;
+                        {{else}}
+                        <a class="skip1" href="../productdata/showDetailedData?id={{$v.Id}}&agentProductId={{$v.AgentProductId}}&createDate={{$v.Date}}&cleaningState=1">查看</a>&nbsp;&nbsp;&nbsp;
+                        {{end}}
+                    </td>
+                </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="9">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="/procleaning/getprocleandata?id={{.product.Id}}" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination").my_page("","#pro_cleaning_data");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        <div style="height: 50px; clear: both;"></div>
+        <div class="task_list col-md-12" id="task_list">
+            <div class="list_span col-md-3 jsxx" data-url="/procleaning/getprocleandetail?flag=1&pid={{.product.Id}}">结算信息</div>
+            <div class="list_span col-md-3" data-url="/procleaning/getprocleandetail?flag=2&pid={{.product.Id}}">结算历史</div>
+            <div class="list_span col-md-3" data-url="/procleaning/getprocleandetail?flag=3&pid={{.product.Id}}">开票信息</div>
+            <div class="list_span col-md-3" data-url="/procleaning/getprocleandetail?flag=4&pid={{.product.Id}}">后台信息</div>
+        </div>
+    </div>
+</div>
+
+
+<div class="personal_info_details">
+    <div class="panel" id="personal_info_details"></div>
+</div>
+
+
+
+<script type="text/javascript">
+
+    /* 
+    * formatMoney(s,type) 
+    * 功能：金额按千位逗号分割 
+    * 参数：s，需要格式化的金额数值. 
+    * 参数：type,判断格式化后的金额是否需要小数位. 
+    * 返回：返回格式化后的数值字符串. 
+    */ 
+    function formatMoney(s, type) { 
+        if (/[^0-9\.]/.test(s))  return "0";
+        if (s == null || s == "") return "0"; 
+        s = s.toString().replace(/^(\d*)$/, "$1."); 
+        s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1"); 
+        s = s.replace(".", ","); 
+        var re = /(\d)(\d{3},)/; 
+        while (re.test(s)) 
+        s = s.replace(re, "$1,$2"); 
+        s = s.replace(/,(\d\d)$/, ".$1"); 
+        if (type == 0) {// 不带小数位(默认是有小数位) 
+            var a = s.split("."); 
+            if (a[1] == "00") { 
+                s = a[0]; 
+            } 
+        } 
+        return s; 
+    } 
+    $('.has_cost').text(formatMoney({{printf "%.2f" .settlementCount}}, 2));
+    $('.hasnot_cost').text(formatMoney({{printf "%.2f" .notSettlementCount}}, 2));
+
+
+
+
+
+
+    //产品名称搜索
+    $('#agent_name').off().on('keyup', function(e){
+        var length = $('.xl li').length;
+        var name = $('#agent_name').val();
+        var html = '';
+        //当按了下键的时候
+        if(e.keyCode == 40){
+            if(this.index == undefined || this.index >= length - 1){
+                this.index = 0;
+            }else{
+                this.index ++;
+            }
+            $('.xl li').css('background','#fff').css('color','#666');
+            $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+            $('#agent_name').val($('.xl li').eq(this.index).text());
+            $('#agent_id').val($('.xl li').eq(this.index).attr("data-id"));
+            return;
+        }
+        //当按了上键的时候
+        if(e.keyCode == 38){
+            if(this.index == undefined || this.index <= 0){
+                this.index = length - 1;
+            }else{
+                this.index --;
+            }
+            $('.xl li').css('background','#fff').css('color','#666');
+            $('.xl li').eq(this.index).css('background','#ccc').css('color','maroon');
+            $('#agent_name').val($('.xl li').eq(this.index).text());
+            $('#agent_id').val($('.xl li').eq(this.index).attr("data-id"));
+            return;
+        }
+        //当按了回车键的时候
+        if(e.keyCode == 13){
+            this.index = undefined;    //初始化
+            name = $('#agent_name').val();
+            ajax_load(name);
+            return;
+        }
+
+        if (name.length <= 0) {
+            $('.xl').empty().hide();
+            return;
+        }
+        //产品名称模糊查询
+        $.ajax({
+            url: "/procleaning/geth5productlist",
+            type: 'get',
+            data: {
+                name: name
+            },
+            success: function (res) {
+                if (res.ret == 200) {
+                    //将数据显示到下拉框
+                    var data = res.products;
+                    if(data){
+                        $.each(data, function (index, value) {
+                            html += '<li data-id="' + value.Id + '">' + value.Name + '</li>';
+                        });
+                        $('.xl').empty().hide();
+                        $('.xl').append(html).show();
+                        //点击下拉框条目
+                         $('.xl li').on('click', function () {
+                            $('#agent_name').val($(this).text());
+                            $('#agent_id').val($(this).attr("data-id"));
+                            name = $('#agent_name').val();
+                            ajax_load(name);
+                        });
+                    }else{
+                        $('.xl').empty().hide();
+                    }
+                }
+            }
+        });
+    });
+
+
+
+    //产品数据接入
+    function ajax_load(name){
+        $.ajax({
+            url: "/procleaning/getprocleandatabyname",
+            type: 'get',
+            data: {
+                name: name
+            },
+            success: function(res){
+                $('#pro_cleaning_data').html(res);
+                $('#personal_info_details').empty();
+                $('.xl').empty().hide();
+            }
+        });
+    }
+
+    if(window.sessionStorage.agent_name){
+        $('#agent_name').val(window.sessionStorage.agent_name);
+        ajax_load(window.sessionStorage.agent_name);
+    }
+
+    $("#task_list .list_span").off().on("click", function() {
+        if ($(this).attr("zmx")) {
+            return;
+        }
+        $(this).css('color', '#599cf4').css('border', '1px solid #599cf4').siblings().css('color', '#666').css('border', '1px solid #ccc');
+        $(this).siblings().removeAttr("zmx");
+        $(this).attr("zmx", "123");
+        var ranN = Math.random(1000000);
+        var url = $(this).attr("data-url");
+        url += '&token=' + 123456 + "&" + ranN; // uid后缀
+        $.zget(url, {}, function(result) {
+            $("#personal_info_details").empty().append(result);
+            // execjs(result);
+        });
+    });
+
+
+    $('#settle_exl').off().on('click',function () {
+        var url = '/cleanhis/cleanhispage';
+        getpage(url);
+    });
+
+
+    var pid = $('#agent_id').val();
+    $('#settle').off().on('click',function () {
+        var url = '/settlement/settlepage?pid=' + pid;
+        getpage(url);
+    });
+
+
+
+
+</script>
+
+
+
+
+
+

@@ -1,0 +1,376 @@
+<style>
+
+
+    .panel .panel-body .tab {
+        width: 162px;
+        height: 34px;
+        line-height: 34px;
+        float: left;
+        margin-left: 30%;
+        border: #ccc solid 1px;
+        border-radius: 5px;
+        overflow: hidden;
+        padding: 0;
+    }
+
+    .panel .panel-body .tab li {
+        width: 80px;
+        float: left;
+        text-align: center;
+        cursor: pointer;
+        border-right: #ccc solid 1px;
+    }
+
+    .panel .panel-body .tab li.active {
+        color: #fff;
+        background: #599EF4;
+    }
+
+    .panel .panel-body .tab li:nth-child(2) {
+        border-right: 0;
+    }
+
+    .panel .panel-body select {
+        width: 150px;
+    }
+
+    #content {
+        padding: 20px 30px;
+    }
+
+    #content p {
+        line-height: 2;
+    }
+
+    #content input[type="button"] {
+        width: 80px;
+        display: inline-block;
+        margin-right: 20px;
+    }
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">
+        <strong class="pull-left" style="line-height: 30px;">新口子列表</strong>
+        <span class="pull-right btn btn-info skip3" style="width: 100px;" id="hole_config">新口子配置</span>
+    </div>
+    <div class="panel-body" style="padding-top: 20px;">
+        <form action="" id="searchForm" method="get" class="pull-left form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="请输入产品名称" style="width: 250px;" name="name"
+                       id="proName" value="{{.name}}">
+            </div>
+            <input type="hidden" id="phone_type" value="{{.phoneType}}" name="phoneType">
+            <button type="submit" class="btn btn-info">搜索</button>
+        </form>
+        <ul class="tab">
+            <li {{if eq .phoneType 1}}class="active" {{end}}>安卓</li>
+            <li {{if eq .phoneType 2}}class="active" {{end}}>苹果</li>
+        </ul>
+        <select name="select_cut" id="select_cut" class="form-control pull-right">
+            <option value="0">请选择新增口子</option>
+            <option value="1">安卓口子</option>
+            <option value="2">苹果口子</option>
+        </select>
+        <div style="height: 10px; border-bottom: #ccc solid 1px; clear: both;"></div>
+
+        <table class="table table-hover" id="android">
+            <thead>
+            <tr>
+                <th>编号</th>
+                <th style="width: 30%">{{if eq .phoneType 1}}安卓口子名称{{else}}苹果口子名称{{end}}</th>
+                <th style="width: 30%">{{if eq .phoneType 1}}安卓市场链接{{else}}苹果市场链接{{end}}</th>
+                <th>操作</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range $k,$v:=.holeList}}
+                <tr id="pro{{$v.Id}}">
+                    <td>{{$v.Id}}</td>
+                    <td>{{$v.Name}}</td>
+                    <td>
+                        <a href="{{$v.Url}}" target="_blank">前往</a>
+                    </td>
+                    <td>
+                        <span onclick="edit({{$v.Id}},{{$v.Name}},{{$v.Logo}},{{$v.Url}})" style="cursor: pointer; color: #398dee">修改</span>&nbsp;&nbsp;&nbsp;&nbsp;
+                        <span onclick="deletePro({{$v.Id}})" style="cursor: pointer; color: #398dee">删除</span>
+                    </td>
+                </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="4">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="" currentPage="{{.pageNum}}"
+                                 pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination").my_page("#searchForm");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+<!-- 弹窗内容 -->
+<div id="content" style="display: none;">
+    <p>
+        <input type="hidden" id="hole_id">
+        <span class="title">口子名称</span>
+        <input type="text" name="cut_name" id="cut_name" placeholder="请输入口子名称" class="form-control">
+    </p>
+    <p>
+        <span class="title">logo链接</span>
+        <input type="text" name="logo_link" id="logo_link" placeholder="请输入logo链接" class="form-control">
+    </p>
+    <p>
+        <span class="title">下载链接</span>
+        <input type="text" name="download_link" id="download_link" placeholder="请输入下载链接" class="form-control">
+    </p>
+    <p style="text-align: center; margin-top: 30px;">
+        <input type="button" value="取消" class="btn btn-default" id="cancel">
+        <input type="button" value="保存" class="btn btn-info" id="sure">
+    </p>
+</div>
+
+<script>
+
+    $('.tab li').off('click').on('click', function () {
+        $(this).addClass('active').siblings().removeClass('active');
+        var name = $('#proName').val();
+        if ($(this).text() == '安卓') {
+            var url = '../hole/holelist?phoneType=1';
+            if (name){
+                url += "&name=" + name;
+            }
+            getpage(url);
+        } else if ($(this).text() == '苹果') {
+            var url = '../hole/holelist?phoneType=2';
+            if (name){
+                url += "&name=" + name;
+            }
+            getpage(url);
+        }
+    });
+
+    //添加口子
+    $('#select_cut').off('change').on('change', function () {
+        var select_cut = $('#select_cut').val();
+        $('#cut_name').val('');
+        $('#hole_id').val('');
+        $('#download_link').val('');
+        $('#logo_link').val('');
+        if (select_cut == 0) {
+            return;
+        }
+        layer.open({
+            type: 1,
+            title: (select_cut == 1) ? '新增安卓口子信息' : '新增苹果口子信息',
+            area: '500px',
+            content: $('#content')
+        });
+    });
+
+    //修改
+    function edit(id, name, logo, url) {
+        $('#cut_name').val(name);
+        $('#hole_id').val(id);
+        $('#download_link').val(url);
+        $('#logo_link').val(logo);
+        var phoneType = $('#phone_type').val();
+        layer.open({
+            type: 1,
+            title: (phoneType == 1) ? '修改安卓口子信息' : '修改苹果口子信息',
+            area: '500px',
+            content: $('#content')
+        });
+    }
+
+    //点击取消按钮
+    $('#cancel').off('click').on('click', function () {
+        layer.closeAll();
+    });
+
+    //点击保存按钮
+    $('#sure').off('click').on('click', function () {
+        var hole_id = $('#hole_id').val();
+        var cut_name = $('#cut_name').val();
+        var logo_link = $('#logo_link').val();
+        var download_link = $('#download_link').val();
+        var phone_type = "";
+        if (hole_id == 0){
+            phone_type = $('#select_cut').val();
+        }else{
+            phone_type = $('#phone_type').val();
+        };
+        console.log(phone_type);
+        if (!cut_name) {
+            alert('请输入口子名称');
+        } else if (!logo_link) {
+            alert('请输入logo链接');
+        } else if (!download_link) {
+            alert('请输入下载链接');
+        } else {
+            layer.closeAll();
+            $.ajax({
+                url: '../hole/savehole',
+                type: 'post',
+                data: {
+                    Id:hole_id,
+                    Name: cut_name,
+                    Logo: logo_link,
+                    Url: download_link,
+                    PhoneType: phone_type
+                },
+                success: function (res) {
+                    if (res.ret == 200) {
+                        alert(res.msg);
+                        getpage(window.location.href);
+                    }else {
+                        alert(res.err);
+                    }
+                }
+            });
+        }
+    });
+
+
+    //确认删除
+    function deletePro(id) {
+        var confirm = window.confirm("确定删除该产品吗？删除后不可恢复，请考虑清楚！");
+        if (confirm == true) {
+            var phone_type=$('#phone_type').val();
+            $.zpost('../hole/delhole', {
+                hid: id,
+                phoneType:phone_type
+            }, function (result) {
+                if (result.ret == 200) {
+                    alert('删除成功！');
+                    getpage(window.location.href);   //刷新当前页面
+                } else {
+                    alert(result.err);
+                    getpage(window.location.href);   //刷新当前页面
+                }
+            });
+        }
+    }
+
+
+    //新口子配置
+    $("#hole_config").off('click').on('click', function () {
+        var url = "../hole/holeconfig";
+        getpage(url);
+    });
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

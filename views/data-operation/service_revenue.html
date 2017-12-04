@@ -1,0 +1,167 @@
+
+<style>
+
+	.show_data {
+	    border: #ccc solid 1px;
+	    border-radius: 5px;
+	    overflow: hidden;
+	}
+
+	.show_data li {
+	    line-height: 50px;
+	    font-size: 18px;
+	    color: #333;
+	    font-weight: bold;
+	}
+
+	.show_data li span {
+	    width: 20%;
+	    display: block;
+	    float: left;
+	    text-align: center;
+	}
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading">数据汇总</div>
+    <div class="panel-body">
+        <ul class="show_data">
+            <li>
+                <span>新口子累计收入</span>
+                <span>网贷征信累计收入</span>
+				<span>平台征信累计收入</span>
+                <span>VIP累计收入</span>
+                <span>累计总收入</span>
+            </li>
+            <li>
+                <span class="data1"></span>
+                <span class="data2"></span>
+                <span class="data3"></span>
+                <span class="data4"></span>
+				<span class="data5"></span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="panel">
+	<div class="panel-heading">数据明细</div>
+	<div class="panel-body">
+		<form action="/data/getServicesIncomeData" id="searchForm" method="get" class="form-inline">
+		    <div class="form-group">
+		        <select name="Source" id="Source" class="form-control" style="width: 200px; margin-right: 20px;">
+		            <option value="2,3,5,6,7">所有项目</option>
+		            <option value="2">新口子</option>
+		            <option value="3">网贷征信</option>
+					<option value="5">平台征信</option>
+		            <option value="6,7">VIP</option>
+		        </select>
+		    </div>
+		    <div class="form-group">
+		        <input name="startTime" id="startDate" class="Wdate form-control" value="" type="text"
+		               onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd',
+		              maxDate:'#F{$dp.$D(\'endDate\')}'})"
+		        />&nbsp;&nbsp;-&nbsp;
+		        <input name="endTime" id="endDate" class="Wdate form-control" type="text"
+		               onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})"
+		               value="{{.end_time}}"/>&nbsp;&nbsp;&nbsp;
+		    </div>
+		    <button type="submit" class="btn btn-info">搜索</button>
+		</form>
+		<div style="height: 20px; border-bottom: #ccc solid 1px; clear: both;"></div>
+		<table class="table table-hover">
+		    <thead>
+		         <tr>
+		            <th>时间</th>
+		            <th>手机号(人数)</th>
+		            <th>项目</th>
+		            <th>收入金额(元)</th>
+		        </tr>
+		    </thead>
+		    <tbody>
+			{{range $k,$dData := .IncomeList}}
+		        <tr>
+					<td>{{$dData.CreateTime.Format "2006-01-02 15:04:05"}}</td>
+					<td>{{$dData.Account}}</td>
+					<td>{{$dData.Content}}</td>
+					{{if eq $dData.ServiceStates 1}}
+					<td>0</td>
+					{{else if eq $dData.ServiceStates 2}}
+					<td>0</td>
+					{{else}}
+					<td>{{$dData.MoneyAmount}}</td>
+					{{end}}
+		        </tr>
+			{{end}}
+		    </tbody>
+		    <tfoot>
+		    		<tr>
+						<th>总计</th>
+						<th colspan="2">{{.usersCount}}</th>
+						<th>{{.totalMoney}}</th>
+		    		</tr>
+		        <tr>
+		            <td colspan="4">
+		                <div class="fl">
+		                    <div class="pagination">总共{{.count}}条</div>
+		                </div>
+		                <div class="fl">
+		                    <div class="pagination" id="pagination" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+		                </div>
+		                <script type="text/javascript">
+		                    $(function () {
+		                        $("#pagination").my_page("#searchForm");
+		                    });
+		                </script>
+		            </td>
+		        </tr>
+		    </tfoot>
+		</table>
+	</div>
+</div>
+
+
+
+
+<script>
+
+
+
+	/*
+	* formatMoney(s,type)
+	* 功能：金额按千位逗号分割
+	* 参数：s，需要格式化的金额数值.
+	* 参数：type,判断格式化后的金额是否需要小数位.
+	* 返回：返回格式化后的数值字符串.
+	*/
+	function formatMoney(s, type) {
+	    if (/[^0-9\.]/.test(s))  return "0";
+	    if (s == null || s == "") return "0";
+	    s = s.toString().replace(/^(\d*)$/, "$1.");
+	    s = (s + "00").replace(/(\d*\.\d\d)\d*/, "$1");
+	    s = s.replace(".", ",");
+	    var re = /(\d)(\d{3},)/;
+	    while (re.test(s))
+	    s = s.replace(re, "$1,$2");
+	    s = s.replace(/,(\d\d)$/, ".$1");
+	    if (type == 0) {// 不带小数位(默认是有小数位)
+	        var a = s.split(".");
+	        if (a[1] == "00") {
+	            s = a[0];
+	        }
+	    }
+	    return s;
+	}
+	$('.data1').text(formatMoney({{.newCount}}, 2));
+	$('.data2').text(formatMoney({{.loanCount}}, 2));
+    $('.data3').text(formatMoney({{.platformCount}}, 2));
+	$('.data4').text(formatMoney({{.vipCount}}, 2));
+	$('.data5').text(formatMoney({{.totalCount}}, 2));
+
+
+
+
+</script>

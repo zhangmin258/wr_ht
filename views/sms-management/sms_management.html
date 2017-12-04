@@ -1,0 +1,498 @@
+
+
+<style>
+
+    .push li{
+        line-height: 3;
+        margin-bottom: 20px;
+    }
+    .push li .push_title{
+        width: 10%;
+        font-weight: bold;
+        display: inline-block;
+        text-align: right;
+    }
+    .push li .push_cnt{
+        display: inline-block;
+        margin-left: 20px;
+        position: relative;
+    }
+    .push li .push_cnt .sr,.push li .push_cnt .cg{
+        position: absolute;
+        bottom: -5px;
+        right: 0;
+        font-size: 12px;
+    }
+    
+    .push li .push_cnt label{
+        font-weight: normal;
+        position: relative;
+        margin-right: 50px;
+    }
+    .push li .push_cnt label input{
+        width: 20px;
+        height: 20px;
+        position: relative;
+        z-index: 10;
+        vertical-align: -5px;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+    .push li .push_cnt label img{
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        z-index: 0;
+        right: 0;
+        bottom: 11px;
+    }
+    .push li .push_cnt input[type="text"],.push li .push_cnt select{
+        width: 300px;
+        height: 30px;
+        text-indent: 10px;
+        font-size: 14px;
+        border: #ccc solid 1px;
+        border-radius: 5px;
+    }
+    .push li .push_cnt textarea{
+        width: 500px;
+        height: 100px;
+        line-height: 1.5;
+        text-indent: 10px;
+        font-size: 14px;
+        border: #ccc solid 1px;
+        border-radius: 5px;
+    }
+    .disabled{
+        pointer-events:none;
+    }
+
+    #content{
+        overflow: hidden;
+        padding: 20px 30px;
+    }
+
+    #content p{
+        line-height: 2;
+        font-weight: bold;
+    }
+    #content p span{
+        font-weight: normal;
+    }
+
+    　
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">
+        <strong class="pull-left">发送信息</strong>
+        <strong class="pull-left" style="margin-left: 30%;">剩余条数：{{.SMSCount.Msg}}条</strong>
+        <strong class="pull-left" style="margin-left: 10%;">空间畅想余额：{{.SMSBalance.Ret}}条</strong>
+        <a href="/msgtest/testhistory" class="btn btn-info skip2 pull-right">短信测试</a>
+        <a href="/smsmanagement/getsmsmanagelist" class="btn btn-info skip2 pull-right">短信历史</a>
+    </div>
+    <div class="panel-body">
+        <ul class="push">
+            <li>
+                <span class="push_title" style="vertical-align: 80px;">短信文本</span>
+                <span class="push_cnt">
+                    <textarea name="sms_text" id="sms_text" placeholder="请输入短信文本！"></textarea>
+                    <dd class="sr">可输入<strong class="num" style="color: green;">70</strong>个字</dd>
+                    <dd class="cg" style="display: none;">已超过<strong class="num" style="color: red;"></strong>字，<span class="clear" style="cursor: pointer; color: #06f;">清尾</span></dd>
+                </span>
+            </li>
+            <li>
+                <span class="push_title">定时发送</span>
+                <span class="push_cnt">
+                   <input name="startTime" id="startDate" class="Wdate input-small" type="text" onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd HH:mm',
+                           onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}'})" />
+                    <input name="endTime" id="endDate" class="Wdate input-small" type="text" onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})" value="" style="display: none" />&nbsp;&nbsp;&nbsp;
+                    <label>
+                        <span>是否定时推送</span>
+                        <input type="checkbox" id="timed_push" name="timed_push">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="panel">
+    <div class="panel-heading">发送的用户属性 <--地域要求和用户标签暂未实现--></div>
+    <div class="panel-body">
+        <ul class="push">
+            <div style="width: 50%; float: left;">
+                <li>
+                    <span class="push_title" style="width: 20%;">地域要求</span>
+                    <span class="push_cnt disabled">
+                        <input type="text" name="regional" id="regional" placeholder="请输入地域要求,多个地域用，隔开！">
+                    </span>
+                </li>
+                <li>
+                    <span class="push_title" style="width: 20%;">芝麻分要求</span>
+                    <span class="push_cnt">
+                        <select name="sesame_points" id="sesame_points">
+                            <option value="0">无要求</option>
+                            <option value="1">550-580</option>
+                            <option value="2">580-600</option>
+                        </select>
+                    </span>
+                </li>
+            </div>
+            <div style="width: 50%; float: right;">
+                <li>
+                    <span class="push_title" style="width: 20%;">手机系统要求</span>
+                    <span class="push_cnt">
+                        <select name="phone_system" id="phone_system">
+                            <option value="0">无要求</option>
+                            <option value="1">ios</option>
+                            <option value="2">android</option>
+                            <option value="3">wp</option>
+                        </select>
+                    </span>
+                </li>
+                <li>
+                    <span class="push_title" style="width: 20%;">登录时间</span>
+                    <span class="push_cnt">
+                        <select name="login_time" id="login_time">
+                            <option value="0">无要求</option>
+                            <option value="1">3天未登录</option>
+                            <option value="2">7天未登录</option>
+                            <option value="3">3天内登录过</option>
+                        </select>
+                    </span>
+                </li>
+            </div>
+            <li>
+                <span class="push_title">运营商要求</span>
+                <span class="push_cnt" id="operator">
+                    <label>
+                        <span>中国移动</span>
+                        <input type="checkbox" value="1">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>中国联通</span>
+                        <input type="checkbox" value="2">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>中国电信</span>
+                        <input type="checkbox" value="3">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>其他</span>
+                        <input type="checkbox" value="4">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                </span>
+            </li>
+            <li>
+                <span class="push_title">用户标签</span>
+                <span class="push_cnt disabled" id="remark">
+                    <label>
+                        <span>多头借款</span>
+                        <input type="checkbox" value="1">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>网黑</span>
+                        <input type="checkbox" value="2">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>白户</span>
+                        <input type="checkbox" value="3">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>大额需求</span>
+                        <input type="checkbox" value="4">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                </span>
+            </li>
+            <li>
+                <span class="push_title" style="vertical-align: top;">贷款需求</span>
+                <span class="push_cnt" style="width: 80%;" id="loanDemand">
+                    <label>
+                        <span>1000以内</span>
+                        <input type="checkbox" value="1">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>1000~3000</span>
+                        <input type="checkbox" value="2">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>3000~5000</span>
+                        <input type="checkbox" value="3">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>5000~10000</span>
+                        <input type="checkbox" value="4">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>10000~50000</span>
+                        <input type="checkbox" value="5">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>50000~100000</span>
+                        <input type="checkbox" value="6">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>100000~150000</span>
+                        <input type="checkbox" value="7">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>150000~200000</span>
+                        <input type="checkbox" value="8">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>200000~300000</span>
+                        <input type="checkbox" value="9">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>300000以上</span>
+                        <input type="checkbox" value="10">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                </span>
+            </li>
+            <li>
+                <button type="button" class="btn btn-info" style="margin-left: 40%;" id="btn">发送</button>
+                <button type="button" class="btn btn-info" style="margin-left: 10%; width: 100px;" id="btn1">第三方发送</button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+
+<!-- 弹窗内容 -->
+<div id="content" style="display: none">
+    <p>本次发送短信：<span>5555</span>条</p>
+    <p>花费：<span>5555.00</span>元</p>
+    <p>账户余额：<span>5555.00</span>元</p>
+    <p style="text-align: center;">
+        <input type="button" value="取消" class="btn btn-default" id="cancel">
+        <input type="button" value="确定发送" class="btn btn-info" id="sure">
+    </p>
+</div>
+
+
+
+<script src="../../static/layer/layer.js" type="text/javascript"></script>
+
+<script type="text/javascript">
+
+
+$(function(){
+
+    $('input[type="checkbox"]').on('click',function(){
+        if(this.checked){
+            $(this).siblings("img").attr("src","../static/img/true.png");
+　　　　}else{
+　　　　　　$(this).siblings("img").attr("src","../static/img/false.png");
+　　　　}
+    });
+
+
+
+    //短信文本字数限制
+    $('#sms_text').off().on('keyup',function(){
+        check_ps();
+    });
+
+    //清尾
+    $('.clear').on('click',function(){
+        var val =  $('#sms_text').val().substring(0,70);
+        $('#sms_text').val(val);
+        check_ps();
+    });
+
+
+    function check_ps(){
+        var len = $('#sms_text').val().length;
+        var num = 70 - len;
+        if(num >= 0){
+            $('.sr').show();
+            $('.cg').hide();
+            $('.sr strong').html(num);
+        }else{
+            $('.sr').hide();
+            $('.cg').show();
+            $('.cg .num').html(Math.abs(num));
+            alert('你已经超出字数限制，请清尾！');
+        }
+    }
+
+
+    
+    //定时推送
+    var pushTime = '';
+    $('#startDate').on('blur',function(){
+        pushTime = $('#startDate').val();
+    });
+    $('#timed_push').on('click',function(){
+        if(this.checked){
+            pushTime = pushTime;
+        }else{
+            pushTime = '';
+        }
+    });
+
+    var operator = [];    //运营商要求
+    var operator_str;
+    $('#operator').find('input:checkbox').on('click',function(){
+        if(this.checked){
+            operator.push($(this).prev().html());
+        }else{
+            operator.pop($(this).prev().html());
+        }
+        operator_str = operator.join(",");
+    });
+   
+
+
+    var remark = [];    //用户标签
+    var remark_str;
+    $('#remark').find('input:checkbox').on('click',function(){
+        if(this.checked){
+            remark.push($(this).prev().html());
+        }else{
+            remark.pop($(this).prev().html());
+        }
+        remark_str = remark.join(',');
+    });
+
+    var loanDemand = [];    //贷款需求
+    var loanDemand_str;
+    $('#loanDemand').find('input:checkbox').on('click',function(){
+        if(this.checked){
+            loanDemand.push($(this).prev().html());
+        }else{
+            loanDemand.pop($(this).prev().html());
+        }
+        loanDemand_str = loanDemand.join(',');
+    });
+
+
+    //发送
+    var content = '';   //短信文本
+    $('#sms_text').on('blur',function(){
+        content = $('#sms_text').val().substring(0,70);
+    });
+    $('#btn').on('click',function(){
+        if(!content){
+            alert('短信文本不得为空!');
+            return;
+        }
+        layer.open({
+            type: 1,
+            title: '短信信息',
+            area: '500px',
+            content: $('#content')
+        });
+    });
+
+    //取消发送
+    $('#cancel').on('click',function(){
+        layer.closeAll();
+    });
+
+
+    //确定发送
+    $('#sure').off().on('click',function(){
+
+        var address = $('#regional').val();      //地域要求
+        var app = $('#phone_system').val();      //手机系统要求
+        var zmscore = $('#sesame_points').val();    //芝麻分要求
+        var minzmscore = 0;    //最小芝麻分
+        var maxzmscore = 0;    //最大芝麻分
+        if(zmscore == 0){
+            minzmscore = 0;
+            maxzmscore = 0;
+        }else if(zmscore == 1){
+            minzmscore =  $('#sesame_points').find('option:selected').text().split('-')[0];
+            maxzmscore =  $('#sesame_points').find('option:selected').text().split('-')[1];
+        }else if(zmscore == 2){
+            minzmscore =  $('#sesame_points').find('option:selected').text().split('-')[0];
+            maxzmscore =  $('#sesame_points').find('option:selected').text().split('-')[1];
+        }
+ 
+        var loginTime = $('#login_time').val();    //登录时间
+        var loginTimeType = 0;    //登录状态
+        if(loginTime == 0){
+            loginTimeType = 0;         //无要求
+        }else if(loginTime == 1 || loginTime == 2){    //未登录
+            loginTimeType = 1;        
+        }else if(loginTime == 3){    //已登录
+            loginTimeType = 2;        
+        }
+
+        $.ajax({
+            url: '/smsmanagement/pushsms',
+            type: 'post',
+            data: {
+                Content: content,      //短信文本
+                Address: address,       //地域要求
+                MinZmscore: minzmscore,   //最小芝麻分
+                MaxZmscore: maxzmscore,   //最大芝麻分
+                App: app,      //手机系统要求
+                LoginTime: loginTime,    //登录时间
+                LoginTimeType: loginTimeType,     //登录状态
+                Operator: operator_str,       //运营商要求
+                Remark: remark_str,      //用户标签
+                LoanDemand: loanDemand_str,       //贷款需求      
+                PushTime: pushTime       //推送时间
+            },
+            success: function(res){
+                if(res.ret == 200){
+                    alert(res.msg);
+                    layer.closeAll();
+                }else if(res.ret == 403){
+                    alert(res.msg);
+                    layer.closeAll();
+                }
+            }
+        });
+        
+    });
+    
+});
+
+
+
+
+
+
+
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,377 @@
+<link rel="stylesheet" type="text/css" href="../../static/css/titatoggle-dist-min.css">
+<style>
+    .push > li {
+        line-height: 3;
+        margin-bottom: 20px;
+    }
+
+    .push li .push_title {
+        width: 10%;
+        font-weight: bold;
+        display: inline-block;
+    }
+
+    .push li .push_cnt {
+        display: inline-block;
+        position: relative;
+    }
+
+    .push li .push_cnt label {
+        font-weight: normal;
+        position: relative;
+        margin-right: 20px;
+    }
+
+    .push li .push_cnt label input {
+        width: 20px;
+        height: 20px;
+        position: relative;
+        z-index: 10;
+        vertical-align: -5px;
+        opacity: 0;
+        filter: alpha(opacity=0);
+    }
+
+    .push li .push_cnt label img {
+        width: 20px;
+        height: 20px;
+        position: absolute;
+        z-index: 0;
+        right: 0;
+        bottom: 11px;
+    }
+
+    .push li .push_cnt input[type="text"], .push li .push_cnt select {
+        width: 300px;
+        height: 30px;
+        text-indent: 10px;
+        font-size: 14px;
+        border: #ccc solid 1px;
+        border-radius: 5px;
+    }
+
+    .push li .push_cnt textarea {
+        width: 500px;
+        height: 100px;
+        text-indent: 10px;
+        font-size: 14px;
+        border: #ccc solid 1px;
+        border-radius: 5px;
+        line-height: 2;
+    }
+
+    .xl {
+        width: 300px;
+        border: #ccc solid 1px;
+        position: absolute;
+        z-index: 100;
+        top: 35px;
+        left: 0;
+        background: #fff;
+        border-radius: 5px;
+        display: none;
+        padding: 0;
+    }
+
+    .xl > li {
+        line-height: 30px;
+        cursor: pointer;
+        padding-left: 10px;
+        background: #fff;
+        color: #666;
+    }
+
+    .xl > li:hover {
+        background: #ccc;
+        color: maroon;
+    }
+
+
+</style>
+
+
+<div class="panel" style="height: 500px">
+    <div class="panel-heading" style="overflow: hidden;">
+        <strong class="pull-left" style="line-height: 30px;">推送文本</strong>
+        <a href="/push/getpushrecordlist" class="btn btn-info pull-right skip1">推送历史</a>
+    </div>
+    <div class="panel-body">
+        <ul class="push">
+            <li>
+                <span class="push_title">跳转位置</span>
+                <span class="push_cnt">
+                    <select name="pushType" id="pushType">
+                        <option value="3">H5页面</option>
+                        <option value="2">贷款产品详情页</option>
+                    </select>
+                </span>
+            </li>
+
+
+
+            <li id="title_li">
+                <span class="push_title">跳转页标题</span>
+                <span class="push_cnt"><input type="text" name="url_title" id="url_title" placeholder="请输入跳转页面的标题"></span>
+            </li>
+
+            <li id="url_li">
+                <span class="push_title">指向位置</span>
+                <span class="push_cnt">
+                    <input type="text" name="to_location" id="to_location" placeholder="请输入指向链接">
+                </span>
+            </li>
+
+            <li id="loan_product_li" style="display: none;">
+                <span class="push_title">贷款产品</span>
+                <span class="push_cnt">
+                    <input type="text" name="loan_product" id="loan_product" placeholder="请输入贷款产品">
+                    <input type="hidden" name="loan_id" id="loan_id">
+                    <ul class="xl">
+                        
+                    </ul>
+                </span>
+            </li>
+
+            <li>
+                <span class="push_title">推送标题</span>
+                <span class="push_cnt"><input type="text" name="push_title" id="push_title" placeholder="可不填(IOS设置无效)"></span>
+            </li>
+            <li>
+                <span class="push_title" style="vertical-align: 40px;">推送内容</span>
+                <span class="push_cnt"><textarea name="push_cnt" id="push_cnt" style="height: 60px">请输入推送内容</textarea></span>
+            </li>
+            <li>
+                <span class="push_title">定时推送</span>
+                <span class="push_cnt">
+                   <input name="startTime" id="startDate" class="Wdate input-small" value="" type="text" onFocus="var endDate=$dp.$('endDate');WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss',
+                           onpicked:function(){endDate.focus();},maxDate:'#F{$dp.$D(\'endDate\')}'})"/>
+                    <input name="endTime" id="endDate" class="Wdate input-small" type="text"
+                           onFocus="WdatePicker({dateFmt:'yyyy-MM-dd',minDate:'#F{$dp.$D(\'startDate\')}'})" value=""
+                           style="display: none"/>&nbsp;&nbsp;&nbsp;
+                    <label>
+                        <span>是否定时推送</span>
+                        <input type="checkbox" id="timed_push">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                </span>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+<div class="panel">
+    <div class="panel-heading">用户属性 <——暂不支持下列条件推送——></div>
+    <div class="panel-body">
+        <ul class="push">
+            <li>
+                <span class="push_title">地域要求</span>
+                <span class="push_cnt">
+                    <select name="regional" id="regional">
+                        <option value="1">不限</option>
+                        <option value="2">只贷给</option>
+                        <option value="3">不贷给</option>
+                    </select>
+                </span>
+            </li>
+            <li id="loan" style="display: none;">
+                <span class="push_title just_loan">只贷给</span>
+                <span class="push_cnt">
+                    <input type="text" name="address" id="address" placeholder="请输入地址名称，多个地址用逗号隔开！"> 
+                </span>
+            </li>
+            <li>
+                <span class="push_title">手机系统要求</span>
+                <span class="push_cnt">
+                    <select name="phone_system" id="phone_system">
+                        <option value="1">无要求</option>
+                        <option value="2">ios</option>
+                        <option value="3">android</option>
+                    </select>
+                </span>
+            </li>
+            <li>
+                <span class="push_title">芝麻分要求</span>
+                <span class="push_cnt">
+                     <input type="text" name="min_zm" id="min_zm" placeholder="请输入下限" style="width: 140px;"> 至 <input
+                        type="text" name="max_zm" id="max_zm" placeholder="请输入上限" style="width: 140px;">
+                </span>
+            </li>
+            <li>
+                <span class="push_title">用户标签</span>
+                <span class="push_cnt" id="marks">
+                    <label>
+                        <span>多头借款</span>
+                        <input name="user_code" type="checkbox" value="1">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>网黑</span>
+                        <input name="user_code" type="checkbox" value="2">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>白户</span>
+                        <input name="user_code" type="checkbox" value="3">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                    <label>
+                        <span>大额需求</span>
+                        <input name="user_code" type="checkbox" value="4">
+                        <img src="../static/img/false.png" alt="未选中">
+                    </label>
+                </span>
+            </li>
+            <li>
+                <button type="button" class="btn btn-info" style="margin-left: 20%;" id="push">推送</button>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<div class="panel">
+    <div class="panel-heading">
+        <p style="display: inline-block; margin-right: 20px; font-size: 14px;">推荐弹窗开关</p>
+        <div class="checkbox checkbox-slider--b-flat checkbox-slider-md" style="display: inline-block;">
+            <label>
+                <input type="checkbox" checked><span></span>
+            </label>
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+
+    $(function () {
+
+        $('input[type="checkbox"]').on('click', function () {
+            if (this.checked) {
+                $(this).siblings("img").attr("src", "../static/img/true.png");
+            } else {
+                $(this).siblings("img").attr("src", "../static/img/false.png");
+            }
+        });
+
+
+        //贷款产品模糊查询
+        $('#loan_product').on('keyup', function () {
+            var name = $(this).val();
+            var html = '';
+            if (name.length <= 0) {
+                $('.xl').empty().hide();
+                return;
+            }
+            $.ajax({
+                url: '/agent/getproductlistuse',
+                type: 'get',
+                data: {
+                    name: name
+                },
+                success: function (res) {
+                    if (res.ret == 200) {
+                        var data = res.products;
+                        if (data) {
+                            $.each(data, function (index, value) {
+                                html += '<li data-id="' + value.Id + '">' + value.Name + '</li>'
+                            });
+                            $('.xl').empty().append(html).show();
+                            //点击下拉框条目
+                            $('.xl li').on('click', function () {
+                                $('#loan_product').val($(this).text());
+                                $('#loan_id').val($(this).attr('data-id'));
+                                $('.xl').hide();
+                            });
+                        } else {
+                            $('.xl').empty().hide();
+                        }
+                    }
+                }
+            });
+        });
+
+
+
+    $('#regional').on('change',function(){
+        if($(this).val() == 2){
+            $('.just_loan').text('只贷给');
+            $('#loan').show();
+        }else if($(this).val() == 3){
+            $('.just_loan').text('不贷给');
+            $('#loan').show();
+        }else if($(this).val() == 1){
+            $('#loan').hide();
+        }
+    });
+
+
+        //跳转位置的联动
+        $('#pushType').on('change', function () {
+            if ($(this).val() == 3) {
+                $('#title_li').show()
+                $('#url_li').show()
+                $('#loan_product_li').hide()
+            }
+            if ($(this).val() == 2) {
+                $('#title_li').hide()
+                $('#url_li').hide()
+                $('#loan_product_li').show()
+            }
+        });
+
+        var ids = new Array;
+        $("input[name='user_code']:checkbox").on('click',function(){
+            if(this.checked){
+                ids.push($(this).val());
+            }else{
+                ids.pop($(this).val());
+            }
+        });
+
+        //点击推送
+        $('#push').off().on('click', function () {
+
+            $.zpost("/push/sendpushandsaverecord", {
+                    'JumpType': $("#pushType").val(),
+                    'Title': $("#push_title").val(),
+                    'UrlTitle': $("#url_title").val(),
+                    'Url': $("#to_location").val(),
+                    'ProductId': $("#loan_id").val(),
+                    'Content': $("#push_cnt").val(),
+                    'PushTimeForm': $("#startDate").val(),
+                    'IsTimePush': $('#timed_push').prop("checked"),
+
+                    'PushLocationType': $("#regional").val(),
+                    'PushLocation': $("#address").val(),
+                    'PushSys': $("#phone_system").val(),
+                    'PushMinZm': $("#min_zm").val(),
+                    'PushMaxZm': $("#max_zm").val(),
+                    'PushUserLable': ids
+                },
+                function (result) {
+                    if (result.ret == 200) {
+                        alert("发送成功!")
+                    } else {
+                        alert("发送失败!" + result.err)
+                    }
+                }
+            );
+        })
+    });
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+

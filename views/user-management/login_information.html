@@ -1,0 +1,78 @@
+<div id="login_record" class="panel">
+    <div class="panel-heading">登录消息</div>
+    {{if eq .logincount 0}}
+    <div class="panel-body">
+     <strong style="padding-left: 45%;font-size: 16px; line-height: 2;">没有登录消息记录</strong>
+    </div>
+    {{else}}
+    <div class="panel-body">
+        <table class="table table-hover table-striped table_thead_fixed">
+            <thead>
+            <tr>
+                <th>时间</th>
+                <th>操作</th>
+                <th class="text-center">定位</th>
+                <th>手机型号</th>
+                <th>系统版本号</th>
+                <th>App版本号</th>
+                <th>设备号</th>
+            </tr>
+            </thead>
+            <tbody>
+            {{range $k, $v := .loginRcds}}
+            <tr>
+                <td>{{$v.CreateTime.Format "2006-01-02"}}</td>
+                <td>登录 {{if eq $v.SilentLogin 1}} （静默登录） {{end}}
+                <td class="text-center">{{$v.Location}}&nbsp;&nbsp;&nbsp;&nbsp;{{$v.Address}}</td>
+                <td>{{$v.MobileType}}</td>
+                <td>{{$v.MobileVersion}}</td>
+                <td>{{$v.AppVersion}}</td>
+                <td>{{$v.DeviceCode}}</td>
+                </td>
+            </tr>
+            {{end}}
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="7">
+                    <div class="fl">
+                        <div class="pagination">每页{{.pagesize}}条，总共{{.logincount}}条</div>
+                    </div>
+                    <div class="fl">
+                        <div class="pagination" id="pagination1" data-url="../usermetadata/userslogindata.html?id={{.user.Id}}" currentPage="{{.loginpage}}" pageCount="{{.loginpagecount}}"></div>
+                        <script type="text/javascript">
+                            $(function() {
+                                $("#pagination1").my_page("","#login_record");
+                            });
+                        </script>
+                    </div>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{end}}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

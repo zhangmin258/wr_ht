@@ -1,0 +1,278 @@
+<style>
+    .nav-tabs > li.active > a {
+        color: #333;
+        background-color: #a1a1a1;
+        border: #666 solid 1px;
+    }
+
+    .nav-tabs > li.active > a:hover {
+        color: #333;
+        background-color: #a1a1a1;
+        border: #666 solid 1px;
+    }
+
+    .nav-tabs > li.active > a:focus {
+        color: #333;
+        background-color: #a1a1a1;
+        border: #666 solid 1px;
+    }
+
+    .nav-tabs > li > a {
+        color: #333;
+        background: #fff;
+        border: #666 solid 1px;
+    }
+
+    .nav-tabs > li > a:hover {
+        background: #a1a1a1;
+        border: #666 solid 1px;
+    }
+
+    #myTab {
+        margin: 10px auto;
+        text-align: center;
+        padding-left: 40%;
+    }
+
+    label.col-sm-2 {
+        width: 10%;
+    }
+
+    label.col-sm-3 {
+        width: 19.5%;
+    }
+
+    .form-group {
+        margin-bottom: 30px;
+    }
+
+
+</style>
+
+<ul id="myTab" class="nav nav-tabs">
+    <li class="active"><a href="#tab1" data-toggle="tab">机构信息</a></li>
+    <li><a id="next" href="#tab2" data-toggle="tab">结算信息</a></li>
+</ul>
+<div id="myTabContent" class="tab-content">
+    <div class="tab-pane active" id="tab1">
+        <form action="" method="" id="" class="form-horizontal">
+            <div class="panel">
+                <div class="panel-heading">机构信息</div>
+                <input type="hidden" name="Id" value="{{.agent.Id}}">
+                <div class="panel-body" style="padding: 30px 0;">
+                    <div class="form-group">
+                        <label for="institution_name" class="col-sm-2 control-label">机构名称</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="institution_name" placeholder="请输入机构名称"
+                                   name="OrgName" value="{{.agent.OrgName}}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="book_address" class="col-sm-2 control-label">通讯录地址</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="book_address" placeholder="请输入通讯录地址"
+                                   name="OrgAddress" value="{{.agent.OrgAddress}}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email_address" class="col-sm-2 control-label">联系邮箱</label>
+                        <div class="col-sm-2">
+                            <input type="email" class="form-control" id="email_address" placeholder="请输入邮箱地址"
+                                   name="OrgEmail" value="{{.agent.OrgEmail}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-heading">商务联系人</div>
+                <div class="panel-body" style="padding: 30px 0;">
+                    <div class="form-group">
+                        <label for="contact_name" class="col-sm-2 control-label">联系人姓名</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="contact_name" placeholder="请输入联系人姓名"
+                                   name="BusName" value="{{.agent.BusName}}">
+                        </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div class="left" style="width: 50%; float: left;">
+                        <div class="form-group">
+                            <label for="phone" class="col-sm-3 control-label">电话</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="phone" placeholder="请输入联系人电话"
+                                       name="BusPhone" value="{{.agent.BusPhone}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="qq" class="col-sm-3 control-label">QQ</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="qq" placeholder="请输入联系人QQ" name="BusQQ"
+                                       value="{{.agent.BusQQ}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right" style="width: 50%; float: left;">
+                        <div class="form-group">
+                            <label for="WeChat" class="col-sm-3 control-label">微信</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="WeChat" placeholder="请输入联系人微信"
+                                       name="BusWechat" value="{{.agent.BusWechat}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="email" class="col-sm-3 control-label">邮箱</label>
+                            <div class="col-sm-4">
+                                <input type="email" class="form-control" id="email" placeholder="请输入联系人邮箱"
+                                       name="BusEmail" value="{{.agent.BusEmail}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-info" id="save-1" style="margin: 0 auto; display: block;">下一页</button>
+        </form>
+    </div>
+
+
+    <div class="tab-pane " id="tab2">
+        <form action="lowerlevelsave" method="post" id="" class="form-horizontal">
+            <div class="panel">
+                <div class="panel-heading">开票信息</div>
+                <div class="panel-body" style="padding: 30px 0;">
+                    <div class="form-group">
+                        <label for="account_name" class="col-sm-2 control-label">账户名称</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="account_name" placeholder="请输入账户名称"
+                                   name="AccountName" value="{{.agent.AccountName}}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bank" class="col-sm-2 control-label">开户银行</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="bank" placeholder="请输入开户银行" name="AccountBank" value="{{.agent.AccountBank}}">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="bank_account" class="col-sm-2 control-label">银行账号</label>
+                        <div class="col-sm-2">
+                            <input type="email" class="form-control" id="bank_account" placeholder="请输入银行账号"
+                                   name="BankAccount" value="{{.agent.BankAccount}}">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="panel">
+                <div class="panel-heading">后台信息</div>
+                <div class="panel-body" style="padding: 30px 0;">
+                    <div class="form-group">
+                        <label for="backend_url" class="col-sm-2 control-label">后台网址</label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control" id="backend_url" placeholder="请输入后台网址"
+                                   name="BackUrl" value="{{.agent.BackUrl}}">
+                        </div>
+                    </div>
+                    <div style="clear: both;"></div>
+                    <div class="left" style="width: 50%; float: left;">
+                        <div class="form-group">
+                            <label for="backend_account" class="col-sm-3 control-label">后台账号</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="backend_account" placeholder="请输入后台账号"
+                                       name="BackAccount" value="{{.agent.BackAccount}}">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="channel_num" class="col-sm-3 control-label">渠道号</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="channel_num" placeholder="请输入渠道号"
+                                       name="FromNum" value="{{.agent.FromNum}}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="right" style="width: 50%; float: left;">
+                        <div class="form-group">
+                            <label for="backend_pass" class="col-sm-3 control-label">后台密码</label>
+                            <div class="col-sm-4">
+                                <input type="text" class="form-control" id="backend_pass" placeholder="请输入后台密码"
+                                       name="BackPwd" value="{{.agent.BackPwd}}">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <button type="button" class="btn btn-info" id="save-2" style="margin: 0 auto; display: block;">保存</button>
+        </form>
+    </div>
+</div>
+
+<input name="CreateTime" type="hidden" value="{{.agent.CreateTime}}">
+<script type="text/javascript">
+    //下一页
+    $('#save-1').off().on('click', function () {
+        $("#next").click();
+    })
+    //保存
+    $('#save-2').off().on('click', function () {
+        var Id = $('input[name=Id]').val();  //机构id
+        var OrgName = $('input[name=OrgName]').val();  //机构名称
+        var OrgAddress = $('input[name=OrgAddress]').val();  //通讯录地址
+        var OrgEmail = $('input[name=OrgEmail]').val();  //联系邮箱
+        var BusName = $('input[name=BusName]').val();  //联系人姓名
+        var BusPhone = $('input[name=BusPhone]').val();  //电话
+        var BusWechat = $('input[name=BusWechat]').val();  //微信
+        var BusQQ = $('input[name=BusQQ]').val();  //QQ
+        var BusEmail = $('input[name=BusEmail]').val();  //邮箱
+        var AccountName = $('input[name=AccountName]').val();  //账户名称
+        var AccountBank = $('input[name=AccountBank]').val();  //开户银行
+        var BankAccount = $('input[name=BankAccount]').val();  //银行账号
+        var BackUrl = $('input[name=BackUrl]').val();  //后台网址
+        var BackAccount = $('input[name=BackAccount]').val();  //后台账号
+        var BackPwd = $('input[name=BackPwd]').val();  //后台密码
+        var FromNum = $('input[name=FromNum]').val();  //渠道号
+        var CreateTime = $('input[name=CreateTime]').val();  //渠道号
+
+        if (!OrgName) {
+            alert('请输入机构名称！');
+        } else {
+            $.ajax({
+                url: '/agent/addagent',
+                type: 'get',
+                data: {
+                    Id: Id,
+                    OrgName: OrgName,
+                    OrgAddress: OrgAddress,
+                    OrgEmail: OrgEmail,
+                    BusName: BusName,
+                    BusPhone: BusPhone,
+                    BusWechat: BusWechat,
+                    BusQQ: BusQQ,
+                    BusEmail: BusEmail,
+                    AccountName: AccountName,
+                    AccountBank: AccountBank,
+                    BankAccount: BankAccount,
+                    BackUrl: BackUrl,
+                    BackAccount: BackAccount,
+                    BackPwd: BackPwd,
+                    FromNum: FromNum
+                },
+                success: function (res) {
+                    if (res.ret == 200) {
+                        alert('保存成功！');
+                        getpage(window.sessionStorage.URl);   //跳到上一层历史记录
+                    }
+                }
+            });
+        }
+    });
+
+
+</script>
+
+
+
+
+
+
+
+
+
+
+

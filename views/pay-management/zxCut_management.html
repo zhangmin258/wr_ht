@@ -1,0 +1,204 @@
+
+<style>
+
+    #content {
+        padding: 20px 30px;
+    }
+
+    #content p {
+        line-height: 2;
+    }
+
+    #content input[type="button"] {
+        width: 80px;
+        display: inline-block;
+        margin-right: 20px;
+    }
+
+</style>
+
+
+<div class="panel">
+    <div class="panel-heading" style="overflow: hidden;">
+        <strong class="pull-left" style="line-height: 30px;">征信口子列表</strong>
+        <span class="pull-right btn btn-info skip3" style="width: 100px;" id="placredit_config">征信口子配置</span>
+    </div>
+    <div class="panel-body">
+        <form action="../plateformhole/placreditlist" id="searchForm" method="get" class="pull-left form-inline">
+            <div class="form-group">
+                <input type="text" class="form-control" placeholder="请输入产品名称" style="width: 250px;" name="name" id="proName">
+            </div>
+            <button type="submit" class="btn btn-info">搜索</button>
+        </form>
+        <span class="pull-right btn btn-info skip3" style="width: 100px;" onclick="add_placredit()">增加征信口子</span>
+        <div style="height: 20px; border-bottom: #ccc solid 1px; clear: both;"></div>
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th>编号</th>
+                    <th>安卓口子名称</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {{range $k,$v:=.plaCreditList}}
+                <tr id="pro{{$v.Id}}">
+                    <td>{{$v.Id}}</td>
+                    <td class="PlateformName">{{$v.PlateformName}}</td>
+                    <td>
+                        <span style="cursor: pointer; color: #398dee" onclick="edit_placredit({{$v.Id}},{{$v.PlateformName}},{{$v.HasCreditInvestigation}})">修改</span>&nbsp;
+                        <span onclick="deletePro({{$v.Id}})" style="cursor: pointer; color: #398dee">删除</span>
+                    </td>
+                </tr>
+            {{end}}
+
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="3">
+                        <div class="fl">
+                            <div class="pagination">总共{{.count}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                            <script type="text/javascript">
+                                $(function () {
+                                    $("#pagination").my_page("#searchForm");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+
+
+<!-- 弹窗内容 -->
+<div id="content" style="display: none;">
+    <p>
+        <input type="hidden" id="hole_id">
+        <span class="title">征信口子名称</span>
+        <input type="text" name="zx_name" id="zx_name" placeholder="请输入征信口子名称" class="form-control" autocomplete="off">
+    </p>
+    <p>
+        <span class="title">是否上征信</span>
+        <select name="is_zx" id="is_zx" class="form-control">
+            <option value="0">不上</option>
+            <option value="1">上</option>
+        </select>
+    </p>
+    <p style="text-align: center; margin-top: 30px;">
+        <input type="button" value="取消" class="btn btn-default" id="cancel">
+        <input type="button" value="保存" class="btn btn-info" id="sure">
+    </p>
+</div>
+
+<script type="text/javascript">
+
+
+    //产品名称
+    if(window.sessionStorage.proName){
+        $('#proName').val(window.sessionStorage.proName);
+    }
+
+    $('#placredit_config').off('click').on('click',function () {
+        var url ="../plateformhole/placreditconfig";
+        getpage(url);
+    })
+
+    
+
+    //增加征信口子
+    function add_placredit(){
+    	$('#hole_id').val('');
+    	$('#zx_name').val('');
+    	$('#is_zx').val('0');
+        layer.open({
+            type: 1,
+            title: '新增征信口子',
+            area: '500px',
+            content: $('#content')
+        });
+    }
+
+
+    //修改征信口子
+    function edit_placredit(id, name, is_zx){
+    	$('#hole_id').val(id);
+    	$('#zx_name').val(name);
+    	$('#is_zx').val(is_zx);
+        layer.open({
+            type: 1,
+            title: '修改征信口子',
+            area: '500px',
+            content: $('#content')
+        });
+    }
+    
+    //点击取消按钮
+    $('#cancel').off('click').on('click', function () {
+        layer.closeAll();
+    });
+
+    //点击保存按钮
+    $('#sure').off('click').on('click', function(){
+    	var id = $('#hole_id').val();
+    	var zx_name = $.trim($('#zx_name').val());
+    	var is_zx = $('#is_zx').val();
+    	if(!zx_name){
+    	    alert('请输入征信口子名称！');
+    	    return;
+    	}
+        
+        // $.each($('.PlateformName'), function(index, value){
+        //     if(zx_name == $(this).text()){
+        //         alert('该名称已存在，请重新输入！');
+        //         return;
+        //     }
+        // });
+
+        $.ajax({
+            url: '../plateformhole/saveplacredit',
+            type: 'get',
+            data: {
+            	Id: id,
+                PlateformName: zx_name,
+                HasCreditInvestigation: is_zx
+            },
+            success: function (res) {
+                if (res.ret == 200) {
+                	alert(res.msg);
+                	setTimeout(function(){
+                		layer.closeAll();
+                		getpage(window.location.href);   //刷新当前页面
+                	}, 500);
+                    
+                }else{
+                    alert(res.err);
+                    $('#zx_name').focus();
+                }
+            }
+        });
+    });
+
+    
+    //确认删除
+    function deletePro(id) {
+        var confirm = window.confirm("确定删除该产品吗？删除后不可恢复，请考虑清楚！");
+        if(confirm == true){
+            $.zpost('../plateformhole/delplacredit',{
+                pcid: id
+            },function(result){
+                if(result.ret == 200){
+                    $("#pro" + id).remove();
+                    alert('删除成功！');
+                }else{
+                    alert(result.err);
+                }
+            });
+        }
+    }
+</script>

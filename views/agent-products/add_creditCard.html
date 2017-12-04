@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>新增信用卡</title>
+    <style>
+        .form-group {
+            margin-bottom: 50px;
+        }
+
+        .form-group label {
+            color: #333;
+        }
+
+        label span {
+            font-size: 20px;
+            color: red;
+            vertical-align: -7px;
+        }
+
+        .xl {
+            width: 300px;
+            overflow: hidden;
+            border: #ccc solid 1px;
+            position: absolute;
+            z-index: 100;
+            top: 34px;
+            left: 15px;
+            background: #fff;
+            border-radius: 5px;
+            display: none;
+            padding: 0;
+        }
+
+        .xl li {
+            line-height: 30px;
+            cursor: pointer;
+            padding-left: 10px;
+            background: #fff;
+            color: #666;
+        }
+
+        .xl li:hover {
+            background: #ccc;
+            color: maroon;
+        }
+
+    </style>
+</head>
+<body class="sticky-header">
+<div class="panel">
+    <div class="panel-heading">新增信用卡</div>
+    <div class="panel-body" style="padding-top: 30px;">
+        <form action="addBanner" id="imgInput" enctype="multipart/form-data" method="" class="form-horizontal">
+
+            <!--标题-->
+            <div class="form-group">
+                <label for="title" class="col-sm-1 control-label">标题</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="title" placeholder="请输入标题">
+                </div>
+            </div>
+            <!--信用卡图-->
+            <div class="form-group">
+                <label class="col-sm-1 control-label">信用卡图片</label>
+                <div class="col-sm-3">
+                    <img id="imgDisplay" alt="proLogo" src="../static/img/addBanner.png" width="395" height="150"/>
+                    <div style="height: 10px;"></div>
+                    <input type="file" class="imgSelect" id="imgSelect" name="proIcon"/>
+                    <input type="hidden" id="imgUrl" value=""/>
+                </div>
+            </div>
+            <!--链接地址-->
+            <div class="form-group">
+                <label for="link_url" class="col-sm-1 control-label">链接地址</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="link_url" placeholder="请输入链接地址">
+                </div>
+            </div>
+            <!--展示顺序-->
+            <div class="form-group">
+                <label for="sort" class="col-sm-1 control-label">排列顺序</label>
+                <div class="col-sm-3">
+                    <input type="text" class="form-control" id="sort" placeholder="请输入排列顺序">
+                </div>
+            </div>
+            <!--信用卡状态-->
+            <div class="form-group">
+                <label for="isUsed" class="col-sm-1 control-label">信用卡状态</label>
+                <div class="col-sm-3">
+                    <select name="" id="isUsed" class="form-control">
+                        <option value="0">冻结</option>
+                        <option value="1">上线</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-sm-offset-2 col-sm-10">
+                    <button type="button" class="btn btn-info" id="saveCard">保存</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+</body>
+</html>
+<script type="text/javascript">
+        //图片上传
+        $("#imgSelect").off().on("change", function () {
+            var formData = new FormData($("#imgInput")[0]);
+            $.ajax({
+                url: '/product/uploadIcon',
+                type: 'POST',
+                data: formData,
+                async: false,
+                cache: false,
+                contentType: false,
+                processData: false,
+                success: function (data) {
+                    if (data.ret = 200) {
+                        $("#imgDisplay").attr("src", data.url)
+                        $("#imgUrl").val(data.url)
+                    } else {
+                        alert("上传失败！")
+                    }
+                }
+            });
+        });
+
+
+        //新增首页信用卡信息保存
+        $("#saveCard").off().on("click", function () {
+            var title = $('#title').val();              //标题
+            var imgUrl = $('#imgUrl').val();            //上传的图片地址
+            var link_url = $('#link_url').val();        //跳转地址
+            var sort = $('#sort').val();                //展示顺序
+            var isUsed = $('#isUsed').val();            //信用卡状态
+
+            if (!title) {
+                alert('请输入标题！');
+            }else if (!imgUrl) {
+                alert('请上传图片');
+            }else if (!link_url) {
+                alert('请输入链接地址！');
+            } else if (!sort) {
+                alert('请输入排列顺序！');
+            } else if (!isUsed) {
+                alert('请选择信用卡状态！');
+            } else {
+                $.zpost("/creditcard/savecreditcard", {
+                    'Title': title,
+                    'ImgUrl': imgUrl,
+                    'LinkUrl': link_url,
+                    'Sort': sort,
+                    'IsUsed': isUsed
+                }, function (result) {
+                    if (result.ret == 200) {
+                        alert(result.msg)
+                        getpage(window.sessionStorage.URl);
+                    } else {
+                        alert(result.msg)
+                    }
+                });
+            }
+        });
+</script>

@@ -1,0 +1,93 @@
+ <style>
+    #user_lottery_records th,td{
+        width: 50%;
+    }
+</style> 
+
+<div class="panel" id="user_lottery_records">
+    <div class="panel-heading">积分抽奖记录</div>
+    {{if eq .messcount 0}}
+    <div class="panel-body">
+        <strong style="padding-left: 45%;font-size: 16px; line-height: 2;">没有积分抽奖记录</strong>
+    </div>
+    {{else}}
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="text-center">时间</th>
+                    <th class="text-center">奖品名称</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $k,$v := .scorelottery}}
+                <tr class="text-center">
+                    <td>{{$v.CreateTime}}</td>
+                    <td>{{$v.Content}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <div class="fl">
+                            <div class="pagination">每页{{.pagesize}}条，总共{{.messcount}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="../usermetadata/userlotteryrecord.html?id={{.user.Id}}" currentPage="{{.messpage}}" pageCount="{{.messpagecount}}"></div>
+                            <script type="text/javascript">
+                                $(function() {
+                                    $("#pagination").my_page("","#user_lottery_records");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{end}}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

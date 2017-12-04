@@ -1,0 +1,98 @@
+<style>
+    #integration_drawingRecords th,td{
+        width: 25%;
+    }
+</style>
+
+
+<div class="panel" id="integration_drawingRecords">
+    <div class="panel-heading">积分兑换记录</div>
+    {{if eq .messcount 0}}
+    <div class="panel-body">
+        <strong style="padding-left: 45%;font-size: 16px; line-height: 2;">没有积分兑换记录</strong>
+    </div>
+    {{else}}
+    <div class="panel-body">
+        <table class="table table-hover">
+            <thead>
+                <tr>
+                    <th class="text-center">时间</th>
+                    <th class="text-center">奖品名称</th>
+                    <th class="text-center">积分消耗</th>
+                    <th class="text-center">积分余额</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{range $k,$v := .scoreexchange}}
+                <tr class="text-center">
+                    <td>{{$v.CreateTime}}</td>
+                    <td>{{$v.Prize}}</td>
+                    <td>{{$v.ScoreAmount}}</td>
+                    <td>{{$v.AfterScoreAmount}}</td>
+                </tr>
+                {{end}}
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="5">
+                        <div class="fl">
+                            <div class="pagination">每页{{.pagesize}}条，总共{{.messcount}}条</div>
+                        </div>
+                        <div class="fl">
+                            <div class="pagination" id="pagination" data-url="../usermetadata/userexchangerecord.html?id={{.user.Id}}" currentPage="{{.messpage}}" pageCount="{{.messpagecount}}"></div>
+                            <script type="text/javascript">
+                                $(function() {
+                                    $("#pagination").my_page("","#integration_drawingRecords");
+                                });
+                            </script>
+                        </div>
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+    {{end}}
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>登录</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <meta name="author" content="">
+    <meta name="description" content="">
+    <link href="../static/css/layout.css" rel="stylesheet">
+    <link href="../static/css/style-responsive.css" rel="stylesheet">
+    <link rel="shortcut icon" href="../favicon.ico">
+    <script src="../static/js/jquery.min.js"></script>
+    <script src="../static/js/jquery.validate.js"></script>
+</head>
+<body>
+<div class="container">
+    <form class="form-signin" id="login-form">
+        <div class="form-signin-heading text-center">
+            <h1 class="sign-title">登录</h1>
+            <img src="../static/img/wrLogo.png" alt="微融"/>
+        </div>
+        <div class="login-wrap">
+            <input id="name" type="text"  class="form-control" name="username" placeholder="请填写用户名" autofocus>
+            <input id="password" type="password"  class="form-control" name="password" placeholder="请填写密码">
+            <input id="verify_code" type="text"  class="form-control" name="verify_code" placeholder="请填写验证码">
+            <button class="btn btn-login btn-block" type="submit">登录</button>
+        </div>
+    </form>
+</div>
+<script>
+    $(function(){
+        $('#login-form').validate({
+            ignore:'',
+            rules : {
+                username:{ required: true},
+                password:{required: true}
+            },
+            messages : {
+                username : {required: '请填写用户名'},
+                password : {required: '请填写密码'}
+            },
+            submitHandler:function(form) {
+                $(form).ajaxSubmit({
+                    url:"/login",
+                    type:'POST',
+                    dataType:'json',
+                    success:function(data){
+                        if(data.ret==200){
+                           window.location.href="/";
+                        }else{
+                            alert(data.msg);
+                        }
+                    }
+                });
+            }
+        });
+    });
+</script>
+</body>
+</html>

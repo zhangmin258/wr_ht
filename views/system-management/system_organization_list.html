@@ -1,0 +1,459 @@
+<link rel="stylesheet" href="../static/css/metroStyle/metroStyle.css" type="text/css">
+<script type="text/javascript" src="../static/js/zTree/jquery.ztree.core.js"></script>
+<script type="text/javascript" src="../static/js/zTree/jquery.ztree.excheck.js"></script>
+<script type="text/javascript" src="../static/js/zTree/jquery.ztree.exedit.js"></script>
+<style type="text/css">
+    .structure_msg li {
+        padding-top: 15px;
+        list-style: none;
+    }
+</style>
+<div class="structure">
+    <table width="100%" cellpadding="0" cellspacing="0">
+        <thead>
+        <tr>
+            <th width="250">
+                <input type="button" value="添加" class="btn btn-info pull-right" onclick="addOrganization()"/>
+                <input type="button" value="编辑" class="btn btn-info pull-right" onclick="editOrganization()"/>
+                组织机构
+            </th>
+            <th width="400">
+                <input type="button" value="添加" class="btn btn-info pull-right" onclick="addStation()"/>
+                岗位信息
+            </th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr>
+            <td valign="top">
+                <div style="overflow-y: scroll;" id="left">
+                    <ul id="treeOrganization" class="ztree"></ul>
+                </div>
+            </td>
+            <td valign="top">
+                <ul class="structure_mid"></ul>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+<!-- 模态框（Modal） -->
+<div class="modal fade" id="organizationDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    组织机构
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="organization" class="col-sm-4 control-label">组织名称：</label>
+                        <div class="col-sm-8">
+                            <input type="text" style="width: 60%" class="form-control" id="organizationName"
+                                   placeholder="请输入组织名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="parentOrganization" class="col-sm-4 control-label">上级组织：</label>
+                        <div class="col-sm-8">
+                            <input type="hidden" value="" name="deptcode" id="parentOrganizationId"/>
+                            <input type="text" readonly="readonly" style="width: 60%;" class="form-control"
+                                   id="parentOrganizationName">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-info" id="organizationAddBtn"> 确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="editOrganizationDialog" tabindex="-1" role="dialog" aria-labelledby="myModalLabeledit"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabeledit">
+                    组织机构
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="organization" class="col-sm-4 control-label">组织名称：</label>
+                        <div class="col-sm-8">
+                            <input type="text" style="width: 60%" class="form-control" id="editOrganizationName"
+                                   placeholder="请输入组织名称">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-info" id="editOrganizationBtn"> 确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+
+<!-- 岗位信息新增 -->
+<div class="modal fade" id="stationDialog" tabindex="-1" role="dialog" aria-labelledby="stationModalLabel"
+     aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="stationModalLabel">
+                    岗位信息
+                </h4>
+            </div>
+            <div class="modal-body">
+                <form class="form-horizontal" role="form">
+                    <div class="form-group">
+                        <label for="stationName" class="col-sm-4 control-label">岗位名称：</label>
+                        <div class="col-sm-8">
+                            <input type="text" style="width: 60%" class="form-control" id="stationName"
+                                   placeholder="请输入岗位名称">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="roleSelect" class="col-sm-4 control-label">角色选择：</label>
+                        <div class="col-sm-8">
+                            <select id="roleSelect" class="form-control" style="width: 60%;"></select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="station_1" class="col-sm-4 control-label">岗位类型：</label>
+                        <div class="col-sm-8">
+                            <label class="checkbox-inline">
+                                <input type="checkbox" id="station_1" name="stationType" value="1">通用岗位
+                            </label>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="dataPower" class="col-sm-4 control-label">数据权限：</label>
+                        <div class="col-sm-8">
+                            <ul id="dataPower" class="ztree"></ul>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                <button type="button" class="btn btn-info" id="stationAddBtn"> 确定</button>
+            </div>
+        </div><!-- /.modal-content -->
+        <input type="hidden" id="stationId">
+    </div><!-- /.modal -->
+</div>
+
+<script type="text/javascript">
+    var menuData = null;
+    var oranizationTree = null;
+    var checkNode = null;
+    var type = -1;
+    /*组织机构树形结构设置*/
+    var setting = {
+        view: {
+            selectedMulti: false,
+            showIcon: false
+        },
+        check: {
+            enable: true
+        },
+        data: {
+            simpleData: {
+                enable: true,
+                rootPId: "0"
+            }
+        },
+        callback: {
+            onClick: organizationTreeOnClick
+        }
+    }
+    //数据权限树设置
+    var dataPowerSetting = {
+        check: {
+            enable: true,
+            nocheckInherit: true,
+            chkboxType: {"Y": "", "N": ""},
+        },
+        view: {
+            showIcon: false
+        },
+        data: {
+            simpleData: {
+                enable: true,
+                rootPId: "0"
+            }
+        }
+    }
+    //添加组织机构弹出页面
+    function addOrganization() {
+        if (checkNode == null || checkNode.id <= 0) {
+            alert("请选择上级组织架构")
+            return false;
+        }
+        $("#organizationName").val('');
+        $("#parentOrganizationId").val(checkNode.id);
+        $("#parentOrganizationName").val(checkNode.name);
+        $('#organizationDialog').modal('show');
+    }
+    //选中组织机构节点
+    function organizationTreeOnClick(event, treeId, treeNode) {
+        checkNode = treeNode;
+        $('.structure_mid').empty()
+        $.post('/system/getstationdata', {
+            orgId: treeNode.id
+        }, function (result) {
+            if (!!result.stationData) {
+                for (var i = 0; i < result.stationData.length; i++) {
+                    $('.structure_mid').append('<li><a class="postname" data="' + result.stationData[i].Id + '">' + result.stationData[i].Name + '</a><span class="pull-right"><a href="javascript:modifyStation(\'' + result.stationData[i].Id + '\',\'' + result.stationData[i].Name + '\',\'' + result.stationData[i].RoleId + '\');" style="margin-right:10px;">修改</a><a href="javascript:deleteStation(\'' + result.stationData[i].Id + '\',\'' + result.stationData[i].Name + '\');">删除</a></span></li>')
+                }
+            }
+        });
+    }
+
+    //添加组织架构
+    $('#organizationAddBtn').unbind('click').click(function () {
+        var pid = $("#parentOrganizationId").val();
+        var organizationName = $("#organizationName").val();
+        if (pid <= 0) {
+            alert("请选择上级组织架构")
+            return false;
+        }
+        if (organizationName == null || organizationName == "") {
+            alert("请输入组织架构名称");
+            return false;
+        }
+        $.post("/system/addorganization", {pid: pid, organizationName: organizationName}, function (result) {
+            if (result.ret != null && parseInt(result.ret) == 200) {
+                alert("添加成功");
+                GetOrganizationData();
+                oranizationTree.refresh();
+                $('#organizationDialog').modal('hide');
+            } else {
+                alert(result.msg);
+            }
+        });
+    });
+
+    //编辑组织机构弹出页面
+    function editOrganization() {
+        if (checkNode == null || checkNode.id <= 0) {
+            alert("请选择组织架构")
+            return false;
+        }
+        $("#editOrganizationName").val(checkNode.name);
+        $('#editOrganizationDialog').modal('show');
+    }
+
+    //编辑组织架构名称
+    $('#editOrganizationBtn').unbind('click').click(function () {
+        var name = $("#editOrganizationName").val();
+        if (checkNode.id <= 0) {
+            alert("请选择上级组织架构")
+            return false;
+        }
+        if (editOrganizationName == null || editOrganizationName == "") {
+            alert("请输入组织架构名称");
+            return false;
+        }
+        $.post("/system/editorganization", {name: name, id: checkNode.id}, function (result) {
+            if (result.ret != null && parseInt(result.ret) == 200) {
+                alert("编辑成功");
+                GetOrganizationData();
+                oranizationTree.refresh();
+                $('#editOrganizationDialog').modal('hide');
+            } else {
+                alert(result.msg);
+            }
+        });
+    });
+
+    function refreshStation() {
+        var nodes = oranizationTree.getSelectedNodes();
+        if (!!nodes && nodes.length) {
+            organizationTreeOnClick(null, nodes[0].id, nodes[0])
+        }
+    }
+
+    //添加岗位弹出页面
+    function addStation() {
+        if (checkNode == null || checkNode.id <= 0) {
+            alert("请选择组织架构")
+            return false;
+        }
+        type = 1;//添加类型
+        $("#stationName").val('');
+        $("input[name='stationType']:checkbox:checked").each(function () {
+            $(this).attr("checked", false);
+        });
+        var dataPowerTree = $.fn.zTree.getZTreeObj("dataPower");
+        dataPowerTree.cancelSelectedNode();
+        dataPowerTree.checkAllNodes(false);
+        $('#stationDialog').modal('show');
+        $('#dataPower_1 .chk').removeClass('checkbox_true_full');
+    }
+
+    //岗位信息新增/编辑
+    $("#stationAddBtn").unbind("click").click(function () {
+        //组织架构ID
+        if (checkNode == null || checkNode.id <= 0) {
+            alert("请选择组织架构")
+            return false;
+        }
+
+        //岗位名称
+        var stationName = $("#stationName").val();
+        if (stationName == "") {
+            alert("请填写岗位名称")
+            return false;
+        }
+        //获取角色ID
+        var roleId = $("#roleSelect").val();
+        if (roleId <= 0) {
+            alert("请选择角色");
+            return false;
+        }
+        //岗位类型
+        var typeArr = new Array();
+        $("input[name='stationType']:checkbox:checked").each(function () {
+            typeArr.push($(this).val());
+        })
+        var typeStr = typeArr.join();
+        //数据权限
+        var dataPowerTree = $.fn.zTree.getZTreeObj("dataPower");
+        var nodes = dataPowerTree.getCheckedNodes(true);
+        var dataArr = new Array();
+        $.each(nodes, function (index, val) {
+            dataArr.push(val.id);
+        });
+        var dataStr = dataArr.join();
+        if (type == 1) {
+            $.post("/system/addstation", {
+                orgId: checkNode.id,
+                stationName: stationName,
+                roleId: roleId,
+                typeStr: typeStr,
+                dataStr: dataStr
+            }, function (result) {
+                if (result.ret != null && parseInt(result.ret) == 200) {
+                    alert("添加成功");
+                    refreshStation();
+                    $('#stationDialog').modal('hide');
+                } else {
+                    alert(result.msg);
+                }
+            });
+        } else {
+            var stationId = $("#stationId").val();
+            $.post("/system/updatestation", {
+                orgId: checkNode.id,
+                stationId: stationId,
+                stationName: stationName,
+                roleId: roleId,
+                typeStr: typeStr,
+                dataStr: dataStr
+            }, function (result) {
+                if (result.ret != null && parseInt(result.ret) == 200) {
+                    alert("修改成功");
+                    refreshStation();
+                    $('#stationDialog').modal('hide');
+                } else {
+                    alert(result.msg);
+                }
+            });
+        }
+    });
+
+    //编辑岗位
+    function modifyStation(id, name, roleId) {
+        //组织架构ID
+        if (checkNode == null || checkNode.id <= 0) {
+            alert("请选择组织架构")
+            return false;
+        }
+
+        $('#stationDialog :checkbox[name="stationType"]').prop('checked', false);
+        type = 2;//编辑类型
+        $("#stationName").val(name);
+        $("#roleSelect").val(roleId);
+        $.get("/system/getstationbyid", {
+            stationId: id
+        }, function (result) {
+            //设置类型选中
+            $.each(result.data.typeList||[], function (index, val) {
+                $("#station_" + val.Type).prop('checked', true)
+            });
+            //树节点选中
+            var dataPowerTree = $.fn.zTree.getZTreeObj("dataPower");
+            dataPowerTree.cancelSelectedNode();
+            dataPowerTree.checkAllNodes(false);
+            $.each(result.data.dataList, function (index, val) {
+                var node = dataPowerTree.getNodeByParam("id", val.OrgId);
+                dataPowerTree.checkNode(node, true, true);
+            });
+        });
+        $("#stationId").val(id);
+        $('#dataPower_1 .chk').removeClass('checkbox_true_full');
+        $('#stationDialog').modal('show');
+    }
+    // 删除岗位
+    function deleteStation(id, name) {
+        if (id <= 0) {
+            alert("岗位主键错误!")
+            return false;
+        }
+        if (confirm("删除该岗位会造成部分账号无法登陆，是否继续?")) {
+            $.post("/system/delstation", {
+                stationId: id
+            }, function (result) {
+                if (result.ret == 200) {
+                    alert("删除成功!")
+                    refreshStation();
+                } else {
+                    alert("删除失败!");
+                }
+            });
+        }
+    }
+
+    function GetOrganizationData() {
+        $.get("/system/basedata", {}, function (result) {
+            if (result.organizationData) {
+                $.fn.zTree.init($("#treeOrganization"), setting, result.organizationData); //组织机构
+                oranizationTree = $.fn.zTree.getZTreeObj("treeOrganization");
+                $.fn.zTree.init($("#dataPower"), dataPowerSetting, result.organizationData); //组织机构
+                $.fn.zTree.getZTreeObj("dataPower");
+            } else {
+                menuData = result.menuData;
+            }
+        });
+    }
+    //数据初始化
+    $(function () {
+        GetOrganizationData();
+        $.get("/system/getrolelist", {}, function (result) {
+            $("#roleSelect").empty();
+            $.each(result.roleListData, function (index, val) {
+                var option = $("<option>").val(val.Id).text(val.Displayname);
+                $("#roleSelect").append(option);
+            });
+        });
+    });
+</script>

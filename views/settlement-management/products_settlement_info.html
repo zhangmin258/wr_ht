@@ -1,0 +1,104 @@
+{{if eq .flag 1}}
+<table class="table table-hover">
+    <thead>
+    <tr>
+        <th>日期</th>
+        <th>注册用户</th>
+        <th>认证用户</th>
+        <th>放款用户</th>
+        <th>放款金额</th>
+        <th>当日单价</th>
+        <th>收益</th>
+        <th>结算状态</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {{range $k,$v:=.proCleaning}}
+    <tr>
+        <td>{{$v.Date.Format "2006-01-02"}}</td>
+        <td>{{$v.RegisterCount}}</td>
+        <td>{{$v.ApplyCount}}</td>
+        <td>{{$v.MakeLoanCount}}</td>
+        <td>{{printf "%.2f"  $v.MakeLoanAmount}}元</td>
+        <td>
+            {{if eq $v.JointMode 1}}CPA：{{$v.CpaPrice}}
+            {{else if eq $v.JointMode 2}}CPS：{{$v.CpsPrice}} %
+            {{else}}
+            CPA+CPS：{{$v.CpaPrice}}+{{$v.CpsPrice}} %
+            {{end}}
+        </td>
+        <td>{{printf "%.2f" $v.CpaMoney}}元</td>
+        <td>{{if eq $v.State 0}}未结算{{else}}已结算{{end}}</td>
+        <td>
+            {{if eq $v.State 0}}
+            <a class="skip2" href="../productdata/showDetailedData?id={{$v.Id}}&agentProductId={{$v.AgentProductId}}&createDate={{$v.Date}}&cleaningState=0">修改</a>&nbsp;&nbsp;&nbsp;
+            {{else}}
+            <a class="skip2" href="../productdata/showDetailedData?id={{$v.Id}}&agentProductId={{$v.AgentProductId}}&createDate={{$v.Date}}&cleaningState=1">查看</a>&nbsp;&nbsp;&nbsp;
+            {{end}}
+        </td>
+    </tr>
+    {{end}}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="9">
+                <div class="fl">
+                    <div class="pagination">总共{{.count}}条</div>
+                </div>
+                <div class="fl">
+                    <div class="pagination" id="pagination" data-url="/procleaning/getprocleandata?id={{.id}}" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                    <script type="text/javascript">
+                        $(function () {
+                            $("#pagination").my_page("","#pro_cleaning_data");
+                        });
+                    </script>
+                </div>
+            </td>
+        </tr>
+    </tfoot>
+</table>
+<div style="height: 50px; clear: both;"></div>
+<div class="task_list col-md-12" id="task_list">
+    <input type="hidden" id="pro_id" value="{{.id}}">
+    <div class="list_span col-md-3" data-url="/procleaning/getprocleandetail?flag=1&pid={{.id}}">结算信息</div>
+    <div class="list_span col-md-3" data-url="/procleaning/getprocleandetail?flag=2&pid={{.id}}">结算历史</div>
+    <div class="list_span col-md-3" data-url="/procleaning/getprocleandetail?flag=3&pid={{.id}}">开票信息</div>
+    <div class="list_span col-md-3" data-url="/procleaning/getprocleandetail?flag=4&pid={{.id}}">后台信息</div>
+</div>
+
+
+<script>
+
+
+    $("#task_list .list_span").off().on("click", function() {
+        if ($(this).attr("zmx")) {
+            return;
+        }
+        $(this).css('color', '#599cf4').css('border', '1px solid #599cf4').siblings().css('color', '#666').css('border', '1px solid #ccc');
+        $(this).siblings().removeAttr("zmx");
+        $(this).attr("zmx", "123");
+        var ranN = Math.random(1000000);
+        var url = $(this).attr("data-url");
+        url += '&token=' + 123456 + "&" + ranN; // uid后缀
+        $.zget(url, {}, function(result) {
+            $("#personal_info_details").empty().append(result);
+            execjs(result);
+        });
+    });
+
+    $('#settle').off().on('click',function () {
+        var pid = $('#pro_id').val();
+        var url = '/settlement/settlepage?pid=' + pid;
+        getpage(url);
+    });
+
+    
+</script>
+{{else}}
+
+<h1 style="text-align: center; color: maroon; font-size: 18px;">输入的产品名称不存在，请重新输入！</h1>
+
+
+
+{{end}}

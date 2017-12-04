@@ -1,0 +1,45 @@
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th>未结起始日期</th>
+            <th>平台名称</th>
+            <th>有效数量</th>
+            <th>放款金额</th>
+            <th>待结算金额</th>
+            <th class="text-center" style="width: 30%">结算周期</th>
+            <th>操作</th>
+        </tr>
+    </thead>
+    <tbody>
+        {{range $k,$v:=.notSettleProCleaning}}
+        <tr>
+            <td>{{$v.Date.Format "2006-01-02"}}</td>
+            <td>{{$v.Name}}</td>
+            <td>{{if $v.QuantityCount}}{{$v.QuantityCount}}{{else}}-{{end}}人次</td>
+            <td>{{if $v.MakeLoanAmount}}{{printf "%.2f" $v.MakeLoanAmount}}{{else}}-{{end}}元</td>
+            <td>{{printf "%.2f" $v.CpaMoney}}元</td>
+            <td class="text-center">{{$v.CleaningCycle}}</td>
+            <td>
+                <a href='../settlement/settlepage?pid={{$v.Id}}&startDate={{$v.Date.Format "2006-01-02"}}' class="skip1">结算</a>
+            </td>
+        </tr>
+        {{end}}
+    </tbody>
+    <tfoot>
+        <tr>
+            <td colspan="7">
+                <div class="fl">
+                    <div class="pagination">总共{{.count}}条</div>
+                </div>
+                <div class="fl">
+                    <div class="pagination" id="pagination2" data-url="/cleanhis/noclean" currentPage="{{.pageNum}}" pageCount="{{.pageCount}}"></div>
+                    <script type="text/javascript">
+                        $(function () {
+                            $("#pagination2").my_page("#searchForm1","#no_clean");
+                        });
+                    </script>
+                </div>
+            </td>
+        </tr>
+    </tfoot>
+</table>

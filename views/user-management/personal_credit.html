@@ -1,0 +1,86 @@
+
+
+
+<div class="panel">
+    <div class="panel-heading">个人资信</div>
+    <div class="panel-body">
+        <ul class="p-info">
+            <li class="col-md-5">
+                <div class="title">贷款金额：</div>
+                <div class="desk">{{.userCredit.LoanAmount}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">贷款期限：</div>
+                <div class="desk">{{.userCredit.LoanTerm}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">公积金：</div>
+                <div class="desk">
+                    {{if eq .userCredit.IsProvidentFund 1}}有本地公积金
+                    {{else if eq .userCredit.IsProvidentFund 2}}有本地公积金
+                    {{else}}-
+                    {{end}}
+                </div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">社保：</div>
+                <div class="desk">
+                    {{if eq .userCredit.IsSocialSecurity 1}}有本地社保
+                    {{else if eq .userCredit.IsSocialSecurity 2}}有本地社保
+                    {{else}}-
+                    {{end}}
+                </div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">房产：</div>
+                <div class="desk">{{if eq .userCredit.HouseProperty ""}}-{{else}}{{.userCredit.HouseProperty}}{{end}}</div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">车产：</div>
+                <div class="desk">
+                    {{if eq .userCredit.CarProperty 1}}无车
+                    {{else if eq .userCredit.CarProperty 2}}无车，准备购买
+                    {{else if eq .userCredit.CarProperty 3}}名下有车
+                    {{else}}-
+                    {{end}}
+                </div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">信用卡：</div>
+                <div class="desk">
+                    {{if eq .userCredit.IsCreditCard 1}}无信用卡
+                    {{else if eq .userCredit.IsCreditCard 2}}有，持卡未满6个月
+                    {{else if eq .userCredit.IsCreditCard 3}}有，持卡超过6个月
+                    {{else}}-
+                    {{end}}
+                </div>
+            </li>
+            <li class="col-md-5">
+                <div class="title">信用情况：</div>
+                <div class="desk">
+                    {{if eq .userCredit.CreditSituation 1}}一年内逾期超过3次或超过90天
+                    {{else if eq .userCredit.CreditSituation 2}}一年内逾期少于3次且少于90天
+                    {{else if eq .userCredit.CreditSituation 3}}无信用卡或贷款
+                    {{else if eq .userCredit.CreditSituation 4}}信用良好，无逾期
+                    {{else}}-
+                    {{end}}
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,33 @@
+
+<!-- 岗位管理 -->
+<div class="panel">
+    <div class="panel-body">
+        <h2 class="panel-title">角色管理<span class="btn btn-info pull-right skip3" onclick="getpage('/system/roleedit')">添加</span></h2>
+        <div class="task_list col-md-11">
+            {{range $k, $v := .list}}
+            <div class="list_span">
+                <span class="skip3" onclick="getpage('/system/roleedit?rid={{$v.Id}}')">{{$v.Displayname}}</span>
+                <i onclick="deletePost('{{$v.Id}}')">删除</i>
+            </div>
+            {{end}}
+        </div>
+    </div>
+</div>
+
+
+<script type="text/javascript">
+
+//删除岗位
+function deletePost(postId){
+    var confirm = window.confirm('删除该角色会造成部分岗位无法登陆，是否继续?');
+    if(confirm){
+        jQuery.zpost("/system/delrole",{rid:postId},function(result){
+            if(!!result && result.ret == 200){//成功
+                getpage('/system/rolelist');
+            }else {
+                alert(ret.msg);
+            }
+        });
+    }
+}
+</script>
